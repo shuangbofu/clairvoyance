@@ -1,0 +1,67 @@
+@import '~ant-design-vue/dist/antd.less';
+@primary-color: #4876FF; // 全局主色
+@link-color: #4876FF; // 链接色
+@success-color: #52c41a; // 成功色
+@warning-color: #faad14; // 警告色
+@error-color: #f5222d; // 错误色
+@font-size-base: 14px; // 主字号
+@heading-color: rgba(0, 0, 0, 0.85); // 标题色
+@text-color: rgba(0, 0, 0, 0.65); // 主文本色
+@text-color-secondary: rgba(0, 0, 0, 0.45); // 次文本色
+@disabled-color: rgba(0, 0, 0, 0.25); // 失效色
+@border-radius-base: 2px; // 组件/浮层圆角
+@border-color-base: #d9d9d9; // 边框色
+@box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15); // 浮层阴影
+
+/* 覆盖ant-design样式 */
+.ant-menu-inline {
+  border-right-width: 0 !important;
+}
+
+.ant-table-middle {
+  .ant-table-content {
+    .ant-table-thead>tr>th {
+      color: #666 !important;
+      border-bottom: 0;
+    }
+
+    tr {
+      td {
+        border-bottom: 1px solid rgb(235, 238, 245);
+        font-size: 13.5px;
+      }
+
+      &>td:first-child,
+      &>th:first-child {
+        padding-left: 20px !important;
+      }
+    }
+
+    a {
+      &:hover {
+        text-decoration: underline !important;
+      }
+    }
+
+    .action {
+      a {
+        font-size: 12px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.ant-badge-status-dot {
+  height: 8px;
+  width: 8px;
+}
+
+.ant-badge-status-text {
+  font-size: 13px;
+}
+
+.break-word {
+  word-break: break-all;
+  white-space: pre-line;
+}
