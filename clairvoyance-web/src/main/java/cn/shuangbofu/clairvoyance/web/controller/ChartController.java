@@ -1,15 +1,17 @@
 package cn.shuangbofu.clairvoyance.web.controller;
 
 import cn.shuangbofu.clairvoyance.core.db.Chart;
+import cn.shuangbofu.clairvoyance.core.db.DataSource;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
-import cn.shuangbofu.clairvoyance.core.domain.worksheet.SourceConfig;
 import cn.shuangbofu.clairvoyance.core.enums.SheetType;
 import cn.shuangbofu.clairvoyance.core.loader.ChartLoader;
+import cn.shuangbofu.clairvoyance.core.loader.DataSourceLoader;
 import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
-import cn.shuangbofu.clairvoyance.core.query.SqlBuilder;
-import cn.shuangbofu.clairvoyance.core.query.SqlBuilderFactory;
+import cn.shuangbofu.clairvoyance.core.meta.JdbcParam;
+import cn.shuangbofu.clairvoyance.core.meta.MysqlSourceDb;
 import cn.shuangbofu.clairvoyance.web.vo.ChartVO;
 import cn.shuangbofu.clairvoyance.web.vo.Result;
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -58,14 +60,13 @@ public class ChartController {
 
         ChartVO chartVO = ChartVO.toVO(chart);
 
-        SqlBuilder sqlBuilder = SqlBuilderFactory.getSqlBuilder(sheetType, chartVO.getSqlConfig(),
-                SourceConfig.getSourceConfig(workSheet.getSourceConfig())
-        );
+        DataSource dataSource = DataSourceLoader.getSource(workSheet.getDatasourceId());
 
-        List<Map<String, Object>> result = null;
-        if (sqlBuilder != null) {
-            result = sqlBuilder.build().get();
-        }
+        JdbcParam param = JSON.parseObject(dataSource.getConfig(), JdbcParam.class);
+
+        List<Map<String, Object>> result = new MysqlSourceDb(param).sourceTable(workSheet.getTableName())
+                .run(chartVO.getSqlConfig());
+
         return Result.success(result);
     }
 }

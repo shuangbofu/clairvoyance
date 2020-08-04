@@ -1,7 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.query;
 
 import cn.shuangbofu.clairvoyance.core.constant.SourceConfigConstant;
-import cn.shuangbofu.clairvoyance.core.domain.chart.Sql;
+import cn.shuangbofu.clairvoyance.core.domain.chart.SqlConfig;
 import cn.shuangbofu.clairvoyance.core.domain.worksheet.SourceConfig;
 import com.alibaba.fastjson.JSON;
 
@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class MysqlBuilder extends JdbcSqlBuilder {
 
-    public MysqlBuilder(Sql sql, SourceConfig sourceConfig) {
+    public MysqlBuilder(SqlConfig sql, SourceConfig sourceConfig) {
         super(sql, sourceConfig, SourceConfigConstant.MYSQL_DRIVER_CLASS_NAME);
     }
 
@@ -25,7 +25,7 @@ public class MysqlBuilder extends JdbcSqlBuilder {
 //        source.put(SourceConfigConstant.USERNAME, "root");
 //        source.put(SourceConfigConstant.PASSWORD, "root");
         source.setTableName("node");
-        Sql sql = JSON.parseObject(config, Sql.class);
+        SqlConfig sql = JSON.parseObject(config, SqlConfig.class);
 
         MysqlBuilder builder = new MysqlBuilder(sql, source);
 

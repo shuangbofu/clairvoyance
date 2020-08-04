@@ -24,6 +24,7 @@ public class WorkSheet extends Model<WorkSheet> {
     private String title;
     private String description;
     private String tableName;
+    private Long datasourceId;
 
     /**
      * 最近数据同步时间

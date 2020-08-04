@@ -3,19 +3,22 @@ package cn.shuangbofu.clairvoyance.core.domain.chart;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.*;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.worksheet.Field;
+import cn.shuangbofu.clairvoyance.core.meta.Sql;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by shuangbofu on 2020/7/30 下午11:09
  */
 @Data
 @Accessors(chain = true)
-public class Sql {
+public class SqlConfig implements Sql {
 
     /**
      * 筛选器
@@ -46,8 +49,8 @@ public class Sql {
      * 对比和次轴后期可以在这里扩展
      */
 
-    public static Sql defaultValue() {
-        return new Sql().setFilters(new ArrayList<>())
+    public static SqlConfig defaultValue() {
+        return new SqlConfig().setFilters(new ArrayList<>())
                 .setInnerFilters(new ArrayList<>())
                 .setX(new ArrayList<>())
                 .setY(new ArrayList<>())
@@ -64,5 +67,40 @@ public class Sql {
             Optional<Field> any = fields.stream().filter(i -> i.getName().equals(alias.getName())).findAny();
             any.ifPresent(i -> alias.setTitle(i.getTitle()));
         }
+    }
+
+    @Override
+    public List<String> selects() {
+        List<FieldAlias> fieldAliases = new ArrayList<>();
+        fieldAliases.addAll(getX());
+        fieldAliases.addAll(getY());
+
+        return fieldAliases.stream()
+                .map(FieldAlias::getQueryFinalName)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> groupBys() {
+        return getX().stream()
+                .map(FieldAlias::getName).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, Object> wheres() {
+        return null;
+    }
+
+    @Override
+    public cn.shuangbofu.clairvoyance.core.meta.Order order() {
+        return null;
+    }
+
+    public List<Value> getY() {
+        return getY().stream().filter(FieldAlias::isValid).collect(Collectors.toList());
+    }
+
+    public List<Dimension> getX() {
+        return getX().stream().filter(FieldAlias::isValid).collect(Collectors.toList());
     }
 }

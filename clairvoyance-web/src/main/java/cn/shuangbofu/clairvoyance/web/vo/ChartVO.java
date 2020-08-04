@@ -2,7 +2,7 @@ package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.core.db.Chart;
 import cn.shuangbofu.clairvoyance.core.domain.chart.AlarmConfig;
-import cn.shuangbofu.clairvoyance.core.domain.chart.Sql;
+import cn.shuangbofu.clairvoyance.core.domain.chart.SqlConfig;
 import cn.shuangbofu.clairvoyance.core.domain.worksheet.Field;
 import cn.shuangbofu.clairvoyance.core.enums.ChartType;
 import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
@@ -36,7 +36,7 @@ public class ChartVO {
     private Long workSheetId;
     private JSON layoutConfig;
     private AlarmConfig alarmConfig;
-    private Sql sqlConfig;
+    private SqlConfig sqlConfig;
     private String name;
 
     public static ChartVO toVO(Chart chart) {
@@ -44,7 +44,7 @@ public class ChartVO {
         // fields更新到sql
         String fieldsInfo = WorkSheetLoader.getFields(chart.getWorkSheetId());
         List<Field> fields = Field.strToFields(fieldsInfo);
-        Sql sql = JSON.parseObject(chart.getSqlConfig(), Sql.class);
+        SqlConfig sql = JSON.parseObject(chart.getSqlConfig(), SqlConfig.class);
         sql.updateFieldTitle(fields);
 
         return new ChartVO()
@@ -75,7 +75,7 @@ public class ChartVO {
         if (!created()) {
             layoutConfig = new JSONObject();
             alarmConfig = new AlarmConfig();
-            sqlConfig = Sql.defaultValue();
+            sqlConfig = SqlConfig.defaultValue();
         }
         chart
                 .setLayoutConfig(layoutConfig.toJSONString())

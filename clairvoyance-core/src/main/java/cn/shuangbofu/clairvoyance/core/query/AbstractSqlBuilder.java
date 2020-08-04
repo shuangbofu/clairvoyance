@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.query;
 
-import cn.shuangbofu.clairvoyance.core.domain.chart.Sql;
+import cn.shuangbofu.clairvoyance.core.domain.chart.SqlConfig;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 public abstract class AbstractSqlBuilder implements SqlBuilder {
 
     private final SqlExecutor runner;
-    private final Sql sql;
+    private final SqlConfig sql;
     private final SourceConfig sourceConfig;
 
-    public AbstractSqlBuilder(SqlExecutor runner, Sql sql, SourceConfig sourceConfig) {
+    public AbstractSqlBuilder(SqlExecutor runner, SqlConfig sql, SourceConfig sourceConfig) {
         this.runner = runner;
         this.sql = sql;
         this.sourceConfig = sourceConfig;

@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.query;
 
-import cn.shuangbofu.clairvoyance.core.domain.chart.Sql;
+import cn.shuangbofu.clairvoyance.core.domain.chart.SqlConfig;
 import cn.shuangbofu.clairvoyance.core.domain.worksheet.SourceConfig;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 
@@ -9,7 +9,7 @@ import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
  */
 public abstract class JdbcSqlBuilder extends AbstractSqlBuilder implements SqlBuilder {
 
-    public JdbcSqlBuilder(Sql sql, SourceConfig sourceConfig, String className) {
+    public JdbcSqlBuilder(SqlConfig sql, SourceConfig sourceConfig, String className) {
         super(new JdbcExecutor(sourceConfig, className), sql, sourceConfig);
     }
 
