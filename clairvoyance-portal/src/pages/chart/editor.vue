@@ -8,20 +8,18 @@
     <div class="editor-main" v-if="chart">
       <div class="left-container">
         <div style="width: 100%;">
-          <a-select v-model="chart.workSheetId" style="width: 188px;margin-right:10px;">
-            <a-select-option
-              v-for="sheet in workSheets"
-              :key="sheet.workSheetId"
-              :value="sheet.workSheetId"
-            >{{sheet.title}}</a-select-option>
-          </a-select>
-          <a-button icon="eye"></a-button>
+          <div class="top-title" @click="previewVisible = true;">{{workSheet.title}}</div>
+          <a-button icon="swap"></a-button>
         </div>
         <div class="field-list">
           <a-tabs size="small" style="margin-top: 10px;" default-active-key="1">
             <a-tab-pane key="1" tab="字段">
               <div class="field-origin-list">
-                <div class="field-item" v-for="field in fields" :key="field.name">{{field.title}}</div>
+                <div
+                  class="field-item"
+                  v-for="field in workSheet.fields"
+                  :key="field.name"
+                >{{field.title}}</div>
               </div>
             </a-tab-pane>
             <a-tab-pane key="2" tab="参数"></a-tab-pane>
@@ -33,7 +31,7 @@
           <field-choose
             mode="x"
             class="arg"
-            :fields="fields"
+            :fields="workSheet.fields"
             :arr-data="chart.sqlConfig.x"
             :sql-config="chart.sqlConfig"
             @save="saveChart"
@@ -41,7 +39,7 @@
           <field-choose
             mode="y"
             class="arg"
-            :fields="fields"
+            :fields="workSheet.fields"
             :arr-data="chart.sqlConfig.y"
             :sql-config="chart.sqlConfig"
             @save="saveChart"
@@ -54,10 +52,21 @@
       </div>
       <right-controller :chart="chart" @refresh="saveChart" />
     </div>
+    <a-modal
+      :destroyOnClose="true"
+      :visible="previewVisible"
+      width="80%"
+      @cancel="() => {previewVisible = false; form ={};}"
+      :footer="null"
+      title="查看数据"
+    >
+      <data-preview :work-sheet="workSheet" />
+    </a-modal>
   </div>
 </template>
 
 <script>
+import DataPreview from "../components/preview";
 import RightController from "./rightController";
 import ChartBox from "../components/chartBox";
 import FieldChoose from "./fieldChoose";
@@ -68,8 +77,9 @@ export default {
       chart: null,
       workSheets: [],
       chartData: [],
-      fields: [],
-      workSheetId: ""
+      workSheet: {},
+      workSheetId: "",
+      previewVisible: false
     };
   },
   created() {
@@ -83,7 +93,8 @@ export default {
   components: {
     FieldChoose,
     ChartBox,
-    RightController
+    RightController,
+    DataPreview
   },
   methods: {
     initChart() {
@@ -99,7 +110,7 @@ export default {
     },
     getWorkSheet() {
       this.$axios.get(`/workSheet?id=${this.workSheetId}`).then(data => {
-        this.fields = data.fields;
+        this.workSheet = data;
       });
     },
     fetchChartData() {
@@ -135,9 +146,28 @@ export default {
     padding: 10px;
     width: 250px;
     height: calc(100vh - 111px);
+    .top-title {
+      width: 188px;
+      display: inline-block;
+      margin-right: 10px;
+      text-align: center;
+      text-align: center;
+      padding: 4px 20px;
+      font-size: 15px;
+      background: #fff;
+      cursor: pointer;
+      color: #555;
+      font-weight: 500;
+      border: 1px solid #e6e6e6;
+      &:hover {
+        border: 1px solid #4876ff;
+        color: #4876ff;
+        // background: #f6f6f6;
+      }
+    }
     .field-list {
       margin-top: 10px;
-      border: 1px solid #e6e6e6;
+      // border: 1px solid #e6e6e6;
       background: #fff;
       padding: 0 20px 20px 20px;
       height: 100%;
@@ -154,28 +184,31 @@ export default {
     width: calc(100% - 260px);
     .chart-args {
       padding: 20px;
-      border: 1px solid #e6e6e6;
+      // border: 1px solid #e6e6e6;
       background: #fff;
       margin-bottom: 10px;
       .arg {
         margin-bottom: 10px;
+        &:last-child {
+          margin: 0;
+        }
       }
     }
     .chart-filter-container {
       width: 250px;
       padding: 20px;
-      border: 1px solid #e6e6e6;
+      // border: 1px solid #e6e6e6;
       background: #fff;
-      height: calc(100vh - 240px);
+      height: calc(100vh - 230px);
       overflow: auto;
       margin-right: 10px;
     }
     .chart-box {
       padding: 20px;
-      border: 1px solid #e6e6e6;
+      // border: 1px solid #e6e6e6;
       background: #fff;
       width: 100%;
-      height: calc(100vh - 240px);
+      height: calc(100vh - 230px);
       width: calc(100% - 260px);
     }
   }

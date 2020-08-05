@@ -22,7 +22,7 @@
         <a-button style="margin-left: 8px">
           <a-icon
             style="margin-right: 5px;"
-            v-if="sqlConfig.sort && sqlConfig.sort.name === f.name"
+            v-if="sqlConfig.sort && sqlConfig.sort.id === f.id && sqlConfig.sort.axis === mode"
             :type="`sort-${sqlConfig.sort.orderType}ending`"
           />
           {{f.finalAliasName}}
@@ -140,7 +140,8 @@ export default {
         orderType === "default"
           ? null
           : {
-              name: field.name,
+              id: field.id,
+              axis: this.mode,
               orderType
             };
       this.sqlConfig.sort = sort;
@@ -160,8 +161,9 @@ export default {
   width: 100%;
 
   .title {
-    font-size: 16px;
-    line-height: 30px;
+    color: #666;
+    font-size: 15px;
+    line-height: 32px;
     margin-right: 10px;
   }
 

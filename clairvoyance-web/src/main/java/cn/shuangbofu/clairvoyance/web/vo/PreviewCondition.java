@@ -1,6 +1,8 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.core.db.Field;
+import cn.shuangbofu.clairvoyance.core.domain.Pair;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.WhereCondition;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.WhereType;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
@@ -85,8 +87,11 @@ public class PreviewCondition implements Sql {
     }
 
     @Override
-    public Sort sort() {
-        return sort;
+    public Pair<String, OrderType> sort() {
+        if (sort == null) {
+            return null;
+        }
+        return new Pair<>(sort.getName(), sort.getOrderType());
     }
 
     @Override

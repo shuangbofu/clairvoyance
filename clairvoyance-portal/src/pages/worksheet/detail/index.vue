@@ -11,7 +11,7 @@
         <a-button icon="share-alt">创建合表</a-button>
       </div>
     </div>
-    <a-tabs class="tabs" default-active-key="2" @change="chooseTab">
+    <a-tabs class="tabs" default-active-key="1" @change="chooseTab">
       <a-tab-pane key="1" tab="数据预览">
         <preview :work-sheet="data" />
       </a-tab-pane>
@@ -23,13 +23,13 @@
 </template>
 
 <script>
-import Preview from "./preview";
+import Preview from "../../components/preview";
 import FieldList from "./fieldList";
 export default {
   props: ["data"],
   data() {
     return {
-      tabKey: 2
+      tabKey: 1
     };
   },
   components: {

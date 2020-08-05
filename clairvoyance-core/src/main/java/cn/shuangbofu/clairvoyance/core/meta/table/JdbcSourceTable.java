@@ -1,5 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
+import cn.shuangbofu.clairvoyance.core.domain.Pair;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.meta.source.JdbcSourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
@@ -102,6 +104,7 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
         String wheres = sql.wheres();
         List<String> selects = sql.selects();
         String groupBys = sql.groupBys();
+        Pair<String, OrderType> sort = sql.sort();
 
         String selectsString = "1";
         if (selects != null && selects.size() > 0) {
@@ -117,8 +120,8 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
             sqlContent += " GROUP BY " + groupBys;
         }
 
-        if (sql.sort() != null && StringUtils.isNotEmpty(sql.sort().getName())) {
-            sqlContent += String.format(" ORDER BY %s %s", sql.sort().getName(), sql.sort().getOrderType().get());
+        if (sort != null && StringUtils.isNotEmpty(sort.getFirst()) && sort.getSecond() != null) {
+            sqlContent += String.format(" ORDER BY %s %s", sort.getFirst(), sort.getSecond().get());
         }
 
         if (sql.last() != null) {

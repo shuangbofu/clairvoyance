@@ -30,15 +30,17 @@ public class MysqlSourceTable extends JdbcSourceTable {
     public List<Column> columns() {
         List<Column> columns = Lists.newArrayList();
         String createTableSql = getShowCreateTable();
+        System.out.println(createTableSql);
         String[] lines = createTableSql.split("\n");
         for (String line : lines) {
             line = line.trim();
             if (line.startsWith("`") || line.startsWith("\"") || line.startsWith("'")) {
                 String[] word = line.split(" ");
+                String name = clear(word[0]);
                 Column column = new Column()
-                        .setName(clear(word[0]))
+                        .setName(name)
                         .setType(word[1])
-                        .setComment(line.contains("COMMENT") ? clear(word[word.length - 1]) : "");
+                        .setComment(line.contains("COMMENT") && !"COMMENT".equals(name) ? clear(word[word.length - 1]) : "");
                 columns.add(column);
             }
         }

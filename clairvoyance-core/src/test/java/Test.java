@@ -1,7 +1,6 @@
 import cn.shuangbofu.clairvoyance.core.meta.source.MysqlSourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.table.Column;
-import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.meta.utils.JdbcParam;
 import com.alibaba.fastjson.JSON;
@@ -43,11 +42,6 @@ public class Test {
             @Override
             public String wheres() {
                 return "id=1";
-            }
-
-            @Override
-            public Sort sort() {
-                return null;
             }
         });
 

@@ -1,13 +1,16 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart;
 
 import cn.shuangbofu.clairvoyance.core.db.Field;
+import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.ChartInnerFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
+import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -22,6 +25,8 @@ import java.util.stream.Collectors;
 @Data
 @Accessors(chain = true)
 public class ChartSql implements Sql {
+
+    private static final String AXIS_X = "x";
 
     /**
      * 筛选器
@@ -95,8 +100,19 @@ public class ChartSql implements Sql {
     }
 
     @Override
-    public Sort sort() {
-        return sort;
+    public Pair<String, OrderType> sort() {
+        List<FieldAlias> fieldAliases = Lists.newArrayList();
+        if (sort == null) {
+            return null;
+        }
+
+        if (AXIS_X.equals(sort.getAxis())) {
+            fieldAliases.addAll(getX());
+        } else {
+            fieldAliases.addAll(getY());
+        }
+        Optional<FieldAlias> any = fieldAliases.stream().filter(i -> i.getId().equals(sort.getId())).findAny();
+        return any.map(fieldAlias -> new Pair<>(fieldAlias.getQueryName(), sort.getOrderType())).orElse(null);
     }
 
     public List<Value> getY() {

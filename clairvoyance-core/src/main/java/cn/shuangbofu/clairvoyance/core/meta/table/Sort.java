@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import lombok.Data;
 
 /**
@@ -7,17 +8,8 @@ import lombok.Data;
  */
 @Data
 public class Sort {
+    private Long id;
+    private String axis;
     private String name;
     private OrderType orderType;
-
-    enum OrderType {
-        /**
-         *
-         */
-        desc, asc;
-
-        public String get() {
-            return toString().toUpperCase();
-        }
-    }
 }

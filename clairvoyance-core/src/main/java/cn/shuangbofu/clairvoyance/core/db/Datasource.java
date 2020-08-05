@@ -21,6 +21,8 @@ public class Datasource extends Model<Datasource> {
     private Boolean deleted;
     private DatasourceType type;
 
+    private String description;
+
     private String name;
     private String config;
 

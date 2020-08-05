@@ -18,6 +18,9 @@ public class Field extends Model<Field> {
 
     private Long id;
 
+    private Long gmtCreate;
+    private Long gmtModified;
+
     private String name;
 
     private String title;
@@ -51,6 +54,7 @@ public class Field extends Model<Field> {
         return new Field().setName(name).setTitle(
                 StringUtils.emptyGet(comment, name)
         ).setRemarks(comment)
-                .setColumnType(ColumnType.valueOfType(type));
+                .setColumnType(ColumnType.valueOfType(type))
+                .setFieldType(FieldType.origin);
     }
 }

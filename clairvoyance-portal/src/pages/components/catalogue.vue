@@ -27,7 +27,7 @@
             :tree-data="filteredTreeData"
             @expand="expandNode"
             @select="selectNode"
-            :defaultExpandedKeys="defaultExpandedKeys"
+            :expandedKeys.sync="defaultExpandedKeys"
             :selectedKeys.sync="defaultSelectedKeys"
           >
             <template slot-scope="{expanded}" slot="folder">
@@ -278,11 +278,15 @@ export default {
               setLocal(this.selectedKeysLocalKey, [`node_${value.nodeId}`]);
               setLocal(this.selectedRefIdKey, value.dashboardId);
             }
+            this.defaultExpandedKeys.push(`node_${this.form.parentId}`);
+            setLocal(this.expandedKeysLocalKey, this.defaultExpandedKeys);
 
+            // this.addExandedkey(`node_${this.form.parentId}`);
             this.init();
           }
         })
-        .catch(() => {
+        .catch(msg => {
+          console.log(msg);
           this.confirmLoading = false;
         });
     },

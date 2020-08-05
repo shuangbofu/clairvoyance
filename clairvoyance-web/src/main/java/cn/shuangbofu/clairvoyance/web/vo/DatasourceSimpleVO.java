@@ -15,11 +15,14 @@ import java.util.stream.Collectors;
 @Accessors(chain = true)
 public class DatasourceSimpleVO {
     private String name;
+    private String description;
     private Long id;
     private DatasourceType type;
 
     public static DatasourceSimpleVO toVO(Datasource datasource) {
-        return new DatasourceSimpleVO().setId(datasource.getId())
+        return new DatasourceSimpleVO()
+                .setId(datasource.getId())
+                .setDescription(datasource.getDescription())
                 .setName(datasource.getName())
                 .setType(datasource.getType());
     }

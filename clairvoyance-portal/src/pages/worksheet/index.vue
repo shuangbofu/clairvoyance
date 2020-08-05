@@ -2,7 +2,7 @@
   <div>
     <catalogue item="workSheet" @choose="chooseWorkSheet" ref="catRef">
       <template slot="right-container">
-        <work-sheet-detail :data="workSheet" />
+        <work-sheet-detail v-if="workSheet" :data="workSheet" />
       </template>
     </catalogue>
   </div>
@@ -14,7 +14,7 @@ import WorkSheetDetail from "./detail/index";
 export default {
   data() {
     return {
-      workSheet: {}
+      workSheet: null
     };
   },
   components: {

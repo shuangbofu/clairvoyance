@@ -27,12 +27,12 @@ public class DatasourceController {
     @PostMapping("/ping")
     public Result<Boolean> ping(@RequestParam(value = "datasourceId", required = false) Long datasourceId, @RequestBody(required = false) DatasourceForm form) {
         Datasource datasource;
-        if (form != null) {
-            datasource = form.toModel();
-        } else if (datasourceId != null) {
+        if (datasourceId != null) {
             datasource = DatasourceLoader.getSource(datasourceId);
+        } else if (form != null) {
+            datasource = form.pingDatasource();
         } else {
-            throw new RuntimeException("not valid datasource ");
+            throw new RuntimeException("no param");
         }
         boolean connectivity = SqlQueryRunner.checkConnectivity(datasource);
         return Result.success(connectivity);

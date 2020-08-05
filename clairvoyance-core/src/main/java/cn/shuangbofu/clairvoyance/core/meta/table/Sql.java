@@ -1,5 +1,8 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
+import cn.shuangbofu.clairvoyance.core.domain.Pair;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
+
 import java.util.List;
 
 /**
@@ -17,7 +20,7 @@ public interface Sql {
         return null;
     }
 
-    default Sort sort() {
+    default Pair<String, OrderType> sort() {
         return null;
     }
 

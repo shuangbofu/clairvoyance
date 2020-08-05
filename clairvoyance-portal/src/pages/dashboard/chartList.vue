@@ -91,7 +91,6 @@ export default {
           this.visible = false;
           this.confirmLoading = false;
           this.$emit("refresh");
-          console.log(chartId);
           this.$router.push({
             name: "编辑图表",
             query: { chartId, workSheetId: this.form.workSheetId }

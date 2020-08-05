@@ -14,7 +14,7 @@ public class DatasourceLoader {
     }
 
     public static List<Datasource> simpleList() {
-        return Datasource.from().select("id, name, type").all();
+        return Datasource.from().select("id, name, description, type").all();
     }
 
     public static void insert(Datasource datasource) {

@@ -6,6 +6,7 @@ import cn.shuangbofu.clairvoyance.core.db.Node;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.enums.NodeType;
+import cn.shuangbofu.clairvoyance.core.enums.SheetType;
 import cn.shuangbofu.clairvoyance.core.loader.DatasourceLoader;
 import cn.shuangbofu.clairvoyance.core.loader.FieldLoader;
 import cn.shuangbofu.clairvoyance.core.loader.NodeLoader;
@@ -147,13 +148,7 @@ public class WorkSheetController {
         SourceDb sourceDb = SqlQueryRunner.getSourceDb(datasource);
 
         Long folderNodeId = workSheetImport.getFolderId();
-        if (workSheetImport.isNewFolder()) {
-            Node folder = new Node()
-                    .setName(StringUtils.emptyGet(datasource.getName(), sourceDb::name))
-                    .setNodeType(NodeType.workSheet)
-                    .setParentId(folderNodeId);
-            folderNodeId = NodeLoader.newNode(folder);
-        }
+
         List<String> tables;
         List<String> allTables = sourceDb.tables();
         if (workSheetImport.isAllTables()) {
@@ -170,27 +165,37 @@ public class WorkSheetController {
             }
             SourceTable sourceTable = sourceDb.sourceTable(table);
             String tableComment = sourceTable.comment();
+            WorkSheet workSheet = new WorkSheet()
+                    .setTitle(table)
+                    .setSheetType(SheetType.source)
+                    .setDescription(tableComment)
+                    .setTableName(table)
+                    .setDatasourceId(datasourceId)
+                    .setLastSyncTime(System.currentTimeMillis());
+            Long workSheetId = WorkSheetLoader.insert(workSheet);
+
             List<Column> columns = sourceTable.columns();
             AtomicInteger count = new AtomicInteger();
             List<Field> fields = columns.stream().map(col ->
                     Field.newColumn(col.getName(), col.getComment(), col.getType())
-                            .setSeqNo(count.incrementAndGet()))
+                            .setSeqNo(count.incrementAndGet())
+                            .setWorkSheetId(workSheetId)
+            )
                     .collect(Collectors.toList());
             FieldLoader.insertBatch(fields);
 
-            WorkSheet workSheet = new WorkSheet()
-                    .setTitle(table)
-                    .setDescription(tableComment)
-                    .setTableName(table)
-                    .setDatasourceId(datasourceId)
-                    .setLastSyncTime(System.currentTimeMillis())
-                    .setSheetType(workSheetImport.getSheetType());
-            Long id = WorkSheetLoader.insert(workSheet);
+            if (workSheetImport.isNewFolder()) {
+                Node folder = new Node()
+                        .setName(StringUtils.emptyGet(datasource.getName(), sourceDb::name))
+                        .setNodeType(NodeType.workSheet)
+                        .setParentId(folderNodeId);
+                folderNodeId = NodeLoader.newNode(folder);
+            }
 
             NodeLoader.newNode(
                     new Node()
                             .setName(workSheet.getTableName())
-                            .setRefId(id)
+                            .setRefId(workSheetId)
                             .setParentId(folderNodeId)
                             .setNodeType(NodeType.workSheet));
         }
