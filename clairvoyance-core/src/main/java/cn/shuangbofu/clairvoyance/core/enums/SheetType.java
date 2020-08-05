@@ -12,12 +12,21 @@ public enum SheetType {
     /**
      *
      */
-    hive(1),
-    excel(2),
-    mysql(3),
-    view(4),
+    // jdbc
+//    hive(1),
+//    mysql(2),
+//    presto(3),
+    source(1),
+
+    // other
+    excel(8),
+    view(9),
 
     ;
 
-    private int sheetTypeValue;
+    private final int sheetTypeValue;
+
+    public boolean fromSource() {
+        return sheetTypeValue == 1;
+    }
 }

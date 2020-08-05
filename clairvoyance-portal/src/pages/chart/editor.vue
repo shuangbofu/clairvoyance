@@ -35,6 +35,7 @@
             class="arg"
             :fields="fields"
             :arr-data="chart.sqlConfig.x"
+            :sql-config="chart.sqlConfig"
             @save="saveChart"
           />
           <field-choose
@@ -42,11 +43,13 @@
             class="arg"
             :fields="fields"
             :arr-data="chart.sqlConfig.y"
+            :sql-config="chart.sqlConfig"
             @save="saveChart"
           />
         </div>
-        <div style="height: calc(100vh - 230px);">
-          <chart-box :chart="chart" :data="chartData" />
+        <div style="height: calc(100vh - 230px); display:flex;">
+          <div class="chart-filter-container"></div>
+          <chart-box class="chart-box" :chart="chart" :data="chartData" />
         </div>
       </div>
       <right-controller :chart="chart" @refresh="saveChart" />
@@ -136,7 +139,7 @@ export default {
       margin-top: 10px;
       border: 1px solid #e6e6e6;
       background: #fff;
-      padding: 20px;
+      padding: 0 20px 20px 20px;
       height: 100%;
       overflow: auto;
       .field-item {
@@ -146,16 +149,34 @@ export default {
   }
   .chart-main {
     position: relative;
-    background: #fff;
     margin-top: 10px;
-    padding: 20px;
-    border: 1px solid #e6e6e6;
     height: calc(100vh - 90px);
     width: calc(100% - 260px);
     .chart-args {
+      padding: 20px;
+      border: 1px solid #e6e6e6;
+      background: #fff;
+      margin-bottom: 10px;
       .arg {
         margin-bottom: 10px;
       }
+    }
+    .chart-filter-container {
+      width: 250px;
+      padding: 20px;
+      border: 1px solid #e6e6e6;
+      background: #fff;
+      height: calc(100vh - 240px);
+      overflow: auto;
+      margin-right: 10px;
+    }
+    .chart-box {
+      padding: 20px;
+      border: 1px solid #e6e6e6;
+      background: #fff;
+      width: 100%;
+      height: calc(100vh - 240px);
+      width: calc(100% - 260px);
     }
   }
 }

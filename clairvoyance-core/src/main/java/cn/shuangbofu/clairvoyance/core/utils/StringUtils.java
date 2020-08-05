@@ -1,5 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.utils;
 
+import java.util.function.Supplier;
+
 /**
  * Created by shuangbofu on 2020-05-22 16:00
  *
@@ -16,8 +18,12 @@ public class StringUtils {
     }
 
     public static String emptyGet(String str, String defaultValue) {
+        return emptyGet(str, () -> defaultValue);
+    }
+
+    public static String emptyGet(String str, Supplier<String> supplier) {
         if (isEmpty(str)) {
-            return defaultValue;
+            return supplier.get();
         } else {
             return str;
         }

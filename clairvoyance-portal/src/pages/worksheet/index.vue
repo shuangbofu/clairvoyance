@@ -10,7 +10,7 @@
 
 <script>
 import Catalogue from "../components/catalogue";
-import WorkSheetDetail from "./detail";
+import WorkSheetDetail from "./detail/index";
 export default {
   data() {
     return {

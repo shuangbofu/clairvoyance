@@ -1,29 +1,70 @@
 <template>
   <div class="field-line">
     <div class="title">{{title}}</div>
-    <div v-for="(f,index) in arrData" :key="index" class="field-block">
+    <div :key="index" class="field-block" v-for="(f,index) in arrData">
       <a-dropdown>
-        <a-menu slot="overlay" @click="e => handleMenuClick(e, f)">
+        <a-menu @click="e => handleMenuClick(e, f)" slot="overlay">
           <a-sub-menu key="field" title="选择字段">
-            <a-menu-item v-for="field in fields" :key="field.name">{{field.title}}</a-menu-item>
+            <a-menu-item :key="field.name" v-for="field in fields">{{field.title}}</a-menu-item>
           </a-sub-menu>
-          <a-menu-item key="3">设置字段</a-menu-item>
+          <a-menu-item @click="setField(index)" key="3">设置字段</a-menu-item>
           <a-sub-menu key="aggregator" title="聚合函数" v-if="mode === 'y'">
-            <a-menu-item v-for="(label, value) in aggregatorFunc" :key="value">{{label}}</a-menu-item>
+            <a-menu-item :key="value" v-for="(label, value) in aggregatorFunc">{{label}}</a-menu-item>
+          </a-sub-menu>
+          <a-sub-menu key="sort" title="排序">
+            <a-menu-item
+              :key="sortMenu.name"
+              @click="setSort(f, sortMenu.name)"
+              v-for="sortMenu in sortMenus"
+            >{{sortMenu.title}}</a-menu-item>
           </a-sub-menu>
         </a-menu>
         <a-button style="margin-left: 8px">
-          {{f.aggregator ? (f.title + ' ('+aggregatorFunc[f.aggregator]+')') : f.title}}
+          <a-icon
+            style="margin-right: 5px;"
+            v-if="sqlConfig.sort && sqlConfig.sort.name === f.name"
+            :type="`sort-${sqlConfig.sort.orderType}ending`"
+          />
+          {{f.finalAliasName}}
           <a-icon type="down" />
         </a-button>
       </a-dropdown>
-      <a-button icon="close" style="margin-left: -1px; font-size:14px;" @click="removeField(index)"></a-button>
+      <a-button @click="removeField(index)" icon="close" style="margin-left: -1px; font-size:14px;"></a-button>
     </div>
-    <a-button class="add-button" icon="plus" @click="addField"></a-button>
+    <a-modal
+      :destroyOnClose="true"
+      :visible="settingFieldVisible"
+      :width="400"
+      @cancel="() => {settingFieldVisible = false; form ={};}"
+      @ok="finishSetField"
+      title="修改字段"
+    >
+      <a-form-model-item label="字段别名">
+        <a-input v-model="settingField.aliasName"></a-input>
+      </a-form-model-item>
+      <a-form-model-item label="字段描述">
+        <a-input type="textarea" v-model="settingField.description"></a-input>
+      </a-form-model-item>
+    </a-modal>
+    <a-button @click="addField" class="add-button" icon="plus"></a-button>
   </div>
 </template>
 
 <script>
+const sortMenus = [
+  {
+    name: "default",
+    title: "默认"
+  },
+  {
+    name: "asc",
+    title: "升序"
+  },
+  {
+    name: "desc",
+    title: "降序"
+  }
+];
 const aggregatorFunc = {
   SUM: "求和",
   AVG: "平均值",
@@ -34,10 +75,14 @@ const aggregatorFunc = {
 };
 let idx = 1;
 export default {
-  props: ["mode", "fields", "arrData"],
+  props: ["mode", "fields", "arrData", "sqlConfig"],
   data() {
     return {
-      aggregatorFunc
+      sortMenus,
+      aggregatorFunc,
+      settingField: {},
+      settingFieldVisible: false,
+      settingFieldIndex: ""
     };
   },
   computed: {
@@ -62,10 +107,13 @@ export default {
     },
     removeField(index) {
       this.arrData.splice(index, 1);
-      this.$emit("save");
+      this.saveChart();
     },
     handleMenuClick(e, field) {
       const order = e.keyPath[1];
+      if (order === "sort") {
+        return;
+      }
       if (order === "field") {
         Object.assign(field, { ...this.fields.find(f => f.name === e.key) });
         if (this.mode === "y") {
@@ -75,6 +123,30 @@ export default {
       if (order === "aggregator") {
         field.aggregator = e.key;
       }
+      this.saveChart();
+    },
+    setField(index) {
+      this.settingFieldVisible = true;
+      this.settingFieldIndex = index;
+      this.settingField = this.arrData[index];
+    },
+    finishSetField() {
+      Object.assign(this.arrData[this.settingFieldIndex], this.settingField);
+      this.settingFieldVisible = false;
+      this.saveChart();
+    },
+    setSort(field, orderType) {
+      const sort =
+        orderType === "default"
+          ? null
+          : {
+              name: field.name,
+              orderType
+            };
+      this.sqlConfig.sort = sort;
+      this.saveChart();
+    },
+    saveChart() {
       this.$emit("save");
     }
   }
@@ -85,22 +157,18 @@ export default {
 .field-line {
   height: 40px;
   display: flex;
-  border-bottom: 1px solid #e6e6e6;
   width: 100%;
+
   .title {
     font-size: 16px;
     line-height: 30px;
     margin-right: 10px;
   }
+
   .field-block {
     display: flex;
-    // background: red;
-    // margin-bottom: 10px;
-    // margin-right: 10px;
-    // color: #fff;
-    // font-size: 14px;
-    // padding: 10px;
   }
+
   .add-button {
     margin-left: 10px;
     // flex-flow: ;

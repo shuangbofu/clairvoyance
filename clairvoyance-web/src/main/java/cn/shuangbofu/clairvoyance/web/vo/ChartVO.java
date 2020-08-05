@@ -1,11 +1,11 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.core.db.Chart;
+import cn.shuangbofu.clairvoyance.core.db.Field;
 import cn.shuangbofu.clairvoyance.core.domain.chart.AlarmConfig;
-import cn.shuangbofu.clairvoyance.core.domain.chart.SqlConfig;
-import cn.shuangbofu.clairvoyance.core.domain.worksheet.Field;
+import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSql;
 import cn.shuangbofu.clairvoyance.core.enums.ChartType;
-import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
+import cn.shuangbofu.clairvoyance.core.loader.FieldLoader;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
@@ -36,15 +36,13 @@ public class ChartVO {
     private Long workSheetId;
     private JSON layoutConfig;
     private AlarmConfig alarmConfig;
-    private SqlConfig sqlConfig;
+    private ChartSql sqlConfig;
     private String name;
 
     public static ChartVO toVO(Chart chart) {
-
         // fields更新到sql
-        String fieldsInfo = WorkSheetLoader.getFields(chart.getWorkSheetId());
-        List<Field> fields = Field.strToFields(fieldsInfo);
-        SqlConfig sql = JSON.parseObject(chart.getSqlConfig(), SqlConfig.class);
+        List<Field> fields = FieldLoader.originFieldList(chart.getWorkSheetId());
+        ChartSql sql = JSON.parseObject(chart.getSqlConfig(), ChartSql.class);
         sql.updateFieldTitle(fields);
 
         return new ChartVO()
@@ -75,7 +73,7 @@ public class ChartVO {
         if (!created()) {
             layoutConfig = new JSONObject();
             alarmConfig = new AlarmConfig();
-            sqlConfig = SqlConfig.defaultValue();
+            sqlConfig = ChartSql.defaultValue();
         }
         chart
                 .setLayoutConfig(layoutConfig.toJSONString())

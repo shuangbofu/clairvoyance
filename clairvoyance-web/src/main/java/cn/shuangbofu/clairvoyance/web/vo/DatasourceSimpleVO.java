@@ -1,0 +1,30 @@
+package cn.shuangbofu.clairvoyance.web.vo;
+
+import cn.shuangbofu.clairvoyance.core.db.Datasource;
+import cn.shuangbofu.clairvoyance.core.enums.DatasourceType;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Created by shuangbofu on 2020/8/4 12:06
+ */
+@Data
+@Accessors(chain = true)
+public class DatasourceSimpleVO {
+    private String name;
+    private Long id;
+    private DatasourceType type;
+
+    public static DatasourceSimpleVO toVO(Datasource datasource) {
+        return new DatasourceSimpleVO().setId(datasource.getId())
+                .setName(datasource.getName())
+                .setType(datasource.getType());
+    }
+
+    public static List<DatasourceSimpleVO> toVOs(List<Datasource> datasources) {
+        return datasources.stream().map(DatasourceSimpleVO::toVO).collect(Collectors.toList());
+    }
+}

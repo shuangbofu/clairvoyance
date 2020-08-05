@@ -1,8 +1,9 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
+import cn.shuangbofu.clairvoyance.core.db.Field;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
-import cn.shuangbofu.clairvoyance.core.domain.worksheet.Field;
 import cn.shuangbofu.clairvoyance.core.enums.SheetType;
+import cn.shuangbofu.clairvoyance.core.loader.FieldLoader;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -16,13 +17,13 @@ import java.util.List;
 public class WorkSheetVO extends WorkSheetSimpleVO {
 
     private SheetType sheetType;
-    private List<Field> fields;
+    private List<FieldVO> fields;
 
     public static WorkSheetVO toVO(WorkSheet workSheet) {
-        List<Field> fields = Field.strToFields(workSheet.getFieldInfos());
+        List<Field> fields = FieldLoader.originFieldList(workSheet.getId());
         WorkSheetVO vo = new WorkSheetVO()
                 .setSheetType(workSheet.getSheetType())
-                .setFields(fields);
+                .setFields(FieldVO.toVOs(fields));
 
         vo.setWorkSheetId(workSheet.getId())
                 .setDescription(workSheet.getDescription())

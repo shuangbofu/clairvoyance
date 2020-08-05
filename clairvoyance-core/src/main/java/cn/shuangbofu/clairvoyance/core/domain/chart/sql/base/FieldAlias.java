@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public abstract class FieldAlias {
 
+    protected Long id;
     protected String title;
     protected String name;
     protected String aliasName;
@@ -43,6 +44,7 @@ public abstract class FieldAlias {
         return name;
     }
 
+    @JSONField(serialize = false, deserialize = false)
     public boolean isValid() {
         return StringUtils.isNotEmpty(name);
     }

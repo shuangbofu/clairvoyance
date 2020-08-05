@@ -34,7 +34,7 @@ public class WorkSheet extends Model<WorkSheet> {
     /**
      * 字段元数据信息 ----> List<Field>
      */
-    private String fieldInfos;
+//    private String fieldInfos;
 
     /**
      * 数据源配置 ----> SourceConfig

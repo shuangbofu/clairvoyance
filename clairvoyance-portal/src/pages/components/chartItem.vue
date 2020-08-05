@@ -14,9 +14,11 @@
         <a-icon class="button" type="more"></a-icon>
       </div>
     </div>
-    <div style="position: relative; width: calc(100% - 10px); height: 300px;">
-      <chart-box :chart="conf" :data="chartData" />
-    </div>
+    <chart-box
+      style="position: relative; width: calc(100% - 10px); height: 300px;"
+      :chart="conf"
+      :data="chartData"
+    />
   </div>
 </template>
 
