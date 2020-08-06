@@ -30,8 +30,11 @@ public enum ColumnType {
      * @return
      */
     public static ColumnType valueOfType(String type) {
+        type = type.toLowerCase();
         if (type.contains("varchar")) {
             return text;
+        } else if (type.contains("date")) {
+            return date;
         } else {
             return value;
         }

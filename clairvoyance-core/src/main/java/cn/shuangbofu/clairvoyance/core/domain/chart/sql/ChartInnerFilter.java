@@ -8,4 +8,9 @@ import lombok.Data;
  */
 @Data
 public class ChartInnerFilter extends AbstractFilter {
+
+    @Override
+    public String where() {
+        return null;
+    }
 }

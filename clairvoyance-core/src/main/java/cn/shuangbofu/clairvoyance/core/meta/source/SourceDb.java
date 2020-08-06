@@ -8,9 +8,33 @@ import java.util.Map;
  */
 public interface SourceDb {
 
+    long update(String sql);
+
+    /**
+     * 建表
+     *
+     * @param sql
+     * @return
+     */
+    int execute(String sql);
+
     List<String> tables();
 
-    List<Map<String, Object>> run(String sql);
+    /**
+     * 查询数据
+     *
+     * @param sql
+     * @return
+     */
+    List<Map<String, Object>> query(String sql);
+
+    /**
+     * 插入数据
+     *
+     * @param sql
+     * @return
+     */
+    long insert(String sql);
 
     List<SourceTable> sourceTables();
 

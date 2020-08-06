@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
+import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.meta.source.JdbcSourceDb;
 import com.google.common.collect.Lists;
 
@@ -15,22 +16,13 @@ public class MysqlSourceTable extends JdbcSourceTable {
     }
 
     @Override
-    public String comment() {
-        String createTableSql = getShowCreateTable();
-        String[] lines = createTableSql.split("\n");
-        String lastLine = lines[lines.length - 1];
-        int index = lastLine.indexOf("COMMENT=");
-        if (index != -1) {
-            return clear(lastLine.substring(index + 8));
-        }
-        return "";
+    protected int showCreateColumnIndex() {
+        return 2;
     }
 
     @Override
-    public List<Column> columns() {
+    protected Pair<String, List<Column>> parse2MetaInfo(String createTableSql) {
         List<Column> columns = Lists.newArrayList();
-        String createTableSql = getShowCreateTable();
-        System.out.println(createTableSql);
         String[] lines = createTableSql.split("\n");
         for (String line : lines) {
             line = line.trim();
@@ -44,11 +36,13 @@ public class MysqlSourceTable extends JdbcSourceTable {
                 columns.add(column);
             }
         }
-        return columns;
-    }
 
-    @Override
-    protected int showCreateColumnIndex() {
-        return 2;
+        String comment = "";
+        String lastLine = lines[lines.length - 1];
+        int index = lastLine.indexOf("COMMENT=");
+        if (index != -1) {
+            comment = clear(lastLine.substring(index + 8));
+        }
+        return new Pair<>(comment, columns);
     }
 }

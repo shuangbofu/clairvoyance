@@ -19,11 +19,12 @@ public abstract class FieldAlias extends Field {
     }
 
     public String getFinalAliasName() {
-        String aliasName = getFinalTitle();
-        if (StringUtils.isNotEmpty(this.aliasName)) {
-            aliasName = this.aliasName;
+        String title = getFinalTitle();
+        String aliasName = clearSymbol(this.aliasName);
+        if (StringUtils.isNotEmpty(aliasName)) {
+            title = aliasName;
         }
-        return aliasName;
+        return title;
     }
 
     @JSONField(serialize = false, deserialize = false)
@@ -44,5 +45,14 @@ public abstract class FieldAlias extends Field {
     @JSONField(serialize = false, deserialize = false)
     public boolean isValid() {
         return StringUtils.isNotEmpty(name);
+    }
+
+    private String clearSymbol(String aliasName) {
+        if (aliasName == null) {
+            return null;
+        }
+        return aliasName.replace("`", "")
+                .replace("\"", "")
+                .replace("'", "");
     }
 }

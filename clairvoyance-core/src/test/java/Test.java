@@ -45,7 +45,7 @@ public class Test {
             }
         });
 
-        List<Map<String, Object>> maps = db.run("select * from node");
+        List<Map<String, Object>> maps = db.query("select * from node");
         printResults(results);
         printResults(maps);
 

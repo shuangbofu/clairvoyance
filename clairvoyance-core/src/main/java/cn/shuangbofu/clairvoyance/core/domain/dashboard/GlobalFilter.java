@@ -10,4 +10,8 @@ import io.swagger.annotations.ApiModel;
 @ApiModel("仪表盘过滤器配置")
 public class GlobalFilter extends AbstractFilter {
 
+    @Override
+    public String where() {
+        return null;
+    }
 }

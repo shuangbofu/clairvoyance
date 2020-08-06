@@ -42,6 +42,19 @@ public class Test2 {
                 "    \"key\":\"a\"\n" +
                 "  }]\n" +
                 "}";
+
+        J j = new J();
+        B b = new B("b", "b");
+        b.setKey("b");
+
+        C c = new C("c");
+        c.setName("c");
+        c.setKey("c");
+        c.setValue("c");
+
+        j.setAs(Lists.newArrayList(b, c));
+
+        System.out.println(JSON.toJSONString(j));
 //
 //        SerializerFeature[] features = new SerializerFeature[]{
 //                SerializerFeature.WriteClassName,
@@ -62,11 +75,11 @@ public class Test2 {
 //        System.out.println(j.as);
 //        System.out.println(j.toString());
 
-        J j = JSON.parseObject(jsonString, J.class);
-
-        for (A a : j.as) {
-            System.out.println(a.get());
-        }
+//        J j = JSON.parseObject(jsonString, J.class);
+//
+//        for (A a : j.as) {
+//            System.out.println(a.get());
+//        }
     }
 
     @Target({ElementType.TYPE})

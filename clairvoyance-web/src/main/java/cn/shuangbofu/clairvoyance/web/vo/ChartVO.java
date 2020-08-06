@@ -74,7 +74,7 @@ public class ChartVO {
         chart
                 .setLayoutConfig(layoutConfig.toJSONString())
                 .setAlarmConfig(JSON.toJSONString(alarmConfig))
-                .setSqlConfig(JSON.toJSONString(sqlConfig));
+                .setSqlConfig(sqlConfig.toJSONString());
         // TODO 从config中解析type？ type有什么用？
 //                .setChartType()
         return chart;

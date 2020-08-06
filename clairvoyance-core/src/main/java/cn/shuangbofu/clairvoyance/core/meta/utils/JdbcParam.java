@@ -29,6 +29,10 @@ public class JdbcParam {
         this.password = password;
     }
 
+    public static JdbcParam mysqlDefault(String ip, String db, String username, String password) {
+        return new JdbcParam("jdbc:mysql://" + ip + ":3306/" + db + "?useSSL=false", username, password);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

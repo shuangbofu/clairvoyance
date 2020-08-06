@@ -6,10 +6,12 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.sql.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.ChartInnerFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.AbstractFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -103,7 +105,15 @@ public class ChartSql implements Sql {
 
     @Override
     public String wheres() {
-        return null;
+        List<AbstractFilter> actualFilters = Lists.newArrayList();
+        if (filters != null && filters.size() > 0) {
+            actualFilters.addAll(filters);
+        }
+        if (innerFilters != null && innerFilters.size() > 0) {
+            actualFilters.addAll(innerFilters);
+        }
+        return actualFilters.stream().map((AbstractFilter::where))
+                .collect(Collectors.joining(" AND "));
     }
 
     @Override
@@ -112,7 +122,6 @@ public class ChartSql implements Sql {
         if (sort == null) {
             return null;
         }
-
         if (AXIS_X.equals(sort.getAxis())) {
             fieldAliases.addAll(getX());
         } else {
@@ -128,5 +137,17 @@ public class ChartSql implements Sql {
 
     public List<Dimension> getX() {
         return x.stream().filter(FieldAlias::isValid).collect(Collectors.toList());
+    }
+
+    /**
+     * 保存到数据库前清除多余配置
+     */
+    private void clear() {
+
+    }
+
+    public String toJSONString() {
+        clear();
+        return JSON.toJSONString(this);
     }
 }

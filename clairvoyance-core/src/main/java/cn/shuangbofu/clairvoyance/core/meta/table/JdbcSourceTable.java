@@ -23,7 +23,7 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
 
     private final String tableName;
     private final JdbcSourceDb sourceDb;
-    private String createTableSql;
+    private Pair<String, List<Column>> metaInfo;
 
     public JdbcSourceTable(String tableName, JdbcSourceDb sourceDb) {
         this.sourceDb = sourceDb;
@@ -36,9 +36,34 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
     }
 
     @Override
-    public List<Map<String, Object>> run(String sql) {
+    public String comment() {
+        return getMetaInfos().getFirst();
+    }
+
+    @Override
+    public List<Column> columns() {
+        return getMetaInfos().getSecond();
+    }
+
+    @Override
+    public List<Map<String, Object>> query(String sql) {
         LOGGER.debug("SQL ===> {}", sql);
-        return sourceDb.run(sql);
+        return sourceDb.query(sql);
+    }
+
+    @Override
+    public long insert(String sql) {
+        return sourceDb.insert(sql);
+    }
+
+    @Override
+    public long update(String sql) {
+        return sourceDb.update(sql);
+    }
+
+    @Override
+    public int execute(String sql) {
+        return sourceDb.execute(sql);
     }
 
     protected DruidPooledConnection getConnection() {
@@ -67,7 +92,7 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
     }
 
     private String showCreateTable() {
-        return JdbcUtil.query(getConnection(), "SHOW CREATE TABLE " + name(), resultSet -> {
+        return JdbcUtil.queryMeta(getConnection(), "SHOW CREATE TABLE " + name(), resultSet -> {
             StringBuilder createSql = new StringBuilder();
             while (resultSet.next()) {
                 createSql.append(resultSet.getString(showCreateColumnIndex())).append("\n");
@@ -78,11 +103,14 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
 
     protected abstract int showCreateColumnIndex();
 
-    protected String getShowCreateTable() {
-        if (createTableSql == null) {
-            createTableSql = showCreateTable();
+    protected abstract Pair<String, List<Column>> parse2MetaInfo(String createTableSql);
+
+    private Pair<String, List<Column>> getMetaInfos() {
+        if (metaInfo == null) {
+            String showCreateTable = showCreateTable();
+            metaInfo = parse2MetaInfo(showCreateTable);
         }
-        return createTableSql;
+        return metaInfo;
     }
 
     protected String clear(String origin) {
@@ -97,7 +125,7 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
     @Override
     public List<Map<String, Object>> run(Sql sql) {
         String sqlContent = createSql(sql);
-        return run(sqlContent);
+        return query(sqlContent);
     }
 
     private String createSql(Sql sql) {
@@ -131,14 +159,8 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
         return sqlContent;
     }
 
-    protected String getTableName() {
-        String tableName = name().trim();
-        if (!tableName.startsWith("`")) {
-            tableName = "`" + tableName;
-        }
-        if (!tableName.endsWith("`")) {
-            tableName += "`";
-        }
-        return tableName;
+    @Override
+    public String getTableName() {
+        return "`" + name().trim() + "`";
     }
 }

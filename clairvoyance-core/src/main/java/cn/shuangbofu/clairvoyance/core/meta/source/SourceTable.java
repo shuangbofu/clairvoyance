@@ -17,4 +17,6 @@ public interface SourceTable {
     List<Column> columns();
 
     List<Map<String, Object>> run(Sql sql);
+
+    String getTableName();
 }

@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
+import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.meta.source.JdbcSourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.utils.JdbcUtil;
 import com.alibaba.druid.util.StringUtils;
@@ -22,13 +23,19 @@ public class HiveSourceTable extends JdbcSourceTable {
     }
 
     @Override
+    protected Pair<String, List<Column>> parse2MetaInfo(String createTableSql) {
+        // TODO
+        return new Pair<>("", Lists.newArrayList());
+    }
+
+    @Override
     public String comment() {
         return null;
     }
 
     @Override
     public List<Column> columns() {
-        return JdbcUtil.query(getConnection(), "DESC " + name(), resultSet -> {
+        return JdbcUtil.queryMeta(getConnection(), "DESC " + name(), resultSet -> {
             List<Column> columns = Lists.newArrayList();
             while (resultSet.next()) {
                 String colName = resultSet.getString("col_name");

@@ -4,7 +4,9 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 
+import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,16 +26,45 @@ public class JdbcUtil {
     }
 
     public static List<Map<String, Object>> query(JdbcParam param, String sql) {
-        return roundExRt(() -> new QueryRunner(getDatasource(param)).query(sql, new MapListHandler()), "query error");
+        return roundExRt(() -> getQueryRunner(param).query(sql, new MapListHandler()), "query error");
     }
 
-    public static <T> T query(DruidPooledConnection connection, String sql, Function<ResultSet, T> fuc) {
+    public static long update(JdbcParam param, String sql) {
+        return roundExRt(() -> getQueryRunner(param).update(sql), "update error");
+    }
+
+    public static long insert(JdbcParam param, String sql) {
+        return roundExRt(() -> {
+            BigInteger bigInteger = getQueryRunner(param).insert(sql, new ScalarHandler<>());
+            return bigInteger.longValue();
+        }, "insert error");
+    }
+
+    public static long delete(JdbcParam param, String sql) {
+        return update(param, sql);
+    }
+
+    public static <T> T queryMeta(DruidPooledConnection connection, String sql, Function<ResultSet, T> fuc) {
+        return execute(connection, sql, PreparedStatement::executeQuery, resultSet -> {
+            try {
+                return fuc.apply(resultSet);
+            } finally {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            }
+        });
+    }
+
+    public static int executeUpdate(DruidPooledConnection connection, String sql) {
+        return execute(connection, sql, PreparedStatement::executeUpdate, i -> i);
+    }
+
+    private static <B, C> C execute(DruidPooledConnection connection, String sql, Function<PreparedStatement, B> fuc, Function<B, C> fuc2) {
         PreparedStatement statement = null;
-        ResultSet resultSet = null;
         try {
             statement = connection.prepareStatement(sql);
-            resultSet = statement.executeQuery();
-            return fuc.apply(resultSet);
+            return fuc2.apply(fuc.apply(statement));
         } catch (Exception e) {
             if (e instanceof SQLException) {
                 throw new RuntimeException("run sql error", e);
@@ -41,9 +72,6 @@ public class JdbcUtil {
                 throw new RuntimeException("parse result error", e);
             }
         } finally {
-            if (resultSet != null) {
-                roundEx(resultSet::close, "close resultSet error");
-            }
             if (statement != null) {
                 roundEx(statement::close, "close statement error");
             }
@@ -51,6 +79,10 @@ public class JdbcUtil {
                 roundEx(connection::close, "close connection error");
             }
         }
+    }
+
+    public static QueryRunner getQueryRunner(JdbcParam param) {
+        return new QueryRunner(getDatasource(param), true);
     }
 
     public static DruidPooledConnection getConnection(JdbcParam param) {

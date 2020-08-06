@@ -10,5 +10,20 @@ import lombok.Data;
  */
 @Data
 public abstract class AbstractFilter extends Field {
-    FilterType filterType;
+
+    /**
+     * 获取where条件
+     *
+     * @return
+     */
+    public abstract String where();
+
+    /**
+     * TODO
+     *
+     * @return
+     */
+    public Field realField() {
+        return null;
+    }
 }

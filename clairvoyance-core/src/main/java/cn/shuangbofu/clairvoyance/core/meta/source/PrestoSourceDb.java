@@ -17,4 +17,8 @@ public class PrestoSourceDb extends JdbcSourceDb {
     public JdbcSourceTable sourceTable(String tableName) {
         return new PrestoSourceTable(tableName, this);
     }
+//
+//    public List<String> dbs() {
+//        return list("SHOW SCHEMAS");
+//    }
 }

@@ -28,14 +28,8 @@ public abstract class JdbcSourceDb implements SourceDb {
         return list("SHOW TABLES");
     }
 
-    /**
-     * @return
-     */
-//    public List<String> dbs() {
-//        return list("SHOW DATABASES");
-//    }
-    private List<String> list(String order) {
-        return JdbcUtil.query(getConnection(), order, resultSet -> {
+    protected List<String> list(String order) {
+        return JdbcUtil.queryMeta(getConnection(), order, resultSet -> {
             List<String> tables = Lists.newArrayList();
             while (resultSet.next()) {
                 tables.add(resultSet.getString(1));
@@ -57,8 +51,23 @@ public abstract class JdbcSourceDb implements SourceDb {
     }
 
     @Override
-    public List<Map<String, Object>> run(String sql) {
+    public List<Map<String, Object>> query(String sql) {
         return JdbcUtil.query(param, sql);
+    }
+
+    @Override
+    public long insert(String sql) {
+        return JdbcUtil.insert(param, sql);
+    }
+
+    @Override
+    public long update(String sql) {
+        return JdbcUtil.update(param, sql);
+    }
+
+    @Override
+    public int execute(String sql) {
+        return JdbcUtil.executeUpdate(getConnection(), sql);
     }
 
     @Override
@@ -68,27 +77,6 @@ public abstract class JdbcSourceDb implements SourceDb {
     public List<SourceTable> sourceTables() {
         return tables().stream().map(this::sourceTable).collect(Collectors.toList());
     }
-
-//    public List<JdbcSourceDb> sourceDbs() {
-//        return dbs().stream().map(i -> {
-//            String url = param.getJdbcUrl();
-//            int index = url.lastIndexOf("/");
-//            int index2 = url.lastIndexOf("?");
-//            String newUrl = url.substring(0, index + 1) + i + url.substring(index2);
-//            JdbcParam newParam = new JdbcParam()
-//                    .setJdbcUrl(newUrl)
-//                    .setUsername(param.getUsername())
-//                    .setPassword(param.getPassword())
-//                    .setClassName(param.getClassName());
-//            JdbcSourceDb jdbcSourceDb = this;
-//            return new JdbcSourceDb(newParam) {
-//                @Override
-//                public JdbcSourceTable sourceTable(String tableName) {
-//                    return jdbcSourceDb.sourceTable(tableName);
-//                }
-//            };
-//        }).collect(Collectors.toList());
-//    }
 
     @Override
     public String name() {

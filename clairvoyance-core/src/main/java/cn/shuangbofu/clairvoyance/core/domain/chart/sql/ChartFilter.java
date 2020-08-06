@@ -1,6 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql;
 
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.AbstractFilter;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FilterType;
 import lombok.Data;
 
 /**
@@ -8,5 +9,10 @@ import lombok.Data;
  */
 @Data
 public class ChartFilter extends AbstractFilter {
+    FilterType filterType;
 
+    @Override
+    public String where() {
+        return null;
+    }
 }
