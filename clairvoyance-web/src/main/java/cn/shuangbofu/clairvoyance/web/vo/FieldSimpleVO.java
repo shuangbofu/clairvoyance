@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  */
 @Data
 @Accessors(chain = true)
-public class FieldVO {
+public class FieldSimpleVO {
 
     private Long id;
 
@@ -25,16 +25,16 @@ public class FieldVO {
 
     private String remarks;
 
-    private int seqNo;
+    private Integer seqNo;
 
     private String linkUrl;
 
-    public static List<FieldVO> toVOs(List<Field> fields) {
-        return fields.stream().map(FieldVO::toVO).collect(Collectors.toList());
+    public static List<FieldSimpleVO> toVOs(List<Field> fields) {
+        return fields.stream().map(FieldSimpleVO::toVO).collect(Collectors.toList());
     }
 
-    public static FieldVO toVO(Field field) {
-        return new FieldVO().setId(field.getId())
+    public static FieldSimpleVO toVO(Field field) {
+        return new FieldSimpleVO().setId(field.getId())
                 .setName(field.getName())
                 .setTitle(field.getTitle())
                 .setType(field.getColumnType())

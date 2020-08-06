@@ -19,11 +19,39 @@ public class FieldLoader {
         Anima.saveBatch(fields);
     }
 
-    public static List<Field> originFieldList(Long workSheetId) {
-        return Field.from().where(Field::getWorkSheetId, workSheetId).where(Field::getFieldType, FieldType.origin).all();
+    /**
+     * 原始字段列表，只需要部分字段
+     *
+     * @param workSheetId
+     * @return
+     */
+    public static List<Field> getOriginFields(Long workSheetId) {
+        return Field.from()
+                .select("id, name, title, column_type, remarks, seq_no")
+                .where(Field::getWorkSheetId, workSheetId)
+                .where(Field::getFieldType, FieldType.origin).all();
     }
 
     public static void update(Field field) {
         field.update();
+    }
+
+    public static Field getField(Long id) {
+        return Field.from().where(Field::getId, id).one();
+    }
+
+    /**
+     * 自定义字段列表
+     *
+     * @param workSheetId
+     * @return
+     */
+    public static List<Field> getCustomFields(Long workSheetId) {
+        return Field.from().where(Field::getWorkSheetId, workSheetId)
+                .gt(Field::getFieldType, 1).all();
+    }
+
+    public static List<Field> getAllFields(Long workSheetId) {
+        return Field.from().where(Field::getWorkSheetId, workSheetId).all();
     }
 }

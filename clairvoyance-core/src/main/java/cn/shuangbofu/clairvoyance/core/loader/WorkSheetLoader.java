@@ -12,12 +12,12 @@ public class WorkSheetLoader {
 
     private static final String SIMPLE_SELECT = "id, title,table_name, description";
 
-    public static WorkSheet byId(Long id) {
+    public static WorkSheet getSheet(Long id) {
         return WorkSheet.from().where(WorkSheet::getId, id).one();
     }
 
     public static boolean update(WorkSheet workSheet) {
-        if (workSheet.getId() != 0L || WorkSheetLoader.byId(workSheet.getId()) != null) {
+        if (workSheet.getId() != 0L || WorkSheetLoader.getSheet(workSheet.getId()) != null) {
             workSheet.update();
             return true;
         }

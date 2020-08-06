@@ -11,11 +11,11 @@ import java.util.Map;
  */
 @Data
 @Accessors(chain = true)
-public class PreviewResult {
+public class DataResult {
     private List<Map<String, Object>> data;
     private long total;
 
-    public PreviewResult(List<Map<String, Object>> data, long total) {
+    public DataResult(List<Map<String, Object>> data, long total) {
         this.data = data;
         this.total = total;
     }

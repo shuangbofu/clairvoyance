@@ -1,7 +1,6 @@
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.parser.DefaultJSONParser;
-import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.parser.deserializer.JavaBeanDeserializer;
 import com.alibaba.fastjson.parser.deserializer.ObjectDeserializer;
@@ -49,19 +48,25 @@ public class Test2 {
 //                //SerializerFeature.SkipTransientField,
 //                //SerializerFeature.DisableCircularReferenceDetect
 //        };
-        J j = JSON.parseObject(jsonString, J.class, new TParserConfig(), JSON.DEFAULT_PARSER_FEATURE, new Feature[0]);
-
-        for (A a : j.as) {
-            if (a instanceof B) {
-                System.out.println(a.get());
-            } else if (a instanceof C) {
-                System.out.println(a.get());
-            } else {
-                System.out.println(a.get());
-            }
-        }
+//        J j = JSON.parseObject(jsonString, J.class, new TParserConfig(), JSON.DEFAULT_PARSER_FEATURE, new Feature[0]);
+//
+//        for (A a : j.as) {
+//            if (a instanceof B) {
+//                System.out.println(a.get());
+//            } else if (a instanceof C) {
+//                System.out.println(a.get());
+//            } else {
+//                System.out.println(a.get());
+//            }
+//        }
 //        System.out.println(j.as);
 //        System.out.println(j.toString());
+
+        J j = JSON.parseObject(jsonString, J.class);
+
+        for (A a : j.as) {
+            System.out.println(a.get());
+        }
     }
 
     @Target({ElementType.TYPE})
@@ -88,7 +93,7 @@ public class Test2 {
             @JsonMap(key = "b", value = B.class),
             @JsonMap(key = "c", value = C.class)
     })
-    static class A {
+    static abstract class A {
         String key;
 
         public String get() {

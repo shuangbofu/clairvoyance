@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public class Value extends FieldAlias {
     AggregatorFunc aggregator;
+    private String unit;
 
     @Override
     public String getQueryName() {

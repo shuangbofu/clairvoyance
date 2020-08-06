@@ -7,8 +7,8 @@
     />
     <div class="editor-main" v-if="chart">
       <div class="left-container">
-        <div style="width: 100%;">
-          <div class="top-title" @click="previewVisible = true;">{{workSheet.title}}</div>
+        <div style="width: 100%;display:flex;">
+          <a-button class="top-title" @click="previewVisible = true;">{{workSheet.title}}</a-button>
           <a-button icon="swap"></a-button>
         </div>
         <div class="field-list">
@@ -133,9 +133,6 @@ export default {
 </script>
 
 <style lang="less">
-// .editor-container {
-//   position: relative;
-//   height: 100%;
 .editor-main {
   position: relative;
   display: flex;
@@ -148,22 +145,12 @@ export default {
     height: calc(100vh - 111px);
     .top-title {
       width: 188px;
-      display: inline-block;
       margin-right: 10px;
       text-align: center;
-      text-align: center;
-      padding: 4px 20px;
-      font-size: 15px;
-      background: #fff;
-      cursor: pointer;
-      color: #555;
       font-weight: 500;
-      border: 1px solid #e6e6e6;
-      &:hover {
-        border: 1px solid #4876ff;
-        color: #4876ff;
-        // background: #f6f6f6;
-      }
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .field-list {
       margin-top: 10px;
@@ -204,11 +191,13 @@ export default {
       margin-right: 10px;
     }
     .chart-box {
+      margin-top: 40px;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+        0 16px 24px 0 rgba(81, 129, 228, 0.1);
       padding: 20px;
-      // border: 1px solid #e6e6e6;
       background: #fff;
       width: 100%;
-      height: calc(100vh - 230px);
+      height: calc(100vh - 270px);
       width: calc(100% - 260px);
     }
   }

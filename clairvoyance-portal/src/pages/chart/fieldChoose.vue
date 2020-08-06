@@ -42,6 +42,9 @@
       <a-form-model-item label="字段别名">
         <a-input v-model="settingField.aliasName"></a-input>
       </a-form-model-item>
+      <a-form-model-item label="单位" v-if="mode==='y'">
+        <a-input v-model="settingField.unit"></a-input>
+      </a-form-model-item>
       <a-form-model-item label="字段描述">
         <a-input type="textarea" v-model="settingField.description"></a-input>
       </a-form-model-item>

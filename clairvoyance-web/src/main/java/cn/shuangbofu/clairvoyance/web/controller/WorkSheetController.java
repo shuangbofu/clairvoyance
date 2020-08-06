@@ -5,6 +5,8 @@ import cn.shuangbofu.clairvoyance.core.db.Field;
 import cn.shuangbofu.clairvoyance.core.db.Node;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
+import cn.shuangbofu.clairvoyance.core.domain.field.GroupField;
+import cn.shuangbofu.clairvoyance.core.enums.FieldType;
 import cn.shuangbofu.clairvoyance.core.enums.NodeType;
 import cn.shuangbofu.clairvoyance.core.enums.SheetType;
 import cn.shuangbofu.clairvoyance.core.loader.DatasourceLoader;
@@ -16,8 +18,10 @@ import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.table.Column;
 import cn.shuangbofu.clairvoyance.core.query.SqlQueryRunner;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
+import cn.shuangbofu.clairvoyance.web.service.FieldVOloader;
 import cn.shuangbofu.clairvoyance.web.vo.*;
 import cn.shuangbofu.clairvoyance.web.vo.form.Folder;
+import cn.shuangbofu.clairvoyance.web.vo.form.RangeRequestForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetImport;
 import com.google.common.collect.Lists;
@@ -60,14 +64,14 @@ public class WorkSheetController {
     /**
      * 修改字段
      *
-     * @param fieldVO
+     * @param fieldSimpleVO
      * @return
      */
     @PutMapping("/field")
     @ApiOperation("修改字段")
     @ApiParam(name = "id", defaultValue = "1", required = true)
-    public Result<Boolean> updateField(@RequestBody FieldVO fieldVO) {
-        FieldLoader.update(fieldVO.toModel());
+    public Result<Boolean> updateField(@RequestBody FieldSimpleVO fieldSimpleVO) {
+        FieldLoader.update(fieldSimpleVO.toModel());
         return Result.success(true);
     }
 
@@ -93,7 +97,7 @@ public class WorkSheetController {
     @GetMapping
     @ApiOperation(("根据ID获取工作表"))
     public Result<WorkSheetVO> one(@RequestParam("id") Long id) {
-        WorkSheet workSheet = WorkSheetLoader.byId(id);
+        WorkSheet workSheet = WorkSheetLoader.getSheet(id);
         return Result.success(WorkSheetVO.toVO(workSheet));
     }
 
@@ -202,18 +206,47 @@ public class WorkSheetController {
         return Result.success(true);
     }
 
+    /**
+     * 数据预览
+     *
+     * @param condition
+     * @return
+     */
     @PostMapping("/preview")
-    public Result<PreviewResult> previewData(@RequestBody PreviewCondition condition) {
+    public Result<DataResult> previewData(@RequestBody PreviewCondition condition) {
         Long workSheetId = condition.getWorkSheetId();
-        List<Field> fields = FieldLoader.originFieldList(workSheetId);
-        condition.checkParams(fields);
-        WorkSheet workSheet = WorkSheetLoader.byId(workSheetId);
+        condition.checkParams(FieldVOloader.getOriginFields(workSheetId));
+        WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
         SourceTable table = SqlQueryRunner.getSourceTable(workSheet);
 
         List<Map<String, Object>> result = table.run(condition);
 
         List<Map<String, Object>> countResult = table.run(() -> Lists.newArrayList("COUNT(1) AS COUNT"));
         long total = (Long) countResult.get(0).get("COUNT");
-        return Result.success(new PreviewResult(result, total));
+        return Result.success(new DataResult(result, total));
+    }
+
+    /**
+     * 工作表获取某字段记录集
+     * TODO 需要考虑分组字段的情况
+     *
+     * @param form
+     * @return
+     */
+    @PostMapping("range")
+    public Result<RangeResult> getRangeData(@RequestBody RangeRequestForm form) {
+        Field field = FieldLoader.getField(form.getFieldId());
+        RangeResult rangeResult;
+        if (field.getFieldType().equals(FieldType.origin)) {
+            String name = field.getName();
+            WorkSheet sheet = WorkSheetLoader.getSheet(form.getWorkSheetId());
+            SourceTable table = SqlQueryRunner.getSourceTable(sheet);
+            List<Map<String, Object>> result = table.run(() -> Lists.newArrayList(name));
+            rangeResult = new RangeResult(result, name);
+        } else {
+            List<Object> range = GroupField.parseFromConf(field.getConfig()).getRange();
+            rangeResult = new RangeResult(range);
+        }
+        return Result.success(rangeResult);
     }
 }

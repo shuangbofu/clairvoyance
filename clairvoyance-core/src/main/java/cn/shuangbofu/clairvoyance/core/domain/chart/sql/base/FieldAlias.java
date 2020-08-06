@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.base;
 
+import cn.shuangbofu.clairvoyance.core.domain.field.Field;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
@@ -8,13 +9,9 @@ import lombok.Data;
  * Created by shuangbofu on 2020/8/1 11:29
  */
 @Data
-public abstract class FieldAlias {
+public abstract class FieldAlias extends Field {
 
-    protected Long id;
-    protected String title;
-    protected String name;
     protected String aliasName;
-    protected String description;
 
     @JSONField(serialize = false, deserialize = false)
     public String getFinalTitle() {

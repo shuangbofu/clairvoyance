@@ -51,7 +51,7 @@ public class ChartController {
     public Result<List<Map<String, Object>>> getChartData(@RequestParam("chartId") Long chartId) {
         Chart chart = ChartLoader.byId(chartId);
         Long workSheetId = chart.getWorkSheetId();
-        WorkSheet workSheet = WorkSheetLoader.byId(workSheetId);
+        WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
         ChartVO chartVO = ChartVO.toVO(chart);
         SourceTable table = SqlQueryRunner.getSourceTable(workSheet);
         List<Map<String, Object>> result = table.run(chartVO.getSqlConfig());

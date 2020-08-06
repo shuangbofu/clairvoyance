@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 
 /**
  * Created by shuangbofu on 2020/7/30 下午11:09
+ * <p>
+ * 图表的SQL配置类
  */
 @Data
 @Accessors(chain = true)
@@ -72,7 +74,7 @@ public class ChartSql implements Sql {
 
     private <T extends FieldAlias> void updateFieldTitle0(List<T> fieldAliases, List<Field> fields) {
         for (FieldAlias alias : fieldAliases) {
-            Optional<Field> any = fields.stream().filter(i -> i.getName().equals(alias.getName())).findAny();
+            Optional<Field> any = fields.stream().filter(i -> i.getId().equals(alias.getId())).findAny();
             any.ifPresent(i -> alias.setTitle(i.getTitle()));
         }
     }
@@ -83,15 +85,20 @@ public class ChartSql implements Sql {
         fieldAliases.addAll(getX());
         fieldAliases.addAll(getY());
 
-        return fieldAliases.stream()
+        List<String> selects = fieldAliases.stream()
                 .map(FieldAlias::getQueryFinalName)
                 .collect(Collectors.toList());
+        if (selects.size() == 0) {
+            selects.add("1");
+        }
+        return selects;
     }
 
     @Override
     public String groupBys() {
         return getX().stream()
-                .map(FieldAlias::getName).collect(Collectors.joining(","));
+                .map(FieldAlias::getName)
+                .collect(Collectors.joining(","));
     }
 
     @Override

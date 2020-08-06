@@ -1,6 +1,5 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import cn.shuangbofu.clairvoyance.core.db.Field;
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.WhereCondition;
@@ -55,7 +54,7 @@ public class PreviewCondition implements Sql {
      *
      * @param fields
      */
-    public void checkParams(List<Field> fields) {
+    public void checkParams(List<FieldSimpleVO> fields) {
         if (whereType == null) {
             return;
         }
@@ -64,13 +63,13 @@ public class PreviewCondition implements Sql {
                 return;
             }
             List<String> whereKeys = SqlUtil.getWhereKeys(sql);
-            String notExistKeys = whereKeys.stream().filter(i -> !fields.stream().map(Field::getTitle).collect(Collectors.toList()).contains(i))
+            String notExistKeys = whereKeys.stream().filter(i -> !fields.stream().map(FieldSimpleVO::getTitle).collect(Collectors.toList()).contains(i))
                     .collect(Collectors.joining(","));
             if (StringUtils.isNotEmpty(notExistKeys)) {
                 throw new RuntimeException("不存在字段 " + notExistKeys);
             }
             sql = SqlUtil.standardWhereSql(sql);
-            for (Field field : fields) {
+            for (FieldSimpleVO field : fields) {
                 String token = String.format("[%s]", field.getTitle());
                 sql = sql.replace(token, field.getName());
             }

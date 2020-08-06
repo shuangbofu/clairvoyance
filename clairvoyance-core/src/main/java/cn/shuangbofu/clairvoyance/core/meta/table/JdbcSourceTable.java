@@ -106,7 +106,7 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
         String groupBys = sql.groupBys();
         Pair<String, OrderType> sort = sql.sort();
 
-        String selectsString = "1";
+        String selectsString = "*";
         if (selects != null && selects.size() > 0) {
             selectsString = String.join(",", selects);
         }

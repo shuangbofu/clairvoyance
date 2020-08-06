@@ -12,10 +12,14 @@ public enum FieldType {
 
     /**
      * origin 原始字段
-     * condition 自定义字段，计算字段/分组字段
+     * <p>
+     * 自定义字段
+     * computed    计算字段
+     * group       分组字段
      */
     origin(1),
-    condition(2),
+    computed(2),
+    group(3),
     ;
 
     private final int fieldTypeValue;

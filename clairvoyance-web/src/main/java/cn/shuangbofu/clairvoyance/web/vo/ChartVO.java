@@ -41,7 +41,7 @@ public class ChartVO {
 
     public static ChartVO toVO(Chart chart) {
         // fields更新到sql
-        List<Field> fields = FieldLoader.originFieldList(chart.getWorkSheetId());
+        List<Field> fields = FieldLoader.getOriginFields(chart.getWorkSheetId());
         ChartSql sql = JSON.parseObject(chart.getSqlConfig(), ChartSql.class);
         sql.updateFieldTitle(fields);
 
@@ -59,10 +59,6 @@ public class ChartVO {
     }
 
     public Chart toModel() {
-        // TODO
-        // 因为前端传过来的没有将SQL单独作为一个对象，所以保存的时候需要自己处理
-//        Sql sql = JSON.parseObject(JSON.toJSONString(this), Sql.class);
-
         Chart chart = new Chart()
                 .setChartType(chartType)
                 .setName(name)
@@ -79,7 +75,6 @@ public class ChartVO {
                 .setLayoutConfig(layoutConfig.toJSONString())
                 .setAlarmConfig(JSON.toJSONString(alarmConfig))
                 .setSqlConfig(JSON.toJSONString(sqlConfig));
-//                .setSqlConfig(JSON.toJSONString(sql))
         // TODO 从config中解析type？ type有什么用？
 //                .setChartType()
         return chart;
