@@ -14,7 +14,10 @@ public class Value extends FieldAlias {
 
     @Override
     public String getQueryName() {
-        return aggregator.wrapWithField(name);
+        if (aggregator != null) {
+            return aggregator.wrapWithField(name);
+        }
+        return name;
     }
 
     @Override
