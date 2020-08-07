@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.domain.field;
 
+import cn.shuangbofu.clairvoyance.core.domain.field.group.ConditionGroupField;
 import cn.shuangbofu.clairvoyance.core.domain.field.group.CustomStepGroupField;
 import cn.shuangbofu.clairvoyance.core.domain.field.group.ExpressionGroupField;
 import cn.shuangbofu.clairvoyance.core.domain.field.group.FixedStepGroupField;
@@ -16,6 +17,7 @@ public enum GroupMode {
      * 分组模式
      * 表达式，固定步长，自定义步长
      */
+    condition(ConditionGroupField.class),
     expression(ExpressionGroupField.class),
     fixed_step(CustomStepGroupField.class),
     custom_step(FixedStepGroupField.class),

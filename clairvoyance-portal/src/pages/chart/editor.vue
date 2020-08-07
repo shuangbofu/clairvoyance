@@ -11,20 +11,7 @@
           <a-button class="top-title" @click="previewVisible = true;">{{workSheet.title}}</a-button>
           <a-button icon="swap"></a-button>
         </div>
-        <div class="field-list">
-          <a-tabs size="small" style="margin-top: 10px;" default-active-key="1">
-            <a-tab-pane key="1" tab="字段">
-              <div class="field-origin-list">
-                <div
-                  class="field-item"
-                  v-for="field in workSheet.fields"
-                  :key="field.name"
-                >{{field.title}}</div>
-              </div>
-            </a-tab-pane>
-            <a-tab-pane key="2" tab="参数"></a-tab-pane>
-          </a-tabs>
-        </div>
+        <field-list :fields="workSheet.fields" />
       </div>
       <div class="chart-main">
         <div class="chart-args">
@@ -58,7 +45,7 @@
       width="80%"
       @cancel="() => {previewVisible = false; form ={};}"
       :footer="null"
-      title="查看数据"
+      :title="`查看数据 - ${workSheet.title}`"
     >
       <data-preview :work-sheet="workSheet" />
     </a-modal>
@@ -66,6 +53,7 @@
 </template>
 
 <script>
+import FieldList from './fieldList'
 import DataPreview from "../components/preview";
 import RightController from "./rightController";
 import ChartBox from "../components/chartBox";
@@ -94,7 +82,8 @@ export default {
     FieldChoose,
     ChartBox,
     RightController,
-    DataPreview
+    DataPreview,
+    FieldList
   },
   methods: {
     initChart() {
@@ -139,12 +128,12 @@ export default {
   position: relative;
   display: flex;
   background: #f6f6f6;
-  height: calc(100vh - 68px);
+  height: calc(100vh - 67px);
   overflow: hidden;
   .left-container {
     padding: 10px;
-    width: 250px;
-    height: calc(100vh - 111px);
+    width: 240px;
+    height: calc(100vh - 109px);
     .top-title {
       width: 188px;
       margin-right: 10px;
@@ -158,19 +147,22 @@ export default {
       margin-top: 10px;
       // border: 1px solid #e6e6e6;
       background: #fff;
-      padding: 0 20px 20px 20px;
+      padding: 0 20px;
       height: 100%;
       overflow: auto;
       .field-item {
         padding: 10px;
+      }
+      .ant-tabs-nav .ant-tabs-tab {
+        margin-right: 10px;
       }
     }
   }
   .chart-main {
     position: relative;
     margin-top: 10px;
-    height: calc(100vh - 90px);
-    width: calc(100% - 260px);
+    height: calc(100vh - 87px);
+    width: calc(100% - 250px);
     .chart-args {
       padding: 20px;
       // border: 1px solid #e6e6e6;
@@ -184,11 +176,11 @@ export default {
       }
     }
     .chart-filter-container {
-      width: 250px;
+      width: 210px;
       padding: 20px;
       // border: 1px solid #e6e6e6;
       background: #fff;
-      height: calc(100vh - 230px);
+      height: calc(100vh - 227px);
       overflow: auto;
       margin-right: 10px;
     }
@@ -199,8 +191,8 @@ export default {
       padding: 20px;
       background: #fff;
       width: 100%;
-      height: calc(100vh - 270px);
-      width: calc(100% - 260px);
+      height: calc(100vh - 267px);
+      width: calc(100% - 210px);
     }
   }
 }

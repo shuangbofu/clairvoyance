@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by shuangbofu on 2020/8/4 11:50
  */
 public class PrestoSourceDb extends JdbcSourceDb {
-    private final SqlCache sqlCache = SqlCache.getInstance();
+    private final PrestoSqlCache prestoSqlCache = PrestoSqlCache.getInstance();
 
     public PrestoSourceDb(JdbcParam param) {
         super(param.setClassName(JdbcParam.PRESTO_DRIVER_CLASS_NAME));
@@ -24,7 +24,7 @@ public class PrestoSourceDb extends JdbcSourceDb {
 
     @Override
     public List<Map<String, Object>> query(String sql) {
-        return sqlCache.getQueryResult(param, sql);
+        return prestoSqlCache.getQueryResult(param, sql);
     }
 
 //    public List<String> dbs() {

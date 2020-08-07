@@ -9,19 +9,21 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by shuangbofu on 2020/8/7 12:06
  */
-public class SqlCache {
+public class PrestoSqlCache {
 
-    private static final SqlCache INSTANCE = new SqlCache();
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private static final PrestoSqlCache INSTANCE = new PrestoSqlCache();
     private final Map<String, Future<List<Map<String, Object>>>> queryCache = new ConcurrentHashMap<>();
     private final Cache<String, List<Map<String, Object>>> resultCache = CacheBuilder.newBuilder()
-            .expireAfterWrite(30, TimeUnit.SECONDS).build();
+            .expireAfterWrite(5, TimeUnit.MINUTES).build();
+    private final AtomicInteger counter = new AtomicInteger(1);
+    private final ExecutorService executorService = Executors.newCachedThreadPool(r -> new Thread(r, "PRESTO-QUERY-" + counter.getAndIncrement()));
 
-    public static SqlCache getInstance() {
+    public static PrestoSqlCache getInstance() {
         return INSTANCE;
     }
 
