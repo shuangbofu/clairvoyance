@@ -119,6 +119,7 @@ export default {
       }
       if (order === "field") {
         Object.assign(field, { ...this.fields.find(f => f.name === e.key) });
+        field.aliasName = ''
         if (this.mode === "y") {
           field.aggregator = field.type === "value" ? "SUM" : "COUNT";
         }
