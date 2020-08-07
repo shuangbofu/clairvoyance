@@ -159,7 +159,7 @@ export default {
       if (order === "aggregator") {
         field.aggregator = e.key;
       }
-      // this.saveChart();
+      this.saveChart();
     },
     setField(index) {
       this.settingFieldVisible = true;

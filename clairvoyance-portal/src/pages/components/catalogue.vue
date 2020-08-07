@@ -2,63 +2,69 @@
   <div class="dashboard-container">
     <a-row type="flex" justify="center" align="top" :gutter="16">
       <a-col :xs="{span: 7}" :xl="{span: 5}" :xxl="{span: 5}">
-        <div style="display: flex; justify-content: space-between">
-          <a-input placeholder="过滤" v-model="filterValue" icon="FilterOutlined">
-            <a-icon type="filter" slot="suffix" />
-          </a-input>
-          <a-dropdown :trigger="['click']">
-            <a-menu slot="overlay" @click="handleMenuClick">
-              <a-menu-item key="文件夹">
-                <a-icon type="folder" />创建文件夹
-              </a-menu-item>
-              <a-menu-item key="仪表盘">
-                <a-icon type="dashboard" />创建仪表盘
-              </a-menu-item>
-            </a-menu>
-            <div>
-              <a-button icon="plus" style="margin-left: 5px;"></a-button>
-            </div>
-          </a-dropdown>
-        </div>
         <div class="catalogue-container">
-          <a-tree
-            v-if="treeData.length > 0"
-            show-icon
-            :tree-data="filteredTreeData"
-            @expand="expandNode"
-            @select="selectNode"
-            :expandedKeys.sync="defaultExpandedKeys"
-            :selectedKeys.sync="defaultSelectedKeys"
-          >
-            <template slot-scope="{expanded}" slot="folder">
-              <a-icon class="tree-icon" theme="outlined" :type="expanded ? 'folder-open': 'folder'"></a-icon>
-            </template>
-            <a-icon class="tree-icon" theme="outlined" :type="treeIcon" :slot="item" />
-            <template slot="title" slot-scope="data">
-              <a-tooltip
-                v-if="!data.folder"
-                overlayClassName="tooltip"
-                placement="right"
-                :overlayStyle="{
+          <div style="display: flex; justify-content: space-between">
+            <a-input placeholder="过滤" v-model="filterValue" icon="FilterOutlined">
+              <a-icon type="filter" slot="suffix" />
+            </a-input>
+            <a-dropdown :trigger="['click']">
+              <a-menu slot="overlay" @click="handleMenuClick">
+                <a-menu-item key="文件夹">
+                  <a-icon type="folder" />创建文件夹
+                </a-menu-item>
+                <a-menu-item key="仪表盘">
+                  <a-icon type="dashboard" />创建仪表盘
+                </a-menu-item>
+              </a-menu>
+              <div>
+                <a-button icon="plus" style="margin-left: 5px;"></a-button>
+              </div>
+            </a-dropdown>
+          </div>
+          <div class="catalogue-tree">
+            <a-tree
+              v-if="treeData.length > 0"
+              show-icon
+              :tree-data="filteredTreeData"
+              @expand="expandNode"
+              @select="selectNode"
+              :expandedKeys.sync="defaultExpandedKeys"
+              :selectedKeys.sync="defaultSelectedKeys"
+            >
+              <template slot-scope="{expanded}" slot="folder">
+                <a-icon
+                  class="tree-icon"
+                  theme="outlined"
+                  :type="expanded ? 'folder-open': 'folder'"
+                ></a-icon>
+              </template>
+              <a-icon class="tree-icon" theme="outlined" :type="treeIcon" :slot="item" />
+              <template slot="title" slot-scope="data">
+                <a-tooltip
+                  v-if="!data.folder"
+                  overlayClassName="tooltip"
+                  placement="right"
+                  :overlayStyle="{
                 'background': '#fff'
               }"
-              >
-                <template slot="title">
-                  <template v-if="item === 'dashboard'">
-                    <div>名称：{{data.title}}</div>
-                    <div>备注：{{data.remarks}}</div>
+                >
+                  <template slot="title">
+                    <template v-if="item === 'dashboard'">
+                      <div>名称：{{data.title}}</div>
+                      <div>备注：{{data.remarks}}</div>
+                    </template>
+                    <template v-if="item === 'workSheet'">
+                      <div>名称：{{data.title}}</div>
+                      <div>原名：{{data.tableName}}</div>
+                      <div>描述：{{data.description}}</div>
+                    </template>
                   </template>
-                  <template v-if="item === 'workSheet'">
-                    <div>名称：{{data.title}}</div>
-                    <div>原名：{{data.tableName}}</div>
-                    <div>描述：{{data.description}}</div>
-                  </template>
-                </template>
-                {{data.title}}
-              </a-tooltip>
-              <template v-else>{{data.title}}</template>
-            </template>
-          </a-tree>
+                  {{data.title}}
+                </a-tooltip>
+                <template v-else>{{data.title}}</template>
+              </template>
+            </a-tree>
+          </div>
         </div>
       </a-col>
       <a-col :xs="{span: 17}" :xl="{span: 19}" :xxl="{span: 19}">
@@ -313,21 +319,22 @@ export default {
 
 <style lang="less">
 .dashboard-container {
-  // background: #f6f6f6;
+  background: #f6f6f6;
   .catalogue-container {
-    margin-top: 10px;
     width: 100%;
     padding: 10px;
     overflow: auto;
-    height: calc(100vh - 137px);
+    height: calc(100vh - 94px);
     border: 1px solid #e6e6e6;
     background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 21, 41, 0.08);
+    // box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 16px 24px 0 rgba(0, 0, 0, 0.1);
     .tree-icon {
       color: #4876ff;
       margin-right: 5px;
     }
     .tooltip {
-      background: #fff;
+      // background: #fff;
       color: red;
     }
   }

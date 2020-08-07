@@ -161,7 +161,7 @@ export default {
       padding: 20px 10px;
       // border: 1px solid #e6e6e6;
       border-right: 1px solid #e6e6e6;
-      height: calc(100vh - 197px);
+      height: calc(100vh - 187px);
       overflow: auto;
       margin-right: 15px;
     }
@@ -172,7 +172,7 @@ export default {
       padding: 20px;
       background: #fff;
       width: 100%;
-      height: calc(100vh - 237px);
+      height: calc(100vh - 227px);
       width: calc(100% - 210px);
     }
   }

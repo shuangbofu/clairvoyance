@@ -127,7 +127,7 @@ export default {
 
 <style lang="less">
 .dashboard-main {
-  padding: 20px 10px;
+  padding: 20px 0px;
   .dashboard-header {
     display: flex;
     justify-content: space-between;
