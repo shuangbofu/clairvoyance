@@ -27,6 +27,13 @@ public class PrestoSqlCache {
         return INSTANCE;
     }
 
+    /**
+     * TODO 避免短时间提交多个查询
+     *
+     * @param param
+     * @param sql
+     * @return
+     */
     public List<Map<String, Object>> getQueryResult(JdbcParam param, String sql) {
         synchronized (sql) {
             List<Map<String, Object>> result = resultCache.getIfPresent(sql);

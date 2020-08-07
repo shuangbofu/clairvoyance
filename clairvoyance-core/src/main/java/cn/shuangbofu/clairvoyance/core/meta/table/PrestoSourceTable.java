@@ -62,6 +62,9 @@ public class PrestoSourceTable extends JdbcSourceTable {
 
     @Override
     public List<Map<String, Object>> query(String sql) {
+        if (sql.contains("SELECT 1 FROM " + getTableName())) {
+            return Lists.newArrayList();
+        }
         return super.query(convertQuotes(sql));
     }
 

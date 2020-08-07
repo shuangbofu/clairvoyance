@@ -8,8 +8,6 @@ import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.utils.JdbcUtil;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.alibaba.druid.pool.DruidPooledConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -18,8 +16,6 @@ import java.util.Map;
  * Created by shuangbofu on 2020/8/3 下午9:58
  */
 public abstract class JdbcSourceTable implements SourceTable, SourceDb {
-
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     private final String tableName;
     private final JdbcSourceDb sourceDb;
