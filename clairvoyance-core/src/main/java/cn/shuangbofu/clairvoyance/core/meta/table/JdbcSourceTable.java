@@ -47,7 +47,6 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
 
     @Override
     public List<Map<String, Object>> query(String sql) {
-        LOGGER.debug("SQL ===> {}", sql);
         return sourceDb.query(sql);
     }
 

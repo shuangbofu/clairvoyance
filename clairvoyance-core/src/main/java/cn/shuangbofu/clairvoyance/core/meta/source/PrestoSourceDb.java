@@ -4,10 +4,14 @@ import cn.shuangbofu.clairvoyance.core.meta.table.JdbcSourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.table.PrestoSourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.utils.JdbcParam;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by shuangbofu on 2020/8/4 11:50
  */
 public class PrestoSourceDb extends JdbcSourceDb {
+    private final SqlCache sqlCache = SqlCache.getInstance();
 
     public PrestoSourceDb(JdbcParam param) {
         super(param.setClassName(JdbcParam.PRESTO_DRIVER_CLASS_NAME));
@@ -17,7 +21,12 @@ public class PrestoSourceDb extends JdbcSourceDb {
     public JdbcSourceTable sourceTable(String tableName) {
         return new PrestoSourceTable(tableName, this);
     }
-//
+
+    @Override
+    public List<Map<String, Object>> query(String sql) {
+        return sqlCache.getQueryResult(param, sql);
+    }
+
 //    public List<String> dbs() {
 //        return list("SHOW SCHEMAS");
 //    }

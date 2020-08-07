@@ -72,6 +72,8 @@ export default {
         .post("/workSheet/preview", {
           workSheetId: this.workSheet.id,
           ...this.previewCondition
+        },{
+          timeout: 100000
         })
         .then(data => {
           this.sheetData = data.data;

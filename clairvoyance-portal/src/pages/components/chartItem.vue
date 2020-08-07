@@ -39,7 +39,9 @@ export default {
   },
   methods: {
     fetchData() {
-      this.$axios.get(`/chart/data?chartId=${this.conf.chartId}`).then(data => {
+      this.$axios.get(`/chart/data?chartId=${this.conf.chartId}`,{
+          timeout: 100000
+        }).then(data => {
         this.chartData = data;
       });
     }

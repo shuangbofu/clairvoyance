@@ -2,9 +2,12 @@ package cn.shuangbofu.clairvoyance.core.meta.utils;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
+import com.google.common.base.Stopwatch;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
@@ -13,6 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by shuangbofu on 2020/8/3 下午10:14
@@ -20,13 +24,22 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JdbcUtil {
 
     private static final Map<JdbcParam, DruidDataSource> SOURCE_MAP = new ConcurrentHashMap<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcUtil.class);
 
     public static boolean connectionIsValid(DruidPooledConnection connection) {
         return roundExRt(() -> connection.isValid(3), "check error", connection::close);
     }
 
     public static List<Map<String, Object>> query(JdbcParam param, String sql) {
-        return roundExRt(() -> getQueryRunner(param).query(sql, new MapListHandler()), "query error");
+        return roundExRt(() -> {
+            String className = param.getClassName();
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            LOGGER.info("SQL SUBMIT ===> {} ({})", sql, className);
+            List<Map<String, Object>> result = getQueryRunner(param).query(sql, new MapListHandler());
+            stopwatch.stop();
+            LOGGER.info("SQL RESULT ===> [{}ms] {} ({})", stopwatch.elapsed(TimeUnit.MILLISECONDS), sql, className);
+            return result;
+        }, "query error");
     }
 
     public static long update(JdbcParam param, String sql) {

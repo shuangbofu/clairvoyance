@@ -26,10 +26,12 @@ public class PrestoSourceTable extends JdbcSourceTable {
         String[] lines = createTableSql.split("\n");
         boolean fieldLine = false;
         String comment = "";
+        boolean fieldEnd = false;
         List<Column> columns = Lists.newArrayList();
         for (String line : lines) {
             if (line.contains(")")) {
                 fieldLine = false;
+                fieldEnd = true;
             }
             if (fieldLine) {
                 line = line.trim();
@@ -46,7 +48,7 @@ public class PrestoSourceTable extends JdbcSourceTable {
                     comment = clear(words[words.length - 1]);
                 }
             }
-            if (line.contains("(")) {
+            if (line.contains("(") && !fieldEnd) {
                 fieldLine = true;
             }
         }

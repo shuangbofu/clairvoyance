@@ -162,6 +162,15 @@ public class WorkSheetController {
                     .stream().filter(allTables::contains)
                     .collect(Collectors.toList());
         }
+
+        if (workSheetImport.isNewFolder()) {
+            Node folder = new Node()
+                    .setName(StringUtils.emptyGet(datasource.getName(), sourceDb::name))
+                    .setNodeType(NodeType.workSheet)
+                    .setParentId(folderNodeId);
+            folderNodeId = NodeLoader.newNode(folder);
+        }
+
         for (String table : tables) {
             boolean exist = WorkSheetLoader.existSheet(datasourceId, table);
             if (exist) {
@@ -187,14 +196,6 @@ public class WorkSheetController {
             )
                     .collect(Collectors.toList());
             FieldLoader.insertBatch(fields);
-
-            if (workSheetImport.isNewFolder()) {
-                Node folder = new Node()
-                        .setName(StringUtils.emptyGet(datasource.getName(), sourceDb::name))
-                        .setNodeType(NodeType.workSheet)
-                        .setParentId(folderNodeId);
-                folderNodeId = NodeLoader.newNode(folder);
-            }
 
             NodeLoader.newNode(
                     new Node()

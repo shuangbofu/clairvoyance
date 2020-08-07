@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class WorkSheetLoader {
 
-    private static final String SIMPLE_SELECT = "id, title,table_name, description";
+    private static final String SIMPLE_SELECT = "id, title, table_name, description";
 
     public static WorkSheet getSheet(Long id) {
         return WorkSheet.from().where(WorkSheet::getId, id).one();

@@ -3,7 +3,7 @@
     <a-page-header
       style="border: 1px solid rgb(235, 237, 240)"
       title="编辑图表"
-      @back="saveChart(); $router.go(-1);"
+      @back="saveChart(true); $router.go(-1);"
     />
     <div class="editor-main" v-if="chart">
       <div class="left-container">
@@ -115,15 +115,17 @@ export default {
     },
     fetchChartData() {
       this.$axios
-        .get(`/chart/data?chartId=${this.chart.chartId}`)
+        .get(`/chart/data?chartId=${this.chart.chartId}`,{
+          timeout: 100000
+        })
         .then(data => {
           this.chartData = data;
         });
     },
-    saveChart() {
+    saveChart(notInit) {
       this.chart.chartType = this.chart.chartType || "UNKNOWN";
       this.$axios.post("/chart", this.chart).then(b => {
-        if (b) {
+        if (b && !notInit) {
           this.initChart();
         }
       });

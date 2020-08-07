@@ -95,7 +95,7 @@ public class PreviewCondition implements Sql {
 
     @Override
     public String last() {
-        return " LIMIT 200";
+        return " LIMIT 1000";
     }
 
     enum WhereLinker {
