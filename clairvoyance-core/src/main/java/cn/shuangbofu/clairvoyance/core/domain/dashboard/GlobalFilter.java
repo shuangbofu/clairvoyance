@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.domain.dashboard;
 
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.AbstractFilter;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
 import io.swagger.annotations.ApiModel;
 
 /**
@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModel;
  * 全局过滤器
  */
 @ApiModel("仪表盘过滤器配置")
-public class GlobalFilter extends AbstractFilter {
+public class GlobalFilter implements Filter {
 
     @Override
     public String where() {

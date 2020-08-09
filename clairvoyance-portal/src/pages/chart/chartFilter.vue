@@ -22,7 +22,21 @@
         </a-collapse-panel>
       </a-collapse>
     </draggable>
-    <div class="inner-filter-container">图内筛选器</div>
+    <draggable
+      class="inner-filter-container"
+      v-model="innerFilters"
+      group="field"
+      ghostClass="new-field"
+      :sort="false"
+    >
+      图内筛选器
+      <div style="margin-top: 10px;" />
+      <div
+        class="filter-item"
+        v-for="innerFilter in innerFilters"
+        :key="innerFilter.id"
+      >{{innerFilter.title}}</div>
+    </draggable>
     <a-modal
       title="编辑筛选项"
       :destroyOnClose="true"
@@ -55,13 +69,26 @@ export default {
         return this.$store.getters['chart/filters']
       },
       set(value) {
-        const arr = value.filter(i=> !this.filters.map(i=>i.id).includes(i.id))
-        if(arr.length == 0) {
-          this.$message.error('已经添加过该字段的过滤条件')
-          return;
+        const filter = this.checkFilter(value, this.filters)
+        if(filter) {
+          this.$store.dispatch('chart/newFilter',filter)
+          this.filterAddModalVisible = true
         }
-        this.$store.dispatch('chart/newFilter',arr[0])
-        this.filterAddModalVisible = true
+      }
+    },
+    innerFilters: {
+      get() {
+        return this.$store.getters['chart/innerFilters']
+      },
+      set(value) {
+        const filter = this.checkFilter(value, this.innerFilters)
+        if(filter) {
+          if(filter.type !== 'text') {
+            this.$message.error('类型不允许')
+            return
+          }
+          this.$store.dispatch('chart/newInnerFilter', filter)
+        }
       }
     }
   },
@@ -78,6 +105,14 @@ export default {
     editFilter(filter) {
       this.$store.dispatch('chart/editFilter',filter)
       this.filterAddModalVisible = true
+    },
+    checkFilter(value, filters){ 
+        const arr = value.filter(i=> !filters.map(i=>i.id).includes(i.id))
+        if(arr.length == 0) {
+          this.$message.error('已经添加过该字段的过滤条件')
+          return;
+        }
+        return arr[0]
     }
   }
 }
@@ -91,7 +126,7 @@ export default {
   .filter-container {
     margin-bottom: 10px;
     padding-right: 15px;
-    height: 50%;
+    height: calc(70% - 12px);
     color: #666;
     font-size: 15px;
     .ant-collapse {
@@ -115,6 +150,12 @@ export default {
   .inner-filter-container {
     color: #666;
     font-size: 15px;
+    height: calc(30% - 7.5px);
+    .filter-item {
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: #777;
+    }
   }
   .new-field {
     opacity: 0;

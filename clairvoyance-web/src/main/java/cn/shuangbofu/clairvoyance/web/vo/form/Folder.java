@@ -17,10 +17,6 @@ public class Folder {
     private Long id;
     @ApiModelProperty("名称")
     private String name;
-//
-//    @ApiModelProperty("文件夹类型")
-//    private NodeType type;
-
     private Long refId;
     @ApiModelProperty("父文件夹")
     private Long parentId;

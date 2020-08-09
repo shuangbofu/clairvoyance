@@ -16,7 +16,6 @@ public abstract class FieldAlias extends Field {
 
     protected String aliasName;
 
-    //    @JSONField(serialize = false, deserialize = false)
     @JsonIgnore
     public String getFinalTitle() {
         return title;
@@ -32,7 +31,6 @@ public abstract class FieldAlias extends Field {
         return title;
     }
 
-    //    @JSONField(serialize = false, deserialize = false)
     @JsonIgnore
     public String getQueryFinalName() {
         String queryName = getQueryName();
@@ -43,13 +41,11 @@ public abstract class FieldAlias extends Field {
         return queryName;
     }
 
-    //    @JSONField(serialize = false, deserialize = false)
     @JsonIgnore
     public String getQueryName() {
         return name;
     }
 
-    //    @JSONField(serialize = false, deserialize = false)
     @JsonIgnore
     public boolean isValid() {
         return StringUtils.isNotEmpty(name);

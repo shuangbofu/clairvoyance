@@ -34,7 +34,7 @@ public class DashboardVO extends DashboardSimpleVO {
         DashboardSimpleVO simpleVO = DashboardSimpleVO.toSimpleVO(dashboard);
         DashboardVO vo = new DashboardVO();
         vo
-                .setDashboardId(simpleVO.getId())
+                .setDashboardId(simpleVO.getRefId())
                 .setName(simpleVO.getName())
                 .setRemarks(simpleVO.getRemarks())
 //                .setTags(simpleVO.getTags())
@@ -53,7 +53,7 @@ public class DashboardVO extends DashboardSimpleVO {
      * @return
      */
     public Dashboard toModel() {
-        return new Dashboard().setId(getId())
+        return new Dashboard().setId(getRefId())
                 .setRemarks(getRemarks())
                 .setName(getName())
                 .setLayoutConfig(dashboardLayout.toString())

@@ -1,4 +1,5 @@
 import axios from "@/utils/request.js";
+import Vue from 'vue'
 export default {
   namespaced: true,
   state: {
@@ -9,7 +10,7 @@ export default {
 
     // 编辑筛选项
     editingFilter: null,
-    rangeData: []
+    rangeData: [],
   },
   getters: {
     sqlConfig: state => state.chart.sqlConfig,
@@ -19,7 +20,8 @@ export default {
     fields: state => state.workSheet.fields,
     filters: (state, getters) => getters.sqlConfig.filters,
     editingFilter: state => state.editingFilter,
-    rangeData: state => state.rangeData
+    rangeData: state => state.rangeData,
+    innerFilters: (state, getters) => getters.sqlConfig.innerFilters,
   },
   mutations: {
     CLEAR_CHART(state) {
@@ -95,7 +97,6 @@ export default {
           ...state.workSheet.fields.find(i => i.id === data.id)
         }
       }
-      // filter['@type'] = filter.filterType
       state.editingFilter = filter
       if (filter.filterType === 'exact') {
         dispatch('fetchRangeData')
@@ -107,23 +108,52 @@ export default {
         workSheetId: state.workSheet.workSheetId,
         fieldId: state.editingFilter.id
       }, { timeout: 10000000 }).then(data => {
-        const rangeData = []
-        data.range.forEach(value => {
-          if (!rangeData.includes(value)) {
-            rangeData.push(value)
-          }
-        })
-        state.rangeData = rangeData
+        state.rangeData = disinct(data.range)
       })
 
     },
     newFilter({ dispatch }, data) {
-      console.log(data)
       dispatch('editFilter', data)
     },
     saveFilter({ commit, dispatch }) {
       commit('SAVE_FILTER')
       return dispatch('saveChart')
+    },
+    newInnerFilter({ state, dispatch }, data) {
+      state.chart.sqlConfig.innerFilters.push({
+        filterType: 'inner',
+        range: [],
+        ...data
+      })
+      return dispatch('saveChart')
+    },
+    initInnerFilterRange({ state }, id) {
+      const targ = state.chart.sqlConfig.innerFilters.find(i => i.id === id)
+      const filter = state.chart.sqlConfig.filters.find(i => i.id === id)
+      if (filter && filter.included) {
+        Vue.set(targ, 'rangeData', filter.range)
+        return
+      }
+      axios.post('/workSheet/range', {
+        workSheetId: state.workSheet.workSheetId,
+        fieldId: id
+      }, { timeout: 10000000 }).then(data => {
+        Vue.set(targ, 'rangeData', disinct(data.range))
+      })
+    },
+    setInnerFilterRnage({ state, dispatch }, { id, value }) {
+      state.chart.sqlConfig.innerFilters.find(i => i.id === id).range = value ? [value] : []
+      return dispatch('saveChart')
     }
   },
+}
+
+function disinct(arr) {
+  const res = []
+  arr.forEach(value => {
+    if (!res.includes(value)) {
+      res.push(value)
+    }
+  })
+  return res
 }

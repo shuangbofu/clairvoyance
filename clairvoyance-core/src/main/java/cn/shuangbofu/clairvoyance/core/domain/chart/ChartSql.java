@@ -6,8 +6,8 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.sql.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.ChartInnerFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.AbstractFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
@@ -36,7 +36,6 @@ public class ChartSql implements Sql {
     /**
      * 筛选器
      */
-//    @JSONField(serialzeFeatures = SerializerFeature.WriteClassName)
     List<ChartFilter> filters;
 
     /**
@@ -131,14 +130,14 @@ public class ChartSql implements Sql {
 
     @Override
     public String wheres() {
-        List<AbstractFilter> actualFilters = Lists.newArrayList();
+        List<Filter> actualFilters = Lists.newArrayList();
         if (filters != null && filters.size() > 0) {
             actualFilters.addAll(filters);
         }
         if (innerFilters != null && innerFilters.size() > 0) {
             actualFilters.addAll(innerFilters);
         }
-        return actualFilters.stream().map((AbstractFilter::where))
+        return actualFilters.stream().map((Filter::where))
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(" AND "));
     }

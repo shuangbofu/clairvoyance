@@ -24,6 +24,7 @@ import cn.shuangbofu.clairvoyance.web.vo.form.Folder;
 import cn.shuangbofu.clairvoyance.web.vo.form.RangeRequestForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetImport;
+import cn.shuangbofu.clairvoyance.web.vo.preview.PreviewFilter;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -213,9 +214,8 @@ public class WorkSheetController {
      * @param condition
      * @return
      */
-    @PostMapping("/preview")
-    public Result<DataResult> previewData(@RequestBody PreviewCondition condition) {
-        Long workSheetId = condition.getWorkSheetId();
+    @PostMapping("/preview/{workSheetId}")
+    public Result<DataResult> previewData(@PathVariable(value = "workSheetId") Long workSheetId, @RequestBody PreviewFilter condition) {
         condition.checkParams(FieldVOloader.getOriginFields(workSheetId));
         WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
         SourceTable table = SqlQueryRunner.getSourceTable(workSheet);

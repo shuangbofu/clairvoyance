@@ -1,10 +1,16 @@
 <template>
-  <div class="preview-container">
+  <div v-if="sheetData" class="preview-container">
+    <div class="top">
+      显示最新
+      <span class="value">{{sheetData.length}}</span>条数据，总共
+      <span class="value">{{total}}</span>条数据
+    </div>
     <div class="data-container">
       <a-table
         table-layout="auto"
         :style="{ 'word-break': 'break-all' }"
         size="small"
+        rowKey="index"
         :pagination="false"
         :data-source="sheetData"
         :columns="columns"
@@ -30,7 +36,8 @@ export default {
           desc: true
         }
       },
-      sheetData: []
+      sheetData: null,
+      total: 0
       // tableWidth: 0
     };
   },
@@ -69,14 +76,12 @@ export default {
   methods: {
     fetchData() {
       this.$axios
-        .post("/workSheet/preview", {
-          workSheetId: this.workSheet.id,
-          ...this.previewCondition
-        },{
+        .post(`/workSheet/preview/${this.workSheet.workSheetId}`, this.previewCondition,{
           timeout: 10000000
         })
         .then(data => {
           this.sheetData = data.data;
+          this.total = data.total
           // let tableWidth = 0;
           // let map = {};
           // data.data.forEach(line => {
@@ -98,12 +103,19 @@ export default {
 
 <style lang="less">
 .preview-container {
+  .top {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 10px;
+    .value {
+      color: #4876ff;
+      margin: 0 4px;
+    }
+  }
   .data-continer {
     .ant-table td {
       white-space: nowrap;
     }
-    // width: calc(100% - 500px);
-    // overflow: auto;
   }
   td,
   th {

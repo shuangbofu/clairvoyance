@@ -15,6 +15,7 @@ public enum DatasourceType {
     hive(1),
     mysql(2),
     presto(3),
+    none(0),
 
 
     ;

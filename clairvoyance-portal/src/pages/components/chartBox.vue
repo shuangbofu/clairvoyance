@@ -1,5 +1,6 @@
 <template>
   <div class="chart-box-container">
+    <slot name="header" />
     <div v-if="chart.chartType === 'UNKNOWN'" class="unknown-chart">未选择图表类型</div>
     <div v-else-if="chart.chartType === 'C2'" class="value-card">
       <div style="margin: auto;">

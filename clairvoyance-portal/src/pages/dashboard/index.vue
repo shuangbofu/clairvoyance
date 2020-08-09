@@ -10,10 +10,10 @@
             </div>
             <div class="button-list">
               <a-button icon="bar-chart" @click="addChart">添加图表</a-button>
-              <a-button icon="highlight">设计</a-button>
-              <a-button icon="fullscreen">全屏</a-button>
-              <a-button icon="share-alt">分享</a-button>
-              <a-button icon="more">更多</a-button>
+              <a-button icon="highlight" disabled>设计</a-button>
+              <a-button icon="fullscreen" disabled>全屏</a-button>
+              <a-button icon="share-alt" disabled>分享</a-button>
+              <a-button icon="more" disabled>更多</a-button>
             </div>
           </div>
           <div class="charts-container">
@@ -26,7 +26,7 @@
               </div>
             </template>
             <template v-else>
-              <chart-item v-for="chart in charts" :conf="chart" :key="chart.id" />
+              <chart-item v-for="chart in charts" :chart="chart" :key="chart.id" />
             </template>
           </div>
         </div>

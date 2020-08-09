@@ -1,6 +1,11 @@
 <template>
   <div class="add-filter-container">
-    <a-radio-group v-model="filter.filterType" button-style="solid" @change="changeFilterType">
+    <a-radio-group
+      style="margin-bottom: 10px;"
+      v-model="filter.filterType"
+      button-style="solid"
+      @change="changeFilterType"
+    >
       <template v-for="filterType in filterTypes">
         <a-radio-button
           :key="filterType.name"
@@ -10,9 +15,10 @@
       </template>
     </a-radio-group>
     <div class="exact-container" v-if="filter.filterType === 'exact'">
-      {{field.title}}
-      <div>
-        是否包含下列选项
+      <div style="margin-bottom: 20px;">
+        <span
+          style="font-weight: 500; color: #333; margin-right: 5px; padding: 10px;"
+        >{{field.title}}</span>是否包含下列选项
         <a-switch v-model="filter.included" />
       </div>
       <a-select
@@ -81,6 +87,7 @@ export default {
 <style lang="less">
 .add-filter-container {
   .exact-container {
+    padding: 10px 0;
   }
 }
 </style>

@@ -39,7 +39,7 @@ public class DashboardSimpleVO implements IdVo {
     }
 
     @Override
-    public Long getId() {
+    public Long getRefId() {
         return dashboardId;
     }
 }

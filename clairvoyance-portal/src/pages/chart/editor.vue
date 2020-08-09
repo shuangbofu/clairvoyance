@@ -24,7 +24,36 @@
         </div>
         <div style="height: calc(100vh - 230px); display:flex;">
           <chart-filter class="chart-filter-container" />
-          <chart-box class="chart-box" :chart="chart" :data="chartData" />
+          <chart-box class="chart-box" :chart="chart" :data="chartData">
+            <div slot="header" style="display:flex; align-items: center;">
+              <a-icon style="font-size: 20px; color: #d6d6d6; margin-right: 10px;" type="filter" />
+              <div
+                style="margin-right: 10px;"
+                v-for="(innerFilter,index) in innerFilters"
+                :key="index"
+              >
+                <!-- <span style="margin-right: 6px;">{{innerFilter.title}}:</span> -->
+                <a-select
+                  :placeholder="innerFilter.title"
+                  v-model="innerFilter.range[0]"
+                  :allowClear="true"
+                  show-search
+                  :filter-option="filterOption"
+                  @change="value => $store.dispatch('chart/setInnerFilterRnage',{id: innerFilter.id, value})"
+                  @dropdownVisibleChange="open => {if(open) {$store.dispatch('chart/initInnerFilterRange',innerFilter.id)}}"
+                  style="width: 120px;"
+                >
+                  <template v-if="innerFilter.rangeData">
+                    <a-select-option
+                      v-for="(value, index) in innerFilter.rangeData"
+                      :key="index"
+                      :value="value"
+                    >{{value}}</a-select-option>
+                  </template>
+                </a-select>
+              </div>
+            </div>
+          </chart-box>
         </div>
       </div>
       <right-controller :chart="chart" @refresh="saveChart" />
@@ -62,7 +91,9 @@ export default {
       'workSheet',
       'chart',
       'sqlConfig',
-      'chartData'
+      'chartData',
+      'innerFilters',
+      'innnerFilterRangeData'
     ])
   },
   created() {
@@ -86,6 +117,13 @@ export default {
     },
     saveChart(notInit) {
       this.$store.dispatch('chart/saveChart',notInit)
+    },
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
+      );
     }
   }
 };
@@ -166,16 +204,15 @@ export default {
       margin-right: 15px;
     }
     .chart-box {
-      margin-top: 40px;
+      margin-top: 15px;
       box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
         0 16px 24px 0 rgba(81, 129, 228, 0.1);
       padding: 20px;
       background: #fff;
       width: 100%;
-      height: calc(100vh - 227px);
+      height: calc(100vh - 202px);
       width: calc(100% - 210px);
     }
   }
 }
-// }
 </style>

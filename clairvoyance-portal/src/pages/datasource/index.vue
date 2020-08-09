@@ -82,7 +82,7 @@ export default {
         jdbcUrl: "",
         username: "",
         password: "",
-        type: "",
+        type: "none",
         name: ""
       },
       dsTypeList,

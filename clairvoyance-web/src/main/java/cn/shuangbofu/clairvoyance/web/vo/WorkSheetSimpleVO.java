@@ -32,7 +32,7 @@ public class WorkSheetSimpleVO implements IdVo {
     }
 
     @Override
-    public Long getId() {
+    public Long getRefId() {
         return workSheetId;
     }
 }

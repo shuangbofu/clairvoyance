@@ -74,6 +74,6 @@ public class SqlUtil {
             String value = matcher.group(3);
             return WhereOperation.valueOfSymbol(op).where(key, value);
         }
-        throw new RuntimeException("parse error");
+        throw new RuntimeException("parse sql error");
     }
 }

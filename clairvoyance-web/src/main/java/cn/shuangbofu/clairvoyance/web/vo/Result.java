@@ -12,12 +12,10 @@ import lombok.Data;
 @ApiModel(description = "返回结构")
 public class Result<T> {
     @ApiModelProperty("错误信息")
-//    @JSONField(name = "errorMsg")
     @JsonProperty("errorMsg")
     private String message;
     @ApiModelProperty("数据")
 
-//    @JSONField(name = "result")
     @JsonProperty("result")
     private T data;
     @ApiModelProperty("是否成功")

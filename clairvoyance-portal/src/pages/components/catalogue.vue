@@ -17,7 +17,11 @@
                 </a-menu-item>
               </a-menu>
               <div>
-                <a-button icon="plus" style="margin-left: 5px;"></a-button>
+                <a-button
+                  type="link"
+                  style="margin-left: 5px; color: #666; font-size: 16px;"
+                  icon="plus"
+                ></a-button>
               </div>
             </a-dropdown>
           </div>
@@ -70,7 +74,6 @@
       <a-col :xs="{span: 17}" :xl="{span: 19}" :xxl="{span: 19}">
         <div class="right-container">
           <a-spin class="spin" v-if="dashboardLoading" tip="仪表盘加载中……" />
-          <!-- <chart-list v-else :dashboard="dashboard" /> -->
           <template v-else>
             <slot name="right-container"></slot>
           </template>
