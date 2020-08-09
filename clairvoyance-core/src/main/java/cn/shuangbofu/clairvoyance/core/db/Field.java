@@ -3,6 +3,7 @@ package cn.shuangbofu.clairvoyance.core.db;
 import cn.shuangbofu.clairvoyance.core.enums.ColumnType;
 import cn.shuangbofu.clairvoyance.core.enums.FieldType;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
+import io.github.biezhi.anima.annotation.Column;
 import io.github.biezhi.anima.annotation.Table;
 import io.github.biezhi.anima.core.AnimaQuery;
 import lombok.Data;
@@ -20,6 +21,8 @@ public class Field extends Model<Field> {
 
     private Long gmtCreate;
     private Long gmtModified;
+    @Column(name = "`status`")
+    private Boolean deleted;
 
     private String name;
 
@@ -40,7 +43,7 @@ public class Field extends Model<Field> {
     private Long workSheetId;
 
     public static AnimaQuery<Field> from() {
-        return s(Field.class);
+        return s(Field.class).where(Field::getDeleted, 0);
     }
 
     /**

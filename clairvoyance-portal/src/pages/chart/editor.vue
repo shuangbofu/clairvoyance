@@ -158,7 +158,7 @@ export default {
     }
     .chart-filter-container {
       width: 210px;
-      padding: 20px 10px;
+      // padding: 10px;
       // border: 1px solid #e6e6e6;
       border-right: 1px solid #e6e6e6;
       height: calc(100vh - 187px);

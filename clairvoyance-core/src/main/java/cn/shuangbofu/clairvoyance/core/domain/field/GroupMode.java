@@ -4,7 +4,7 @@ import cn.shuangbofu.clairvoyance.core.domain.field.group.ConditionGroupField;
 import cn.shuangbofu.clairvoyance.core.domain.field.group.CustomStepGroupField;
 import cn.shuangbofu.clairvoyance.core.domain.field.group.ExpressionGroupField;
 import cn.shuangbofu.clairvoyance.core.domain.field.group.FixedStepGroupField;
-import com.alibaba.fastjson.JSON;
+import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import lombok.AllArgsConstructor;
 
 /**

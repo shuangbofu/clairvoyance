@@ -11,13 +11,14 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
-import com.alibaba.fastjson.JSON;
+import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,7 @@ public class ChartSql implements Sql {
     /**
      * 筛选器
      */
+//    @JSONField(serialzeFeatures = SerializerFeature.WriteClassName)
     List<ChartFilter> filters;
 
     /**
@@ -69,9 +71,30 @@ public class ChartSql implements Sql {
                 .setSort(new Sort());
     }
 
-    public void updateFieldTitle(List<Field> fields) {
+    private static void parseAndPrint(String json) {
+        ChartSql chartSql = JSON.parseObject(json, ChartSql.class);
+        System.out.println(chartSql.getFilters());
+    }
+
+    /**
+     * 需要都改为一个类
+     *
+     * @param fields
+     */
+    public void setFields(List<Field> fields) {
         updateFieldTitle0(x, fields);
         updateFieldTitle0(y, fields);
+        if (sort != null) {
+            Optional<Field> any = fields.stream().filter(i -> i.getId().equals(sort.getId())).findAny();
+            any.ifPresent(i -> sort.setName(i.getName()));
+        }
+        List<cn.shuangbofu.clairvoyance.core.domain.field.Field> filterList = Lists.newArrayList();
+        filterList.addAll(filters);
+        filterList.addAll(innerFilters);
+        for (cn.shuangbofu.clairvoyance.core.domain.field.Field field : filterList) {
+            Optional<Field> any = fields.stream().filter(i -> i.getId().equals(field.getId())).findAny();
+            any.ifPresent(i -> field.setTitle(i.getTitle()).setName(i.getName()));
+        }
     }
 
     private <T extends FieldAlias> void updateFieldTitle0(List<T> fieldAliases, List<Field> fields) {
@@ -83,17 +106,20 @@ public class ChartSql implements Sql {
 
     @Override
     public List<String> selects() {
-        List<FieldAlias> fieldAliases = new ArrayList<>();
-        fieldAliases.addAll(getX());
-        fieldAliases.addAll(getY());
-
-        List<String> selects = fieldAliases.stream()
+        List<String> selects = getXY().stream()
                 .map(FieldAlias::getQueryFinalName)
                 .collect(Collectors.toList());
         if (selects.size() == 0) {
             selects.add("1");
         }
         return selects;
+    }
+
+    private List<FieldAlias> getXY() {
+        List<FieldAlias> fieldAliases = new ArrayList<>();
+        fieldAliases.addAll(getX());
+        fieldAliases.addAll(getY());
+        return fieldAliases;
     }
 
     @Override
@@ -113,6 +139,7 @@ public class ChartSql implements Sql {
             actualFilters.addAll(innerFilters);
         }
         return actualFilters.stream().map((AbstractFilter::where))
+                .filter(Objects::nonNull)
                 .collect(Collectors.joining(" AND "));
     }
 
@@ -139,6 +166,16 @@ public class ChartSql implements Sql {
         return x.stream().filter(FieldAlias::isValid).collect(Collectors.toList());
     }
 
+    private void check() {
+        // 检查sort
+        if (sort != null) {
+            Long fieldId = sort.getId();
+            if (fieldId == null || getXY().stream().noneMatch(i -> i.getId().equals(fieldId))) {
+                sort = null;
+            }
+        }
+    }
+
     /**
      * 保存到数据库前清除多余配置
      */
@@ -147,6 +184,7 @@ public class ChartSql implements Sql {
     }
 
     public String toJSONString() {
+        check();
         clear();
         return JSON.toJSONString(this);
     }

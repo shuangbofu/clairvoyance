@@ -4,10 +4,8 @@
       class="field-line"
       v-model="arrData"
       group="field"
-      :options="{
-            sort: false,
-            ghostClass: 'new-field',
-          }"
+      ghostClass="new-field"
+      :sort="false"
     >
       <div class="title">{{title}}</div>
       <div :key="index" class="field-block" v-for="(f,index) in arrData">
@@ -141,6 +139,10 @@ export default {
       });
     },
     removeField(index) {
+      // const field = this.arrData[index]
+      // if(field.name === this.sqlConfig.sort.name) {
+      //   this.setField(field, 'default')
+      // }
       this.arrData.splice(index, 1);
       this.saveChart();
     },

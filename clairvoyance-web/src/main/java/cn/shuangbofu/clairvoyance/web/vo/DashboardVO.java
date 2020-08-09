@@ -2,7 +2,7 @@ package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.core.db.Dashboard;
 import cn.shuangbofu.clairvoyance.core.domain.dashboard.GlobalFilter;
-import com.alibaba.fastjson.JSON;
+import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,7 +17,7 @@ import java.util.List;
 public class DashboardVO extends DashboardSimpleVO {
 
     @ApiModelProperty("布局配置")
-    private JSON dashboardLayout;
+    private String dashboardLayout;
 
     /**
      * 全局过滤器配置
@@ -40,7 +40,7 @@ public class DashboardVO extends DashboardSimpleVO {
 //                .setTags(simpleVO.getTags())
         ;
 
-        vo.setDashboardLayout(JSON.parseObject(dashboard.getLayoutConfig()));
+        vo.setDashboardLayout(dashboard.getLayoutConfig());
         vo.setGlobalFilter(JSON.parseObject(dashboard.getFilterConfig(), GlobalFilter.class));
         vo.setCharts(charts);
 
@@ -56,7 +56,7 @@ public class DashboardVO extends DashboardSimpleVO {
         return new Dashboard().setId(getId())
                 .setRemarks(getRemarks())
                 .setName(getName())
-                .setLayoutConfig(dashboardLayout.toJSONString())
+                .setLayoutConfig(dashboardLayout.toString())
                 ;
     }
 }

@@ -6,8 +6,7 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.AlarmConfig;
 import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSql;
 import cn.shuangbofu.clairvoyance.core.enums.ChartType;
 import cn.shuangbofu.clairvoyance.core.loader.FieldLoader;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -34,7 +33,7 @@ public class ChartVO {
     private ChartType chartType;
     private Long dashboardId;
     private Long workSheetId;
-    private JSON layoutConfig;
+    private String layoutConfig;
     private AlarmConfig alarmConfig;
     private ChartSql sqlConfig;
     private String name;
@@ -43,7 +42,7 @@ public class ChartVO {
         // fields更新到sql
         List<Field> fields = FieldLoader.getOriginFields(chart.getWorkSheetId());
         ChartSql sql = JSON.parseObject(chart.getSqlConfig(), ChartSql.class);
-        sql.updateFieldTitle(fields);
+        sql.setFields(fields);
 
         return new ChartVO()
                 .setChartType(chart.getChartType())
@@ -51,7 +50,7 @@ public class ChartVO {
                 .setChartId(chart.getId())
                 .setDashboardId(chart.getDashboardId())
                 .setWorkSheetId(chart.getWorkSheetId())
-                .setLayoutConfig(JSON.parseObject(chart.getLayoutConfig()))
+                .setLayoutConfig(chart.getLayoutConfig())
                 .setAlarmConfig(JSON.parseObject(chart.getAlarmConfig(), AlarmConfig.class))
                 .setWorkSheetId(chart.getWorkSheetId())
                 .setSqlConfig(sql)
@@ -67,12 +66,15 @@ public class ChartVO {
                 .setWorkSheetId(workSheetId);
 
         if (!created()) {
-            layoutConfig = new JSONObject();
+//            layoutConfig = new JSONObject();
             alarmConfig = new AlarmConfig();
             sqlConfig = ChartSql.defaultValue();
+        } else {
+            List<Field> fields = FieldLoader.getOriginFields(chart.getWorkSheetId());
+            sqlConfig.setFields(fields);
         }
         chart
-                .setLayoutConfig(layoutConfig.toJSONString())
+//                .setLayoutConfig(layoutConfig.toString())
                 .setAlarmConfig(JSON.toJSONString(alarmConfig))
                 .setSqlConfig(sqlConfig.toJSONString());
         // TODO 从config中解析type？ type有什么用？

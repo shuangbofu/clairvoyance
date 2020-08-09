@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.domain.worksheet;
 
-import com.alibaba.fastjson.JSON;
+import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

@@ -73,7 +73,7 @@ export default {
           workSheetId: this.workSheet.id,
           ...this.previewCondition
         },{
-          timeout: 100000
+          timeout: 10000000
         })
         .then(data => {
           this.sheetData = data.data;

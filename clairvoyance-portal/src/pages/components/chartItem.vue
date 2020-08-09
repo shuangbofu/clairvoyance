@@ -3,13 +3,7 @@
     <div class="chart-header">
       <div class="title">{{conf.name}}</div>
       <div class="button-list">
-        <a-icon
-          class="button"
-          type="edit"
-          @click="$router.push({name: '编辑图表', 
-          query:{chartId: conf.chartId, workSheetId: conf.workSheetId}
-           })"
-        ></a-icon>
+        <a-icon class="button" type="edit" @click="link2Editor"></a-icon>
         <a-icon class="button" type="redo" @click="fetchData"></a-icon>
         <a-icon class="button" type="more"></a-icon>
       </div>
@@ -40,10 +34,14 @@ export default {
   methods: {
     fetchData() {
       this.$axios.get(`/chart/data?chartId=${this.conf.chartId}`,{
-          timeout: 100000
+          timeout: 10000000
         }).then(data => {
         this.chartData = data;
       });
+    },
+    link2Editor() {
+      this.$store.commit('chart/CLEAR_CHART')
+      this.$router.push({name: '编辑图表', query:{chartId: this.conf.chartId, workSheetId: this.conf.workSheetId}})
     }
   }
 };

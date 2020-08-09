@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,11 +12,13 @@ import lombok.Data;
 @ApiModel(description = "返回结构")
 public class Result<T> {
     @ApiModelProperty("错误信息")
-    @JSONField(name = "errorMsg")
+//    @JSONField(name = "errorMsg")
+    @JsonProperty("errorMsg")
     private String message;
     @ApiModelProperty("数据")
 
-    @JSONField(name = "result")
+//    @JSONField(name = "result")
+    @JsonProperty("result")
     private T data;
     @ApiModelProperty("是否成功")
     private boolean success;

@@ -3,7 +3,7 @@ import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.table.Column;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.meta.utils.JdbcParam;
-import com.alibaba.fastjson.JSON;
+import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import com.google.common.collect.Lists;
 
 import java.util.List;

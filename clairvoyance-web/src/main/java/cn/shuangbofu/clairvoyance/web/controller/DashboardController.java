@@ -10,13 +10,13 @@ import cn.shuangbofu.clairvoyance.core.loader.NodeLoader;
 import cn.shuangbofu.clairvoyance.web.vo.*;
 import cn.shuangbofu.clairvoyance.web.vo.form.DashboardForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.Folder;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +48,7 @@ public class DashboardController {
      */
     @PostMapping()
     @ApiOperation("创建仪表盘")
-    public Result<JSON> createDashboard(@RequestBody DashboardForm form) {
+    public Result<Map<String, Long>> createDashboard(@RequestBody DashboardForm form) {
 
         // 创建仪表盘
         Dashboard dashboard = form.toModel();
@@ -61,7 +61,7 @@ public class DashboardController {
                 .setRefId(id)
                 .setParentId(form.getParentId()));
 
-        JSONObject object = new JSONObject();
+        Map<String, Long> object = new HashMap<>();
         object.put("nodeId", nodeId);
         object.put("dashboardId", id);
         return Result.success(object);

@@ -234,7 +234,7 @@ public class WorkSheetController {
      * @param form
      * @return
      */
-    @PostMapping("range")
+    @PostMapping("/range")
     public Result<RangeResult> getRangeData(@RequestBody RangeRequestForm form) {
         Field field = FieldLoader.getField(form.getFieldId());
         RangeResult rangeResult;

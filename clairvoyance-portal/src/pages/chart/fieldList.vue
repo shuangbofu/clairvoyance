@@ -6,9 +6,7 @@
           class="list"
           v-model="fields"
           :group="{ name: 'field', pull: 'clone', put: false }"
-          :options="{
-            sort: false
-          }"
+          :sort="false"
         >
           <div class="field-item" v-for="field in fields" :key="field.id">
             <a-icon style="color: #4876ff" v-if="field.type === 'value'" type="number" />
@@ -17,7 +15,7 @@
               v-else-if="field.type === 'text'"
               type="text"
             >T</span>
-            <span style="margin-left: 6px;">{{field.name}}</span>
+            <span style="margin-left: 6px;">{{field.title}}</span>
           </div>
         </draggable>
       </a-tab-pane>

@@ -2,22 +2,27 @@ package cn.shuangbofu.clairvoyance.core.domain.chart.sql.base;
 
 import cn.shuangbofu.clairvoyance.core.domain.field.Field;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
-import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
  * Created by shuangbofu on 2020/8/1 11:29
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class FieldAlias extends Field {
 
     protected String aliasName;
 
-    @JSONField(serialize = false, deserialize = false)
+    //    @JSONField(serialize = false, deserialize = false)
+    @JsonIgnore
     public String getFinalTitle() {
         return title;
     }
 
+    @JsonProperty("finalAliasName")
     public String getFinalAliasName() {
         String title = getFinalTitle();
         String aliasName = clearSymbol(this.aliasName);
@@ -27,7 +32,8 @@ public abstract class FieldAlias extends Field {
         return title;
     }
 
-    @JSONField(serialize = false, deserialize = false)
+    //    @JSONField(serialize = false, deserialize = false)
+    @JsonIgnore
     public String getQueryFinalName() {
         String queryName = getQueryName();
         String finalAliasName = getFinalAliasName();
@@ -37,12 +43,14 @@ public abstract class FieldAlias extends Field {
         return queryName;
     }
 
-    @JSONField(serialize = false, deserialize = false)
+    //    @JSONField(serialize = false, deserialize = false)
+    @JsonIgnore
     public String getQueryName() {
         return name;
     }
 
-    @JSONField(serialize = false, deserialize = false)
+    //    @JSONField(serialize = false, deserialize = false)
+    @JsonIgnore
     public boolean isValid() {
         return StringUtils.isNotEmpty(name);
     }

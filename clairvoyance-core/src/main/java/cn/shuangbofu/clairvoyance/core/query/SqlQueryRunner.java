@@ -5,7 +5,7 @@ import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
 import cn.shuangbofu.clairvoyance.core.loader.DatasourceLoader;
 import cn.shuangbofu.clairvoyance.core.meta.source.*;
 import cn.shuangbofu.clairvoyance.core.meta.utils.JdbcParam;
-import com.alibaba.fastjson.JSON;
+import cn.shuangbofu.clairvoyance.core.utils.JSON;
 
 /**
  * Created by shuangbofu on 2020/8/4 11:35

@@ -32,6 +32,7 @@ public class DashboardForm {
         return new Dashboard()
                 .setName(name)
                 .setTags(String.join(",", tags))
-                .setRemarks(remarks);
+                .setRemarks(remarks)
+                .setFilterConfig("{}");
     }
 }

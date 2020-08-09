@@ -3,8 +3,8 @@ package cn.shuangbofu.clairvoyance.web.vo.form;
 import cn.shuangbofu.clairvoyance.core.db.Datasource;
 import cn.shuangbofu.clairvoyance.core.enums.DatasourceType;
 import cn.shuangbofu.clairvoyance.core.meta.utils.JdbcParam;
+import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
-import com.alibaba.fastjson.JSON;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

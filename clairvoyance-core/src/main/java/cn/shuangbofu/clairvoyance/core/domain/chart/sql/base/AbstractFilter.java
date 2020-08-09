@@ -17,13 +17,4 @@ public abstract class AbstractFilter extends Field {
      * @return
      */
     public abstract String where();
-
-    /**
-     * TODO
-     *
-     * @return
-     */
-    public Field realField() {
-        return null;
-    }
 }

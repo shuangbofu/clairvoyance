@@ -1,20 +1,11 @@
 package cn.shuangbofu.clairvoyance.web;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by shuangbofu on 2020/7/30 下午8:16
@@ -27,21 +18,21 @@ public class App {
         SpringApplication.run(App.class, args);
     }
 
-    @Bean
-    public HttpMessageConverters fastJsonHttpMessageConverters() {
-        //1、定义一个convert转换消息的对象
-        FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
-        //2、添加fastJson的配置信息
-        FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
-        //3、在convert中添加配置信息
-        fastConverter.setFastJsonConfig(fastJsonConfig);
-        //4、将convert添加到converters中
-        List<MediaType> fastMediaTypes = new ArrayList<>();
-        fastMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
-        fastConverter.setSupportedMediaTypes(fastMediaTypes);
-        return new HttpMessageConverters(fastConverter);
-    }
+//    @Bean
+//    public HttpMessageConverters fastJsonHttpMessageConverters() {
+//        //1、定义一个convert转换消息的对象
+//        FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
+//        //2、添加fastJson的配置信息
+//        FastJsonConfig fastJsonConfig = new FastJsonConfig();
+//        fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
+//        //3、在convert中添加配置信息
+//        fastConverter.setFastJsonConfig(fastJsonConfig);
+//        //4、将convert添加到converters中
+//        List<MediaType> fastMediaTypes = new ArrayList<>();
+//        fastMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
+//        fastConverter.setSupportedMediaTypes(fastMediaTypes);
+//        return new HttpMessageConverters(fastConverter);
+//    }
 
     @Controller
     static class IndexController {
