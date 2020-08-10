@@ -11,8 +11,13 @@ import java.util.List;
  */
 public class FieldVOloader {
 
-    public static List<FieldSimpleVO> getOriginFields(Long workSheetId) {
-        List<Field> originFields = FieldLoader.getOriginFields(workSheetId);
-        return FieldSimpleVO.toVOs(originFields);
+//    public static List<FieldSimpleVO> getOriginFields(Long workSheetId) {
+//        List<Field> originFields = FieldLoader.getOriginFields(workSheetId);
+//        return FieldSimpleVO.toVOs(originFields);
+//    }
+
+    public static List<FieldSimpleVO> getAllFields(Long workSheetId) {
+        List<Field> fields = FieldLoader.getAllFields(workSheetId);
+        return FieldSimpleVO.toVOs(fields);
     }
 }

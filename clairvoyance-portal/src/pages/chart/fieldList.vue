@@ -8,14 +8,25 @@
           :group="{ name: 'field', pull: 'clone', put: false }"
           :sort="false"
         >
-          <div class="field-item" v-for="field in fields" :key="field.id">
-            <a-icon style="color: #4876ff" v-if="field.type === 'value'" type="number" />
+          <div
+            :class="[field.fieldType !== 'origin' ? 'custom' : '']"
+            class="field-item"
+            v-for="field in fields"
+            :key="field.id"
+          >
+            <a-icon class="icon" v-if="field.type === 'value'" type="number" />
             <span
-              style="margin: 0 3px; color: #4876ff; font-size: 15x;font-weight: 500;"
+              class="icon"
+              style="margin: 0 3px; font-size: 15x;font-weight: 500;"
               v-else-if="field.type === 'text'"
               type="text"
             >T</span>
             <span style="margin-left: 6px;">{{field.title}}</span>
+            <a-icon
+              style="float:right;line-height: 24px;"
+              type="setting"
+              v-if="field.fieldType !== 'origin'"
+            />
           </div>
         </draggable>
       </a-tab-pane>
@@ -61,6 +72,14 @@ export default {
     padding: 10px;
     cursor: pointer;
     font-size: 14px;
+    .icon {
+      color: #4876ff;
+    }
+    &.custom {
+      .icon {
+        color: red;
+      }
+    }
   }
   .ant-tabs-nav .ant-tabs-tab {
     margin-right: 10px;

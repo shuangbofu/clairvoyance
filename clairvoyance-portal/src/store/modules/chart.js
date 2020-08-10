@@ -138,12 +138,32 @@ export default {
         workSheetId: state.workSheet.workSheetId,
         fieldId: id
       }, { timeout: 10000000 }).then(data => {
-        Vue.set(targ, 'rangeData', disinct(data.range))
+        let rangeData = disinct(data.range)
+        if (filter && !filter.included) {
+          rangeData = rangeData.filter(i => !filter.range.includes(i))
+        }
+        Vue.set(targ, 'rangeData', rangeData)
       })
     },
     setInnerFilterRnage({ state, dispatch }, { id, value }) {
       state.chart.sqlConfig.innerFilters.find(i => i.id === id).range = value ? [value] : []
       return dispatch('saveChart')
+    },
+    removeFilter({ state, dispatch }, filter) {
+      const filters = state.chart.sqlConfig.filters
+      const index = filters.findIndex(i => i.id === filter.id)
+      if (index !== -1) {
+        filters.splice(index, 1)
+        return dispatch('saveChart')
+      }
+    },
+    removeInnerFilter({ state, dispatch }, filter) {
+      const filters = state.chart.sqlConfig.innerFilters
+      const index = filters.findIndex(i => i.id === filter.id)
+      if (index !== -1) {
+        filters.splice(index, 1)
+        return dispatch('saveChart')
+      }
     }
   },
 }

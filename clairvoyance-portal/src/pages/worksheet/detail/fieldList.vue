@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-table :pagination="false" size="small" :data-source="data" :columns="columns"></a-table>
+    <a-table :pagination="false" size="small" :data-source="fieldsData" :columns="columns"></a-table>
   </div>
 </template>
 
@@ -34,6 +34,11 @@ export default {
     return {
       columns
     };
+  },
+  computed: {
+    fieldsData() {
+      return this.data.filter(i=>i.fieldType === 'origin')
+    }
   }
 };
 </script>

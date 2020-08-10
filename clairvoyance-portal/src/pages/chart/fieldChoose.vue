@@ -30,7 +30,7 @@
               v-if="sqlConfig.sort && sqlConfig.sort.id === f.id && sqlConfig.sort.axis === mode"
               :type="`sort-${sqlConfig.sort.orderType}ending`"
             />
-            {{f.finalAliasName}}
+            {{f.realAliasName}}
             <a-icon
               @click="removeField(index)"
               class="close-icon"
@@ -48,7 +48,7 @@
       :width="400"
       @cancel="() => {settingFieldVisible = false; form ={};}"
       @ok="finishSetField"
-      title="修改字段"
+      :title="`修改字段 ${settingField.name}`"
     >
       <a-form-model-item label="字段别名">
         <a-input v-model="settingField.aliasName"></a-input>
@@ -139,10 +139,6 @@ export default {
       });
     },
     removeField(index) {
-      // const field = this.arrData[index]
-      // if(field.name === this.sqlConfig.sort.name) {
-      //   this.setField(field, 'default')
-      // }
       this.arrData.splice(index, 1);
       this.saveChart();
     },
@@ -151,13 +147,6 @@ export default {
       if (order === "sort" || !order) {
         return;
       }
-      // if (order === "field") {
-      //   Object.assign(field, { ...this.fields.find(f => f.name === e.key) });
-      //   field.aliasName = ''
-      //   if (this.mode === "y") {
-      //     field.aggregator = field.type === "value" ? "SUM" : "COUNT";
-      //   }
-      // }
       if (order === "aggregator") {
         field.aggregator = e.key;
       }
@@ -194,7 +183,7 @@ export default {
 
 <style lang="less">
 .field-line {
-  height: 44px;
+  height: 40px;
   display: flex;
   flex-direction: row;
   box-sizing: border-box;
@@ -202,7 +191,7 @@ export default {
   border-bottom: 1px solid #e6e6e6;
   .title {
     color: #666;
-    font-size: 15px;
+    font-size: 14px;
     line-height: 32px;
     margin-right: 26px;
   }
@@ -229,19 +218,20 @@ export default {
       background: #fff;
       color: #666;
       padding: 4px 10px;
-      height: 36px;
-      font-size: 14px;
-      line-height: 28px;
+      height: 32px;
+      font-size: 13px;
+      line-height: 24px;
       border: 1px solid #e6e6e6;
       cursor: pointer;
       .close-icon {
         opacity: 0;
+        // font-size: 13px;
+        // line-height: 24px;
       }
       &:hover {
         .close-icon {
           opacity: 1;
           color: #666;
-          font-size: 14px;
           &:hover {
             color: #4876ff;
           }

@@ -2,6 +2,7 @@ package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.core.db.Field;
 import cn.shuangbofu.clairvoyance.core.enums.ColumnType;
+import cn.shuangbofu.clairvoyance.core.enums.FieldType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -20,6 +21,8 @@ public class FieldSimpleVO {
     private String name;
 
     private String title;
+
+    private FieldType fieldType;
 
     private ColumnType type;
 
@@ -40,7 +43,8 @@ public class FieldSimpleVO {
                 .setType(field.getColumnType())
                 .setRemarks(field.getRemarks())
                 .setSeqNo(field.getSeqNo())
-                .setLinkUrl(field.getLinkUrl());
+                .setLinkUrl(field.getLinkUrl())
+                .setFieldType(field.getFieldType());
     }
 
     public Field toModel() {

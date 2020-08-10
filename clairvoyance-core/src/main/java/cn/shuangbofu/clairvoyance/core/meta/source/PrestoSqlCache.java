@@ -19,7 +19,7 @@ public class PrestoSqlCache {
     private static final PrestoSqlCache INSTANCE = new PrestoSqlCache();
     private final Map<String, Future<List<Map<String, Object>>>> queryCache = new ConcurrentHashMap<>();
     private final Cache<String, List<Map<String, Object>>> resultCache = CacheBuilder.newBuilder()
-            .expireAfterWrite(5, TimeUnit.MINUTES).build();
+            .expireAfterWrite(30, TimeUnit.MINUTES).build();
     private final AtomicInteger counter = new AtomicInteger(1);
     private final ExecutorService executorService = Executors.newCachedThreadPool(r -> new Thread(r, "PRESTO-QUERY-" + counter.getAndIncrement()));
 

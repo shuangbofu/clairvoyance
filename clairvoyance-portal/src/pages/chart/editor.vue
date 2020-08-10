@@ -12,27 +12,25 @@
         </div>
         <field-list />
       </div>
-      <!-- <div style="width: 0; position:relative;">
-        <div class="hidden-button">
-          <a-icon class="icon" type="right" />
-        </div>
-      </div>-->
       <div class="chart-main">
         <div class="chart-args">
           <field-choose mode="x" class="arg" />
           <field-choose mode="y" class="arg" />
         </div>
-        <div style="height: calc(100vh - 230px); display:flex;">
+        <div style="height: calc(100vh - 167px); display:flex;">
           <chart-filter class="chart-filter-container" />
           <chart-box class="chart-box" :chart="chart" :data="chartData">
             <div slot="header" style="display:flex; align-items: center;">
-              <a-icon style="font-size: 20px; color: #d6d6d6; margin-right: 10px;" type="filter" />
+              <a-icon
+                v-if="innerFilters.length > 0"
+                style="font-size: 18px; color: #4876ff; margin-right: 10px;"
+                type="filter"
+              />
               <div
                 style="margin-right: 10px;"
                 v-for="(innerFilter,index) in innerFilters"
                 :key="index"
               >
-                <!-- <span style="margin-right: 6px;">{{innerFilter.title}}:</span> -->
                 <a-select
                   :placeholder="innerFilter.title"
                   v-model="innerFilter.range[0]"
@@ -134,11 +132,12 @@ export default {
   position: relative;
   display: flex;
   background: #f6f6f6;
+  // background: #fff;
   height: calc(100vh - 67px);
   overflow: hidden;
   .left-container {
     width: 240px;
-    height: calc(100vh - 79px);
+    height: calc(100vh - 67px);
     background: #fff;
     border-right: 1px solid #e6e6e6;
     box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
@@ -181,12 +180,13 @@ export default {
     }
   }
   .chart-main {
-    padding-left: 15px;
+    // padding-left: 15px;
     position: relative;
     margin-top: 10px;
     height: calc(100vh - 87px);
     width: calc(100% - 255px);
     .chart-args {
+      padding-left: 15px;
       .arg {
         margin-bottom: 8px;
         &:last-child {
@@ -195,11 +195,13 @@ export default {
       }
     }
     .chart-filter-container {
+      padding-left: 15px;
+      // background: #fff;
       width: 210px;
       // padding: 10px;
       // border: 1px solid #e6e6e6;
       border-right: 1px solid #e6e6e6;
-      height: calc(100vh - 187px);
+      height: calc(100vh - 165px);
       overflow: auto;
       margin-right: 15px;
     }
@@ -210,7 +212,7 @@ export default {
       padding: 20px;
       background: #fff;
       width: 100%;
-      height: calc(100vh - 202px);
+      height: calc(100vh - 193px);
       width: calc(100% - 210px);
     }
   }

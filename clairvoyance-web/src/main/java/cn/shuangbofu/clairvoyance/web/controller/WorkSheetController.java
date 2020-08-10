@@ -5,6 +5,7 @@ import cn.shuangbofu.clairvoyance.core.db.Field;
 import cn.shuangbofu.clairvoyance.core.db.Node;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
+import cn.shuangbofu.clairvoyance.core.domain.chart.SqlBuiler;
 import cn.shuangbofu.clairvoyance.core.domain.field.GroupField;
 import cn.shuangbofu.clairvoyance.core.enums.FieldType;
 import cn.shuangbofu.clairvoyance.core.enums.NodeType;
@@ -16,6 +17,7 @@ import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.table.Column;
+import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.query.SqlQueryRunner;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import cn.shuangbofu.clairvoyance.web.service.FieldVOloader;
@@ -25,7 +27,6 @@ import cn.shuangbofu.clairvoyance.web.vo.form.RangeRequestForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetImport;
 import cn.shuangbofu.clairvoyance.web.vo.preview.PreviewFilter;
-import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -123,7 +124,7 @@ public class WorkSheetController {
      * @return
      */
     @GetMapping("/list")
-    public Result<List<WorkSheetSimpleVO>> listLimit(@RequestParam(value = "limit", required = false, defaultValue = "10") int limit) {
+    public Result<List<WorkSheetSimpleVO>> listLimit(@RequestParam(value = "limit", required = false, defaultValue = "10000") int limit) {
         return Result.success(WorkSheetSimpleVO.toSimpleVOList(WorkSheetLoader.simpleAllLimit(limit)));
     }
 
@@ -216,13 +217,15 @@ public class WorkSheetController {
      */
     @PostMapping("/preview/{workSheetId}")
     public Result<DataResult> previewData(@PathVariable(value = "workSheetId") Long workSheetId, @RequestBody PreviewFilter condition) {
-        condition.checkParams(FieldVOloader.getOriginFields(workSheetId));
+        condition.checkParams(FieldVOloader.getAllFields(workSheetId));
         WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
         SourceTable table = SqlQueryRunner.getSourceTable(workSheet);
 
         List<Map<String, Object>> result = table.run(condition);
 
-        List<Map<String, Object>> countResult = table.run(() -> Lists.newArrayList("COUNT(1) AS COUNT"));
+        Sql selectCount = SqlBuiler.select("COUNT(1) AS COUNT");
+
+        List<Map<String, Object>> countResult = table.run(selectCount);
         long total = (Long) countResult.get(0).get("COUNT");
         return Result.success(new DataResult(result, total));
     }
@@ -237,15 +240,23 @@ public class WorkSheetController {
     @PostMapping("/range")
     public Result<RangeResult> getRangeData(@RequestBody RangeRequestForm form) {
         Field field = FieldLoader.getField(form.getFieldId());
-        RangeResult rangeResult;
+        RangeResult rangeResult = null;
         if (field.getFieldType().equals(FieldType.origin)) {
             String name = field.getName();
             WorkSheet sheet = WorkSheetLoader.getSheet(form.getWorkSheetId());
             SourceTable table = SqlQueryRunner.getSourceTable(sheet);
-            List<Map<String, Object>> result = table.run(() -> Lists.newArrayList(name));
+
+            Sql selectColumn = SqlBuiler.select(name);
+
+            List<Map<String, Object>> result = table.run(selectColumn);
             rangeResult = new RangeResult(result, name);
-        } else {
-            List<Object> range = GroupField.parseFromConf(field.getConfig()).getRange();
+        } else if (field.getFieldType().equals(FieldType.group)) {
+            List<Field> allFields = FieldLoader.getAllFields(form.getWorkSheetId());
+            GroupField groupField = (GroupField) cn.shuangbofu.clairvoyance.core.domain.field.Field.fromDb(allFields, field);
+            List<String> range = null;
+            if (groupField != null) {
+                range = groupField.getRange();
+            }
             rangeResult = new RangeResult(range);
         }
         return Result.success(rangeResult);

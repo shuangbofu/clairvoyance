@@ -1,10 +1,9 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.base;
 
-import cn.shuangbofu.clairvoyance.core.domain.field.Field;
+import cn.shuangbofu.clairvoyance.core.domain.field.AbstractChartField;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -12,18 +11,13 @@ import lombok.Data;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class FieldAlias extends Field {
+public abstract class FieldAlias extends AbstractChartField {
 
     protected String aliasName;
 
-    @JsonIgnore
-    public String getFinalTitle() {
-        return title;
-    }
-
-    @JsonProperty("finalAliasName")
-    public String getFinalAliasName() {
-        String title = getFinalTitle();
+    @Override
+    public String getRealAliasName() {
+        String title = getRealAliasName0();
         String aliasName = clearSymbol(this.aliasName);
         if (StringUtils.isNotEmpty(aliasName)) {
             title = aliasName;
@@ -33,8 +27,8 @@ public abstract class FieldAlias extends Field {
 
     @JsonIgnore
     public String getQueryFinalName() {
-        String queryName = getQueryName();
-        String finalAliasName = getFinalAliasName();
+        String queryName = getRealName();
+        String finalAliasName = getRealAliasName();
         if (StringUtils.isNotEmpty(finalAliasName)) {
             return String.format(" %s AS `%s` ", queryName, finalAliasName);
         }
@@ -42,21 +36,7 @@ public abstract class FieldAlias extends Field {
     }
 
     @JsonIgnore
-    public String getQueryName() {
-        return name;
-    }
-
-    @JsonIgnore
-    public boolean isValid() {
-        return StringUtils.isNotEmpty(name);
-    }
-
-    private String clearSymbol(String aliasName) {
-        if (aliasName == null) {
-            return null;
-        }
-        return aliasName.replace("`", "")
-                .replace("\"", "")
-                .replace("'", "");
+    protected String getRealAliasName0() {
+        return super.getRealAliasName();
     }
 }

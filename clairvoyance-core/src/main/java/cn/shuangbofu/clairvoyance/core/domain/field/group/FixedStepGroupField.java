@@ -12,7 +12,7 @@ import java.util.List;
 public class FixedStepGroupField extends GroupField {
 
     @Override
-    public List<Object> getRange() {
+    public List<String> getRange() {
         return null;
     }
 }

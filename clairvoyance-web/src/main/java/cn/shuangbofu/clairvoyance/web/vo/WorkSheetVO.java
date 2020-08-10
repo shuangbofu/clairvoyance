@@ -21,7 +21,7 @@ public class WorkSheetVO extends WorkSheetSimpleVO {
     public static WorkSheetVO toVO(WorkSheet workSheet) {
         WorkSheetVO vo = new WorkSheetVO()
                 .setSheetType(workSheet.getSheetType())
-                .setFields(FieldVOloader.getOriginFields(workSheet.getId()));
+                .setFields(FieldVOloader.getAllFields(workSheet.getId()));
 
         vo.setWorkSheetId(workSheet.getId())
                 .setDescription(workSheet.getDescription())

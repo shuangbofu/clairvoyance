@@ -5,7 +5,7 @@ export function getChartOption(chart, data) {
     series: []
   }
   chart.sqlConfig.x.forEach(xl => {
-    const xData = data.map(i => i[xl.finalAliasName])
+    const xData = data.map(i => i[xl.realAliasName])
     option.xAxis.push({
       type: 'category',
       data: xData
@@ -13,7 +13,7 @@ export function getChartOption(chart, data) {
   })
 
   chart.sqlConfig.y.forEach(yl => {
-    const yData = data.map(i => i[yl.finalAliasName])
+    const yData = data.map(i => i[yl.realAliasName])
     option.yAxis.push({
       type: 'value'
     })
@@ -22,6 +22,7 @@ export function getChartOption(chart, data) {
       data: yData
     })
   })
+  console.log(option)
   return option
 }
 

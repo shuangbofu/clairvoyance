@@ -1,6 +1,5 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter;
 
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.meta.utils.SqlUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -16,6 +15,7 @@ public class ExpressionChartFilter extends ChartFilter {
 
     @Override
     public String where() {
-        return SqlUtil.standardWhereSql(sql);
+        sql = SqlUtil.standardWhereSql(sql);
+        return sql.replace("[" + getTitle() + "]", getRealName());
     }
 }

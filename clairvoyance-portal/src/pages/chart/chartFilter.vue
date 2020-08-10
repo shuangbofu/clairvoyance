@@ -8,9 +8,17 @@
       :sort="false"
     >
       筛选器
-      <a-collapse>
-        <a-collapse-panel v-for="(filter, index) in filters" :key="index" :header="filter.title">
-          <a-icon class="icon" type="setting" slot="extra" v-on:click.stop="editFilter(filter)" />
+      <a-collapse :defaultActiveKey="[filters[0].title]" v-if="filters.length > 0">
+        <a-collapse-panel v-for="filter in filters" :key="filter.title" :header="filter.title">
+          <template slot="extra">
+            <a-icon class="icon" type="setting" v-on:click.stop="editFilter(filter)" />
+            <a-icon
+              @click="removeFilter(filter)"
+              class="icon"
+              style="margin-left: 6px;"
+              type="close"
+            />
+          </template>
           <div
             style="color: #666; font-weight: 500;margin-bottom:4px;"
           >{{!filter.included ? '不' :''}}包含以下选项</div>
@@ -31,11 +39,15 @@
     >
       图内筛选器
       <div style="margin-top: 10px;" />
-      <div
-        class="filter-item"
-        v-for="innerFilter in innerFilters"
-        :key="innerFilter.id"
-      >{{innerFilter.title}}</div>
+      <div class="filter-item" v-for="innerFilter in innerFilters" :key="innerFilter.id">
+        {{innerFilter.title}}
+        <a-icon
+          @click="removeInnerFilter(innerFilter)"
+          class="icon"
+          style="margin-left: 6px;"
+          type="close-circle"
+        />
+      </div>
     </draggable>
     <a-modal
       title="编辑筛选项"
@@ -113,6 +125,12 @@ export default {
           return;
         }
         return arr[0]
+    },
+    removeFilter(filter) {
+      this.$store.dispatch('chart/removeFilter',filter)
+    },
+    removeInnerFilter(filter) {
+      this.$store.dispatch('chart/removeInnerFilter', filter)
     }
   }
 }
@@ -122,7 +140,7 @@ export default {
 .all-filter-container {
   display: flex;
   flex-direction: column;
-  margin-top: 10px;
+  padding-top: 10px;
   .filter-container {
     margin-bottom: 10px;
     padding-right: 15px;

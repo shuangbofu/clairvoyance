@@ -2,9 +2,11 @@ package cn.shuangbofu.clairvoyance.web.controller;
 
 import cn.shuangbofu.clairvoyance.core.db.Chart;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
+import cn.shuangbofu.clairvoyance.core.domain.chart.SqlBuiler;
 import cn.shuangbofu.clairvoyance.core.loader.ChartLoader;
 import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
+import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.query.SqlQueryRunner;
 import cn.shuangbofu.clairvoyance.web.vo.ChartVO;
 import cn.shuangbofu.clairvoyance.web.vo.Result;
@@ -52,9 +54,9 @@ public class ChartController {
         Chart chart = ChartLoader.byId(chartId);
         Long workSheetId = chart.getWorkSheetId();
         WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
-        ChartVO chartVO = ChartVO.toVO(chart);
         SourceTable table = SqlQueryRunner.getSourceTable(workSheet);
-        List<Map<String, Object>> result = table.run(chartVO.getSqlConfig());
+        Sql chartSql = SqlBuiler.buildChartSql(chart.getSqlConfig(), workSheetId);
+        List<Map<String, Object>> result = table.run(chartSql);
         return Result.success(result);
     }
 }

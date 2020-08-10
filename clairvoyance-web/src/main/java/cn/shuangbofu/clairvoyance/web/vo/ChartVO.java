@@ -1,16 +1,13 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.core.db.Chart;
-import cn.shuangbofu.clairvoyance.core.db.Field;
 import cn.shuangbofu.clairvoyance.core.domain.chart.AlarmConfig;
 import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSql;
+import cn.shuangbofu.clairvoyance.core.domain.chart.SqlBuiler;
 import cn.shuangbofu.clairvoyance.core.enums.ChartType;
-import cn.shuangbofu.clairvoyance.core.loader.FieldLoader;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.util.List;
 
 /**
  * Created by shuangbofu on 2020/7/30 下午11:08
@@ -40,10 +37,6 @@ public class ChartVO {
 
     public static ChartVO toVO(Chart chart) {
         // fields更新到sql
-        List<Field> fields = FieldLoader.getOriginFields(chart.getWorkSheetId());
-        ChartSql sql = JSON.parseObject(chart.getSqlConfig(), ChartSql.class);
-        sql.setFields(fields);
-
         return new ChartVO()
                 .setChartType(chart.getChartType())
                 .setName(chart.getName())
@@ -53,8 +46,7 @@ public class ChartVO {
                 .setLayoutConfig(chart.getLayoutConfig())
                 .setAlarmConfig(JSON.parseObject(chart.getAlarmConfig(), AlarmConfig.class))
                 .setWorkSheetId(chart.getWorkSheetId())
-                .setSqlConfig(sql)
-                ;
+                .setSqlConfig(SqlBuiler.buildChartSql(chart.getSqlConfig(), chart.getWorkSheetId()));
     }
 
     public Chart toModel() {
@@ -69,10 +61,8 @@ public class ChartVO {
 //            layoutConfig = new JSONObject();
             alarmConfig = new AlarmConfig();
             sqlConfig = ChartSql.defaultValue();
-        } else {
-            List<Field> fields = FieldLoader.getOriginFields(chart.getWorkSheetId());
-            sqlConfig.setFields(fields);
         }
+
         chart
 //                .setLayoutConfig(layoutConfig.toString())
                 .setAlarmConfig(JSON.toJSONString(alarmConfig))

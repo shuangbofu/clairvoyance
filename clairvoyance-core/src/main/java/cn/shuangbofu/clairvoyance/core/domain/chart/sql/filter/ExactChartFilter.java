@@ -1,6 +1,5 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter;
 
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.ChartFilter;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -27,6 +26,6 @@ public class ExactChartFilter extends ChartFilter {
             }
             return i.toString();
         }).collect(Collectors.joining(", "));
-        return " " + getName() + (!included ? " NOT" : "") + " IN ( " + values + ")";
+        return " " + getRealName() + (!included ? " NOT" : "") + " IN ( " + values + ")";
     }
 }

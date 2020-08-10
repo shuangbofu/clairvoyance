@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
+import com.google.common.collect.Lists;
 import lombok.Data;
 
 import java.util.List;
@@ -20,8 +21,10 @@ public class RangeResult {
         total = range.size();
     }
 
-    public RangeResult(List<Object> range) {
-        this.range = range;
+    public <T> RangeResult(List<T> range) {
+        List<Object> objects = Lists.newArrayList();
+        objects.addAll(range);
+        this.range = objects;
         total = range.size();
     }
 }

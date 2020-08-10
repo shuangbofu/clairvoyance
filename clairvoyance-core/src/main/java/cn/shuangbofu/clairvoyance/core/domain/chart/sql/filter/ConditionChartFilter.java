@@ -1,6 +1,5 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter;
 
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.WhereCondition;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ public class ConditionChartFilter extends ChartFilter {
     public String where() {
         if (conditions != null) {
             return conditions.stream().map(i -> {
-                i.setName(getName());
+                i.setName(getRealAliasName());
                 return i.toString();
             }).collect(Collectors.joining(","));
         }

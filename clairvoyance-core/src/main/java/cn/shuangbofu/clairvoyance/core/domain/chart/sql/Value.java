@@ -13,7 +13,8 @@ public class Value extends FieldAlias {
     private String unit;
 
     @Override
-    public String getQueryName() {
+    public String getRealName() {
+        String name = super.getRealName();
         if (aggregator != null) {
             return aggregator.wrapWithField(name);
         }
@@ -21,7 +22,8 @@ public class Value extends FieldAlias {
     }
 
     @Override
-    public String getFinalTitle() {
+    public String getRealAliasName0() {
+        String title = super.getRealAliasName0();
         if (aggregator != null) {
             return aggregator.wrapWithTitle(title);
         }
