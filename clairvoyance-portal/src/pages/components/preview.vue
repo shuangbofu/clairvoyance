@@ -57,7 +57,9 @@ export default {
       this.workSheet.fields.forEach(f => {
         f.width = map[f.name] * 10 + 20;
       });
-      return this.workSheet.fields.map(i => {
+      return this.workSheet.fields
+      .filter(i=>i.fieldType === 'origin')
+      .map(i => {
         let c = {
           dataIndex: i.name,
           title: i.title,

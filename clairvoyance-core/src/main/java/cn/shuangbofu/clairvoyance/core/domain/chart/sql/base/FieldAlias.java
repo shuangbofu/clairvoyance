@@ -14,6 +14,7 @@ import lombok.Data;
 public abstract class FieldAlias extends AbstractChartField {
 
     protected String aliasName;
+    private String description;
 
     @Override
     public String getRealAliasName() {

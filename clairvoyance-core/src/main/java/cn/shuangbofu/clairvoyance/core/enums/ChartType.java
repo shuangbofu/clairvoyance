@@ -19,8 +19,7 @@ public enum ChartType {
     C4(4, "折线图"),
     C5(5, "簇状柱状图"),
     C6(6, "饼图"),
-
-    ;
+    C7(7, "条形图");
     int chartTypeValue;
     String desc;
 }

@@ -13,7 +13,14 @@
 </template>
 
 <script>
+import "echarts/theme/forest";
+import "echarts/theme/eduardo";
 import "echarts/theme/macarons";
+import "echarts/theme/macarons2";
+import "echarts/theme/roma";
+import "echarts/theme/shine";
+import "echarts/theme/infographic";
+import "echarts/theme/dark";
 import { getChartOption } from "./chartPaint.js";
 export default {
   props: ["data", "chart"],

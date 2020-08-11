@@ -105,6 +105,7 @@ export default {
           this.visible = false;
           this.confirmLoading = false;
           this.$emit("refresh");
+          this.$store.commit('chart/CLEAR_CHART')
           this.$router.push({
             name: "编辑图表",
             query: { chartId, workSheetId: this.form.workSheetId }

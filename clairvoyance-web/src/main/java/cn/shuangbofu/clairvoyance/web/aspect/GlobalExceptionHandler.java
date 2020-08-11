@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(OK)
     @ExceptionHandler(RuntimeException.class)
-    public Result runtime(RuntimeException e) {
+    public Result<Object> runtime(RuntimeException e) {
         log.warn(e.getMessage(), e);
         return Result.error(e.getMessage());
     }

@@ -43,7 +43,7 @@ public class ConditionPreviewFilter extends PreviewFilter {
         wheres.forEach(cond -> {
             long count = fields.stream().filter(i -> i.getName().equals(cond.getName())).count();
             if (count == 0) {
-                throw new RuntimeException("不存在字段" + cond.getName());
+                throw new RuntimeException("not found field " + cond.getName());
             }
         });
     }

@@ -29,7 +29,7 @@ public class ExpressionPreviewFilter extends PreviewFilter {
         String notExistKeys = whereKeys.stream().filter(i -> !fields.stream().map(FieldSimpleVO::getTitle).collect(Collectors.toList()).contains(i))
                 .collect(Collectors.joining(","));
         if (StringUtils.isNotEmpty(notExistKeys)) {
-            throw new RuntimeException("不存在字段 " + notExistKeys);
+            throw new RuntimeException("not found fields  " + notExistKeys);
         }
         sql = SqlUtil.standardWhereSql(sql);
         for (FieldSimpleVO field : fields) {

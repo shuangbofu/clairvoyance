@@ -26,7 +26,7 @@ public class Folder {
 
     public Node toNode() {
         if (level > 3) {
-            throw new RuntimeException("超过三级");
+            throw new RuntimeException("more than level 3");
         }
 
         return new Node()

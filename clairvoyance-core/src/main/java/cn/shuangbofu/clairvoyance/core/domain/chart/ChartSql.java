@@ -80,8 +80,7 @@ public class ChartSql implements Sql {
      */
     public void setRealFields(List<Field> fields) {
         List<ChartField> fieldList = Lists.newArrayList();
-        fieldList.addAll(x);
-        fieldList.addAll(y);
+        fieldList.addAll(getXY());
         fieldList.addAll(filters);
         fieldList.addAll(innerFilters);
         for (ChartField field : fieldList) {
@@ -147,7 +146,7 @@ public class ChartSql implements Sql {
         // 检查sort
         if (sort != null) {
             Long fieldId = sort.getId();
-            if (fieldId == null || x.stream().noneMatch(i -> i.getId().equals(fieldId))) {
+            if (fieldId == null || getXY().stream().noneMatch(i -> i.getId().equals(fieldId))) {
                 sort = null;
             }
         }
