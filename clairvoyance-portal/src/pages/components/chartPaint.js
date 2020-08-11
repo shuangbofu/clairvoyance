@@ -6,12 +6,17 @@ export function getChartOption(chart, data) {
 
   // 折线、柱状
   if (['line', 'bar', 'bar2'].includes(chartType)) {
-    const xAxis = xs.map(i => {
+
+    let xAxis = xs.map(i => {
       return {
         type: 'category',
         data: data.map(values => values[i])
       }
     })
+    if (xs.length == 0) {
+      xAxis = [{ type: 'category', data: [] }]
+    }
+
     const yAxis = ys.map(() => { return { type: 'value' } })
     const series = ys.map(i => {
       return {
@@ -40,7 +45,6 @@ export function getChartOption(chart, data) {
       option.xAxis = yAxis
       option.yAxis = xAxis
     }
-
     return option
     // 饼图
   } else if (chartType === 'pie') {

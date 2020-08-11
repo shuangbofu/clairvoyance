@@ -1,7 +1,7 @@
 <template>
   <div class="chart-container">
     <div class="chart-header">
-      <div class="title">{{chart.name}}</div>
+      <div class="title">{{chart.name === '' ? '未命名图表' : chart.name}}</div>
       <div class="button-list">
         <a-icon class="button" type="edit" @click="link2Editor" />
         <a-icon class="button" type="redo" @click="fetchData" />
@@ -21,8 +21,8 @@
               <a-menu-item key="4-1">导出Excel</a-menu-item>
               <a-menu-item key="4-2">快照工作表</a-menu-item>
             </a-sub-menu>
-            <a-menu-item key="5">移动图标</a-menu-item>
-            <a-menu-item key="6">复制图标</a-menu-item>
+            <a-menu-item key="5">移动图表</a-menu-item>
+            <a-menu-item key="6">复制图表</a-menu-item>
             <a-menu-item key="7">删除</a-menu-item>
           </a-menu>
           <a-icon class="button" type="more" />

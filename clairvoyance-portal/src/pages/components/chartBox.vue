@@ -8,7 +8,7 @@
         <div class="value">{{valueCard.value}}</div>
       </div>
     </div>
-    <v-chart theme="macarons" v-else style="padding: 0;" :options="chartOption" />
+    <v-chart ref="chart" theme="macarons" v-else style="padding: 0;" :options="chartOption" />
   </div>
 </template>
 
@@ -42,6 +42,14 @@ export default {
       }
       return res;
     }
+  },
+  mounted() {
+    window.addEventListener('resize', () => {
+        const ref =  this.$refs.chart
+        if(ref) {
+          ref.resize()
+        }
+    }, false)
   }
 };
 </script>
