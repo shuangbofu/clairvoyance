@@ -35,7 +35,6 @@ public abstract class FieldAlias extends AbstractChartField {
         return queryName;
     }
 
-    @JsonIgnore
     protected String getRealAliasName0() {
         return super.getRealAliasName();
     }

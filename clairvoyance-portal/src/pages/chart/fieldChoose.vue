@@ -11,6 +11,10 @@
       <div :key="index" class="field-block" v-for="(f,index) in arrData">
         <a-dropdown>
           <a-menu @click="e => handleMenuClick(e, f)" slot="overlay">
+            <a-menu-item
+              disabled
+              v-if="f.aliasName && f.aliasName !== ''"
+            >{{mode === 'y' ? f.aggregatorAlias : f.name}}</a-menu-item>
             <a-menu-item @click="setField(index)" key="3">设置字段</a-menu-item>
             <a-sub-menu key="aggregator" title="聚合函数" v-if="mode === 'y'">
               <a-menu-item :key="value" v-for="(label, value) in aggregatorFunc">{{label}}</a-menu-item>
@@ -158,6 +162,12 @@ export default {
       this.settingField = this.arrData[index];
     },
     finishSetField() {
+      const aliasName = this.settingField.aliasName
+      const tar=this.arrData.map(i=>i.aliasName).find(i=>i===aliasName)
+      if(tar) {
+        this.$message.error('别名重复')
+        return
+      }
       Object.assign(this.arrData[this.settingFieldIndex], this.settingField);
       this.settingFieldVisible = false;
       this.saveChart();
@@ -222,11 +232,10 @@ export default {
       font-size: 13px;
       line-height: 24px;
       border: 1px solid #e6e6e6;
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
       cursor: pointer;
       .close-icon {
         opacity: 0;
-        // font-size: 13px;
-        // line-height: 24px;
       }
       &:hover {
         .close-icon {

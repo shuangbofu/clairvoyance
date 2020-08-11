@@ -144,7 +144,7 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
         }
 
         if (sort != null && StringUtils.isNotEmpty(sort.getFirst()) && sort.getSecond() != null) {
-            sqlContent += String.format(" ORDER BY %s %s", sort.getFirst(), sort.getSecond().get());
+            sqlContent += String.format(" ORDER BY `%s` %s", sort.getFirst(), sort.getSecond().get());
         }
 
         if (sql.last() != null) {

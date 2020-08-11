@@ -13,9 +13,9 @@
           <template slot="extra">
             <a-icon class="icon" type="setting" v-on:click.stop="editFilter(filter)" />
             <a-icon
+              style="margin-left: 6px;"
               @click="removeFilter(filter)"
               class="icon"
-              style="margin-left: 6px;"
               type="close"
             />
           </template>
@@ -54,7 +54,7 @@
       :destroyOnClose="true"
       :visible="filterAddModalVisible"
       @ok="handleAddFilter"
-      @cancel="addField = null; filterAddModalVisible = false;"
+      @cancel="filterAddModalVisible = false;"
     >
       <add-filter v-if="filterAddModalVisible" />
     </a-modal>
@@ -146,13 +146,17 @@ export default {
     padding-right: 15px;
     height: calc(70% - 12px);
     color: #666;
-    font-size: 15px;
+    font-size: 14px;
     .ant-collapse {
       margin-top: 10px;
       font-size: 11px;
       .ant-collapse-item > .ant-collapse-header {
         padding: 5px 10px;
         padding-left: 20px;
+        font-size: 13px;
+        .icon {
+          font-size: 12px;
+        }
         .ant-collapse-arrow {
           left: 6px;
           font-size: 10px;
@@ -161,18 +165,23 @@ export default {
     }
     .icon {
       &:hover {
-        color: #666;
+        color: #4876ff;
       }
     }
   }
   .inner-filter-container {
     color: #666;
-    font-size: 15px;
+    font-size: 14px;
     height: calc(30% - 7.5px);
     .filter-item {
       margin-bottom: 6px;
-      font-size: 12px;
+      font-size: 13px;
       color: #777;
+      display: flex;
+      align-items: center;
+      .icon {
+        margin-left: 10px;
+      }
     }
   }
   .new-field {

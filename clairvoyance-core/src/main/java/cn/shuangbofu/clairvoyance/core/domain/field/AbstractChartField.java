@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.domain.field;
 
+import cn.shuangbofu.clairvoyance.core.enums.ColumnType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -50,6 +51,11 @@ public abstract class AbstractChartField implements ChartField {
     }
 
     @Override
+    public ColumnType getType() {
+        return getValue(Field::getType);
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
@@ -64,7 +70,7 @@ public abstract class AbstractChartField implements ChartField {
     }
 
     @JsonIgnore
-    public String getValue(Function<Field, String> get) {
+    public <T> T getValue(Function<Field, T> get) {
         if (realField == null) {
             return null;
         }

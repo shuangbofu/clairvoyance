@@ -232,7 +232,7 @@ public class WorkSheetController {
 
     /**
      * 工作表获取某字段记录集
-     * TODO 需要考虑分组字段的情况
+     * 考虑分组字段的情况
      *
      * @param form
      * @return
@@ -246,11 +246,12 @@ public class WorkSheetController {
             WorkSheet sheet = WorkSheetLoader.getSheet(form.getWorkSheetId());
             SourceTable table = SqlQueryRunner.getSourceTable(sheet);
 
-            Sql selectColumn = SqlBuiler.select(name);
+            Sql selectColumn = SqlBuiler.select("`" + name + "`");
 
             List<Map<String, Object>> result = table.run(selectColumn);
             rangeResult = new RangeResult(result, name);
         } else if (field.getFieldType().equals(FieldType.group)) {
+
             List<Field> allFields = FieldLoader.getAllFields(form.getWorkSheetId());
             GroupField groupField = (GroupField) cn.shuangbofu.clairvoyance.core.domain.field.Field.fromDb(allFields, field);
             List<String> range = null;

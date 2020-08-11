@@ -35,10 +35,10 @@
         <a-button icon="plus" type="link" size="small"></a-button>
         <a-menu slot="overlay">
           <a-menu-item>
-            <a href="javascript:;">添加计算字段</a>
+            <a href="javascript:;" @click="addField('computed')">添加计算字段</a>
           </a-menu-item>
           <a-menu-item>
-            <a href="javascript:;">添加分组字段</a>
+            <a href="javascript:;" @click="addField('group')">添加分组字段</a>
           </a-menu-item>
           <a-menu-item>
             <a href="javascript:;" disabled>添加参数</a>
@@ -46,19 +46,45 @@
         </a-menu>
       </a-dropdown>
     </a-tabs>
+    <a-modal
+      :title="`添加${fieldType === 'group' ? '分组': '计算'}字段`"
+      :destroyOnClose="true"
+      :visible="fieldAddVisible"
+      @ok="handleAddField"
+      @cancel="fieldAddVisible = false;"
+    >
+      <group-field v-if="fieldType === 'group'" />
+    </a-modal>
   </div>
 </template>
 
 <script>
+import GroupField from './groupField'
 import draggable from 'vuedraggable'
 export default {
+  data() {
+    return {
+      fieldAddVisible:false,
+      fieldType: ''
+    }
+  },
   computed: {
     fields() {
       return this.$store.getters['chart/fields']
     }
   },
   components: {
-    draggable
+    draggable,
+    GroupField
+  },
+  methods: {
+    handleAddField() {
+
+    },
+    addField(fieldType) {
+      this.fieldAddVisible = true
+      this.fieldType = fieldType
+    }
   }
 }
 </script>

@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.domain.field;
 
+import cn.shuangbofu.clairvoyance.core.enums.ColumnType;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public abstract class Field {
     protected Long id;
     protected String title;
+    protected ColumnType type;
     protected String name;
     protected String description;
 
@@ -36,7 +38,6 @@ public abstract class Field {
                 GroupField groupField = JSON.parseObject(config, GroupField.class);
                 Optional<cn.shuangbofu.clairvoyance.core.db.Field> any = fields.stream().filter(i -> i.getId().equals(groupField.getRefId())).findAny();
                 any.ifPresent(value -> groupField.setRefField(fromDb(fields, value)));
-
                 finalField = groupField;
                 break;
             case computed:
@@ -48,7 +49,10 @@ public abstract class Field {
                 break;
         }
         if (finalField != null) {
-            return finalField.setId(field.getId()).setName(field.getName()).setTitle(field.getTitle());
+            return finalField.setId(field.getId())
+                    .setName(field.getName())
+                    .setTitle(field.getTitle())
+                    .setType(field.getColumnType());
         }
         return null;
     }

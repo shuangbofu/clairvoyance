@@ -5,7 +5,7 @@ export default {
   state: {
     chartId: '',
     chart: {},
-    workSheet: {},
+    workSheet: null,
     chartData: [],
 
     // 编辑筛选项
@@ -25,18 +25,15 @@ export default {
   },
   mutations: {
     CLEAR_CHART(state) {
-      state.workSheet = {}
       state.chartData = []
+      state.workSheet = null
     },
     INIT_CHART(state, data) {
       state.chart = data
-      this.commit('chart/CLEAR_CHART')
+      state.chartData = []
     },
     INIT_CHART_DATA(state, data) {
       state.chartData = data
-    },
-    INIT_WORKSHEET(state, data) {
-      state.workSheet = data
     },
     SAVE_FILTER(state) {
       const filters = state.chart.sqlConfig.filters
@@ -66,9 +63,12 @@ export default {
           commit('INIT_CHART_DATA', data)
         });
     },
-    initWorkSheet({ commit }, workSheetId) {
+    initWorkSheet({ state }, workSheetId) {
+      if (state.workSheet !== null) {
+        return
+      }
       axios.get(`/workSheet?id=${workSheetId}`).then(data => {
-        commit('INIT_WORKSHEET', data)
+        state.workSheet = data
       });
     },
     saveChart({ dispatch, state }, notInit) {

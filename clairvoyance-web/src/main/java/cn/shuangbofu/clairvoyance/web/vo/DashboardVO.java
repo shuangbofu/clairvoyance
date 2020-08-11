@@ -56,7 +56,7 @@ public class DashboardVO extends DashboardSimpleVO {
         return new Dashboard().setId(getRefId())
                 .setRemarks(getRemarks())
                 .setName(getName())
-                .setLayoutConfig(dashboardLayout.toString())
+                .setLayoutConfig(dashboardLayout)
                 ;
     }
 }

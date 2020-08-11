@@ -14,6 +14,7 @@ public class JSON {
 
     public static final ObjectMapper MAPPER = new ObjectMapper()
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+//            .enable(SerializationFeature.INDENT_OUTPUT)
             .configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
 
     public static <T> T parseObject(String json, Class<T> tClass) {

@@ -1,5 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.domain.field;
 
+import cn.shuangbofu.clairvoyance.core.enums.ColumnType;
+
 import java.util.List;
 
 /**
@@ -12,6 +14,8 @@ public interface ChartField {
     Long getId();
 
     String getTitle();
+
+    ColumnType getType();
 
     String getRealName();
 

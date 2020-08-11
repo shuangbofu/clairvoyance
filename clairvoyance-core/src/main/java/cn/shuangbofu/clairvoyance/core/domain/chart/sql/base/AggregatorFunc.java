@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.base;
 
+import cn.shuangbofu.clairvoyance.core.enums.ColumnType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -22,6 +23,21 @@ public enum AggregatorFunc {
 
     private final String desc;
     private final String funcFormat;
+
+    public static AggregatorFunc defaultFunc(ColumnType type) {
+        if (type == null) {
+            return null;
+        }
+
+        switch (type) {
+            case text:
+                return COUNT;
+            case value:
+                return SUM;
+            default:
+                return null;
+        }
+    }
 
     public String wrapWithField(String field) {
         return String.format(funcFormat, field);

@@ -24,7 +24,7 @@ public class HiveSourceTable extends JdbcSourceTable {
 
     @Override
     protected Pair<String, List<Column>> parse2MetaInfo(String createTableSql) {
-        // TODO
+        // TODO 解析createTableSql
         return new Pair<>("", Lists.newArrayList());
     }
 
