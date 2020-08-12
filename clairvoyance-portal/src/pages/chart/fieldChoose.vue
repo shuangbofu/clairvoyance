@@ -14,9 +14,9 @@
       </div>
       <div :key="index" class="field-block" v-for="(f,index) in arrData">
         <div
+          @click="rollUp(index)"
           v-if="mode ==='drill'"
-          :class="['drill-field', drillLevel === index ? 'in-level':'']"
-          style="display: flex; align-items:center;"
+          :class="['drill-field', drillLevel === index ? 'in-level':'',drillLevel < index ? 'disabled' : '']"
         >
           <div class="field-block-main">
             {{f.realAliasName}}
@@ -28,10 +28,15 @@
               type="close-circle"
             />
           </div>
-          <a-icon type="right" style="font-size: 13px;margin-left: 10px;color:#888;" />
+          <a-icon class="arrow-right" type="right" v-if="index < arrData.length -1" />
         </div>
         <a-dropdown v-else>
           <a-menu @click="e => handleMenuClick(e, f)" slot="overlay">
+            <a-menu-item
+              v-if="mode === 'x' && index === 0 && drillFields.length === 0"
+              @click="openDrill(f.id)"
+              key="drill"
+            >下钻</a-menu-item>
             <a-menu-item
               disabled
               v-if="f.aliasName && f.aliasName !== ''"
@@ -223,7 +228,21 @@
                         name: this.mode,
                         index
                     })
+                } else if(e.moved) {
+                  // console.log(e.moved)
+                  const newIndex = e.moved.newIndex
+                  const oldIndex = e.moved.oldIndex
+                  this.$store.dispatch('chart/moveField',{
+                    newIndex,oldIndex,
+                    name: this.mode
+                  })
                 }
+            },
+            rollUp(index) {
+              this.$store.dispatch('chart/rollUp',index)
+            },
+            openDrill(id) {
+              this.$store.dispatch('chart/openDrill',id)
             }
         }
     };
@@ -260,20 +279,29 @@
   .field-block {
     display: flex;
     margin-right: 10px;
-
-    &:first-child {
-      margin-left: 10px;
-      background: red;
-    }
     .drill-field {
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      .arrow-right {
+        font-size: 13px;
+        margin-left: 6px;
+        color: #888;
+      }
       &.in-level {
         .field-block-main {
-          border-color: blue !important;
+          border-color: #4876ff !important;
+        }
+      }
+      &.disabled {
+        .field-block-main {
+          cursor: default;
         }
       }
       .field-block-main {
         background: transparent !important;
-        border-color: #333;
+        border: 2px solid #e6e6e6 !important;
+        line-height: 20px;
         &:hover {
           border-color: yellow;
         }
@@ -289,9 +317,12 @@
       line-height: 24px;
       border: 1px solid #e6e6e6;
       box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      box-sizing: border-box;
       cursor: pointer;
       &.drill {
-        border-color: red;
+        border: 2px solid red !important;
+        background: transparent;
+        line-height: 20px;
       }
 
       .close-icon {
@@ -313,7 +344,6 @@
 
   .add-button {
     margin-left: 10px;
-    // flex-flow: ;
   }
 }
 </style>

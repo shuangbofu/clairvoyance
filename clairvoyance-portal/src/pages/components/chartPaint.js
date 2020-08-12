@@ -3,7 +3,6 @@ export function getChartOption(chartLayer, data) {
   const xs = chartLayer.x.map(i => i.realAliasName)
   const ys = chartLayer.y.map(i => i.realAliasName)
   console.log(chartType)
-  console.log(chartLayer)
 
   // 折线、柱状
   if (['line', 'bar', 'bar2'].includes(chartType)) {
@@ -91,7 +90,7 @@ export function getChartOption(chartLayer, data) {
         }
       })
     } else {
-      throw new Error('错误')
+      throw new Error('不符合条件，无法绘制饼图')
     }
     return option
     // 计量图

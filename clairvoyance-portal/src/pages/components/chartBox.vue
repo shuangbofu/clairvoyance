@@ -8,7 +8,16 @@
         <div class="value">{{valueCard.value}}</div>
       </div>
     </div>
-    <v-chart ref="chart" theme="macarons" v-else style="padding: 0;" :options="chartOption" />
+    <template v-else>
+      <v-chart
+        @click="onClick"
+        ref="chart"
+        theme="macarons"
+        style="padding: 0;"
+        :options="chartOption"
+      />
+    </template>
+    <slot name="footer" />
   </div>
 </template>
 
@@ -27,9 +36,19 @@ export default {
   data() {
     return {};
   },
+  watch: {
+    data() {
+      this.resize()
+    }
+  },
   computed: {
     chartOption() {
-      return getChartOption(this.chartLayer, this.data);
+      try {
+        return getChartOption(this.chartLayer, this.data);
+      } catch(msg) {
+        this.$message.eror(msg)
+        return {}
+      }
     },
     valueCard() {
       let res = {};
@@ -45,11 +64,21 @@ export default {
   },
   mounted() {
     window.addEventListener('resize', () => {
-        const ref =  this.$refs.chart
+        this.resize()
+    }, false)
+  },
+  methods: {
+    resize() {
+      console.log('resize')
+      const ref =  this.$refs.chart
         if(ref) {
           ref.resize()
         }
-    }, false)
+    },
+    onClick(e) {
+      console.log(this.chartLayer.x.length, this.chartLayer.y.length)
+      this.$emit('click',e)
+    }
   }
 };
 </script>

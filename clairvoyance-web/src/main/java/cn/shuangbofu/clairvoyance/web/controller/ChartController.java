@@ -49,9 +49,8 @@ public class ChartController {
         return Result.success(chart.getId());
     }
 
-    @GetMapping("/data")
-    @ApiOperation("查询图表数据")
-    public Result<List<Map<String, Object>>> getChartData(@RequestParam("chartId") Long chartId, @RequestBody(required = false) DrillParam param) {
+    @PostMapping("/data/{chartId}")
+    public Result<List<Map<String, Object>>> getChartData(@PathVariable("chartId") Long chartId, @RequestBody(required = false) DrillParam param) {
         Chart chart = ChartLoader.byId(chartId);
         Long workSheetId = chart.getWorkSheetId();
         WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);

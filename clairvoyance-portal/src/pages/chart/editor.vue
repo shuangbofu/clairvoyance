@@ -12,15 +12,17 @@
         </div>
         <field-list />
       </div>
-      <div class="chart-main">
+      <div class="chart-right">
         <div class="chart-args">
-          <field-choose mode="drill" class="arg" />
+          <field-choose mode="drill" class="arg" v-if="hasDrill" />
           <field-choose mode="x" class="arg" />
           <field-choose mode="y" class="arg" />
         </div>
-        <div style="height: calc(100vh - 167px); display:flex;">
+        <div class="chart-main" :style="{
+          'height': chartMainheight
+        }">
           <chart-filter class="chart-filter-container" />
-          <chart-box class="chart-box" :chart-layer="chartLayer" :data="chartData">
+          <chart-box @click="onClick" class="chart-box" :chart-layer="chartLayer" :data="chartData">
             <div slot="header" style="display:flex; align-items: center;">
               <a-icon
                 v-if="innerFilters.length > 0"
@@ -52,6 +54,13 @@
                 </a-select>
               </div>
             </div>
+            <div slot="footer" class="chart-footer" v-if="drillValues.length>0">
+              <drill-crumbs
+                :first="drillFields[0].realAliasName"
+                :arr="drillValues"
+                @click="rollUp"
+              />
+            </div>
           </chart-box>
         </div>
       </div>
@@ -78,6 +87,7 @@ import DataPreview from "../components/preview";
 import RightController from "./rightController";
 import ChartBox from "../components/chartBox";
 import FieldChoose from "./fieldChoose";
+import DrillCrumbs from '../components/drillCrumbs'
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -94,8 +104,20 @@ export default {
       'sqlConfig',
       'chartData',
       'innerFilters',
-      'innnerFilterRangeData'
-    ])
+      'innnerFilterRangeData',
+      'drillValues'
+    ]),
+    hasDrill() {
+      return this.drillFields.length > 0
+    },
+    chartMainheight() {
+      let minus = 167
+      if(this.hasDrill) {
+        minus += 48
+      }
+      console.log(minus)
+      return 'calc(100vh - ' + minus + 'px)'
+    }
   },
   created() {
     const chartId = this.$route.query.chartId;
@@ -109,6 +131,7 @@ export default {
     DataPreview,
     FieldList,
     ChartFilter,
+    DrillCrumbs
   },
   methods: {
     getWorkSheets() {
@@ -125,6 +148,12 @@ export default {
           .toLowerCase()
           .indexOf(input.toLowerCase()) >= 0
       );
+    },
+    onClick(e) {
+      this.$store.dispatch('chart/drill', e.name)
+    },
+    rollUp(index) {
+      this.$store.dispatch('chart/rollUp',index)
     }
   }
 };
@@ -182,7 +211,7 @@ export default {
       cursor: pointer;
     }
   }
-  .chart-main {
+  .chart-right {
     // padding-left: 15px;
     position: relative;
     margin-top: 10px;
@@ -197,26 +226,32 @@ export default {
         }
       }
     }
-    .chart-filter-container {
-      padding-left: 15px;
-      // background: #fff;
-      width: 210px;
-      // padding: 10px;
-      // border: 1px solid #e6e6e6;
-      border-right: 1px solid #e6e6e6;
-      height: calc(100vh - 165px);
-      overflow: auto;
-      margin-right: 15px;
-    }
-    .chart-box {
-      margin-top: 15px;
-      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
-        0 16px 24px 0 rgba(81, 129, 228, 0.1);
-      padding: 20px;
-      background: #fff;
-      width: 100%;
-      height: calc(100vh - 193px);
-      width: calc(100% - 210px);
+    .chart-main {
+      // height: calc(100vh - 215px);
+      display: flex;
+      .chart-filter-container {
+        padding-left: 15px;
+        width: 210px;
+        border-right: 1px solid #e6e6e6;
+        height: 100%;
+        overflow: auto;
+        margin-right: 15px;
+      }
+      .chart-box {
+        margin-top: 15px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+          0 16px 24px 0 rgba(81, 129, 228, 0.1);
+        padding: 20px;
+        background: #fff;
+        width: 100%;
+        height: calc(100% - 27px);
+        .echarts {
+          height: calc(100% - 55px);
+        }
+      }
+      .chart-footer {
+        padding: 10px;
+      }
     }
   }
 }

@@ -60,7 +60,7 @@
 
 <script>
 import Catalogue from "../components/catalogue";
-import ChartItem from "../components/chartItem";
+import ChartItem from "./chartItem";
 export default {
   data() {
     return {

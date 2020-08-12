@@ -18,7 +18,6 @@ import lombok.experimental.Accessors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -111,13 +110,9 @@ public class ChartSql implements Sql {
         actualFilters.addAll(innerFilters);
 
         // 下钻
-        int toIndex = drillLevel() - 1;
-        List<Object> values = drillValues();
-        if (values.size() > 0 && toIndex > -1) {
-            List<DrillField> drillFields = this.drillFields.subList(0, toIndex);
-            if (drillFields.size() == values.size()) {
-                throw new RuntimeException("error");
-            }
+        List<Object> values = drillParam.getValues();
+        if (values.size() > 0) {
+            List<DrillField> drillFields = this.drillFields.subList(0, drillLevel());
             for (int i = 0; i < drillFields.size(); i++) {
                 Drill drill = new Drill(drillFields.get(i), values.get(i));
                 actualFilters.add(drill);
@@ -154,11 +149,6 @@ public class ChartSql implements Sql {
 
     @JsonIgnore
     private int drillLevel() {
-        return Optional.ofNullable(drillParam).orElse(DrillParam.empty()).getLevel();
-    }
-
-    @JsonIgnore
-    private List<Object> drillValues() {
-        return Optional.ofNullable(drillParam).orElse(DrillParam.empty()).getValues();
+        return drillParam.getLevel();
     }
 }

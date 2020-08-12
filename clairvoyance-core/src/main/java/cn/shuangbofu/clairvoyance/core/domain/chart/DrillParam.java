@@ -12,10 +12,6 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 public class DrillParam {
-    private int level;
-    private List<Object> values;
-
-    public static DrillParam empty() {
-        return new DrillParam().setLevel(0).setValues(new ArrayList<>());
-    }
+    private int level = 0;
+    private List<Object> values = new ArrayList<>();
 }

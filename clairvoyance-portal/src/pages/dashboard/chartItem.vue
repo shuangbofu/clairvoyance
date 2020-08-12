@@ -29,21 +29,39 @@
         </a-dropdown>
       </div>
     </div>
-    <chart-box
-      style="position: relative; width: calc(100% - 10px); height: 300px;"
-      :chart-layer="chart.sqlConfig.layers[0]"
-      :data="chartData"
+    <div :style="{
+      height: `${301 - (drillParam.values.length > 0 ? 21: 0)}px`
+    }">
+      <chart-box
+        ref="chartBox"
+        @click="onClick"
+        style="position: relative; width: calc(100% - 10px); height: 100%;"
+        :chart-layer="chart.sqlConfig.layers[drillParam.level]"
+        :data="chartData"
+      />
+    </div>
+    <drill-crumbs
+      slot="footer"
+      v-if="drillParam.values.length > 0"
+      :first="chart.sqlConfig.drillFields[0].realAliasName"
+      :arr="drillParam.values"
+      @click="rollUp"
     />
   </div>
 </template>
 
 <script>
 import ChartBox from "../components/chartBox";
+import DrillCrumbs from '../components/drillCrumbs'
 export default {
   props: ["chart"],
   data() {
     return {
-      chartData: []
+      chartData: [],
+      drillParam: {
+        level: 0,
+        values:[]
+      }
     };
   },
   created() {
@@ -55,11 +73,12 @@ export default {
     }
   },
   components: {
-    ChartBox
+    ChartBox,
+    DrillCrumbs
   },
   methods: {
     fetchData() {
-      this.$axios.get(`/chart/data?chartId=${this.chart.chartId}`,{
+      this.$axios.post(`/chart/data/${this.chart.chartId}`,this.drillParam,{
           timeout: 10000000
         }).then(data => {
         this.chartData = data;
@@ -68,6 +87,23 @@ export default {
     link2Editor() {
       this.$store.commit('chart/CLEAR_CHART')
       this.$router.push({name: '编辑图表', query:{chartId: this.chart.chartId}})
+    },
+    // 和chart.js vuex中 下钻和上卷执行操作相同
+    onClick(e) {
+      if(this.drillParam.level + 1 < this.chart.sqlConfig.drillFields.length) {
+        this.drillParam.values.push(e.name)
+        this.drillParam.level+=1
+        this.fetchData()
+      }
+    },
+    rollUp(index) {
+      if (index >= this.drillParam.level) {
+        return;
+      }
+      this.drillParam.values = this.drillParam.values.slice(0, index)
+      this.chartData = []
+      this.drillParam.level = index
+      this.fetchData()
     }
   }
 };
