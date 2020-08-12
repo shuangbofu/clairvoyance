@@ -58,6 +58,14 @@ public class SqlUtil {
         return origin.replace("'", "").replace("\"", "");
     }
 
+    public static String standardValue(Object value) {
+        String v = value.toString();
+        if (value instanceof String) {
+            v = "'" + SqlUtil.clearQuotationMark(v) + "'";
+        }
+        return v;
+    }
+
     /**
      * 检查并标准化每个where片段 (xxx [=,>=,<= etc] xxx)
      *

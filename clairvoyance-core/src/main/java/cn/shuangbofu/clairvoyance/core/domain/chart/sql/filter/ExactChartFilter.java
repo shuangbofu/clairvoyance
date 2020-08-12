@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter;
 
+import cn.shuangbofu.clairvoyance.core.meta.utils.SqlUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -20,12 +21,7 @@ public class ExactChartFilter extends ChartFilter {
         if (range == null || range.size() == 0) {
             return null;
         }
-        String values = range.stream().map(i -> {
-            if (i instanceof String) {
-                return "'" + i.toString() + "'";
-            }
-            return i.toString();
-        }).collect(Collectors.joining(", "));
+        String values = range.stream().map(SqlUtil::standardValue).collect(Collectors.joining(", "));
         return " " + getRealName() + (!included ? " NOT" : "") + " IN ( " + values + ")";
     }
 }

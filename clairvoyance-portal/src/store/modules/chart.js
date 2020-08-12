@@ -3,8 +3,10 @@ import Vue from 'vue'
 export default {
   namespaced: true,
   state: {
+    drillLevel: 0,
     chartId: '',
     chart: {},
+
     workSheet: null,
     chartData: [],
 
@@ -13,15 +15,25 @@ export default {
     rangeData: [],
   },
   getters: {
-    sqlConfig: state => state.chart.sqlConfig,
-    chart: state => state.chart,
-    chartData: state => state.chartData,
     workSheet: state => state.workSheet,
     fields: state => state.workSheet.fields,
+
+    chartData: state => state.chartData,
+    chart: state => state.chart,
+    layers: (state, getters) => getters.sqlConfig.layers,
+    chartLayer: (state, getters) => getters.layers[state.drillLevel],
+
+    // 下钻字段，图层中使用
+    drillLevel: state => state.drillLevel,
+    drillFields: (state, getters) => getters.sqlConfig.drillFields,
+    drillField: (state, getters) => getters.drillFields[state.drillLevel],
+
+    sqlConfig: state => state.chart.sqlConfig,
     filters: (state, getters) => getters.sqlConfig.filters,
+    innerFilters: (state, getters) => getters.sqlConfig.innerFilters,
+
     editingFilter: state => state.editingFilter,
     rangeData: state => state.rangeData,
-    innerFilters: (state, getters) => getters.sqlConfig.innerFilters,
   },
   mutations: {
     CLEAR_CHART(state) {
@@ -31,20 +43,11 @@ export default {
     INIT_CHART(state, data) {
       state.chart = data
       state.chartData = []
+      // state.drillLevel = 0
     },
     INIT_CHART_DATA(state, data) {
       state.chartData = data
     },
-    SAVE_FILTER(state) {
-      const filters = state.chart.sqlConfig.filters
-      const editingFilter = state.editingFilter
-      const target = filters.find(i => i.id === editingFilter.id)
-      if (target) {
-        Object.assign(target, editingFilter)
-      } else {
-        filters.push(editingFilter)
-      }
-    }
   },
   actions: {
     initChart({ dispatch, commit }, chartId) {
@@ -77,10 +80,6 @@ export default {
           dispatch('initChart', state.chart.chartId);
         }
       });
-    },
-    chooseField({ dispatch, state }, { mode, data }) {
-      state.chart.sqlConfig[mode] = data
-      return dispatch('saveChart')
     },
     editFilter({ state, dispatch }, data) {
       let filter;
@@ -115,27 +114,34 @@ export default {
     newFilter({ dispatch }, data) {
       dispatch('editFilter', data)
     },
-    saveFilter({ commit, dispatch }) {
-      commit('SAVE_FILTER')
+    saveFilter({ getters, dispatch }) {
+      const filters = getters.filters
+      const editingFilter = getters.editingFilter
+      const target = filters.find(i => i.id === editingFilter.id)
+      if (target) {
+        Object.assign(target, editingFilter)
+      } else {
+        filters.push(editingFilter)
+      }
       return dispatch('saveChart')
     },
-    newInnerFilter({ state, dispatch }, data) {
-      state.chart.sqlConfig.innerFilters.push({
+    newInnerFilter({ getters, dispatch }, data) {
+      getters.innerFilters.push({
         filterType: 'inner',
         range: [],
         ...data
       })
       return dispatch('saveChart')
     },
-    initInnerFilterRange({ state }, id) {
-      const targ = state.chart.sqlConfig.innerFilters.find(i => i.id === id)
-      const filter = state.chart.sqlConfig.filters.find(i => i.id === id)
+    initInnerFilterRange({ getters }, id) {
+      const targ = getters.innerFilters.find(i => i.id === id)
+      const filter = getters.filters.find(i => i.id === id)
       if (filter && filter.included) {
         Vue.set(targ, 'rangeData', filter.range)
         return
       }
       axios.post('/workSheet/range', {
-        workSheetId: state.workSheet.workSheetId,
+        workSheetId: getters.workSheet.workSheetId,
         fieldId: id
       }, { timeout: 10000000 }).then(data => {
         let rangeData = disinct(data.range)
@@ -145,25 +151,57 @@ export default {
         Vue.set(targ, 'rangeData', rangeData)
       })
     },
-    setInnerFilterRnage({ state, dispatch }, { id, value }) {
-      state.chart.sqlConfig.innerFilters.find(i => i.id === id).range = value ? [value] : []
+    setInnerFilterRnage({ getters, dispatch }, { id, value }) {
+      getters.innerFilters.find(i => i.id === id).range = value ? [value] : []
       return dispatch('saveChart')
     },
-    removeFilter({ state, dispatch }, filter) {
-      const filters = state.chart.sqlConfig.filters
+    removeFilter({ getters, dispatch }, filter) {
+      const filters = getters.filters
       const index = filters.findIndex(i => i.id === filter.id)
       if (index !== -1) {
         filters.splice(index, 1)
         return dispatch('saveChart')
       }
     },
-    removeInnerFilter({ state, dispatch }, filter) {
-      const filters = state.chart.sqlConfig.innerFilters
+    removeInnerFilter({ getters, dispatch }, filter) {
+      const filters = getters.innerFilters
       const index = filters.findIndex(i => i.id === filter.id)
       if (index !== -1) {
         filters.splice(index, 1)
         return dispatch('saveChart')
       }
+    },
+    addField({ getters, dispatch }, { name, index, data }) {
+      if (name === 'drill') {
+        // if (getters.drillFields.length == 0) {
+
+        // }
+        console.log({
+          x: [{ id: data.id }],
+          y: getters.chartLayer.y,
+          sort: getters.chartLayer.sort,
+          chartType: getters.chartLayer.chartType
+        })
+        getters.layers.push({
+          x: [{ id: data.id }],
+          y: getters.chartLayer.y,
+          sort: getters.chartLayer.sort
+        })
+        getters.drillFields.push(data)
+      } else {
+        getters.chartLayer[name].splice(index, 0, data)
+      }
+      return dispatch('saveChart')
+    },
+    removeDrillField({ dispatch, getters }, index) {
+      getters.drillFields.splice(index, 1)
+      getters.drillFields.length
+      if (getters.drillFields.length <= 1) {
+        getters.sqlConfig.drillFields = []
+        getters.sqlConfig.layers.splice(1, getters.sqlConfig.layers.length - 1)
+      }
+      // getters.drillFields.length
+      return dispatch('saveChart')
     }
   },
 }

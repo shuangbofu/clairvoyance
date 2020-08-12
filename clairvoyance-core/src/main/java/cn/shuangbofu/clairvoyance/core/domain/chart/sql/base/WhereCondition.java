@@ -17,9 +17,6 @@ public class WhereCondition {
 
     @Override
     public String toString() {
-        if (value instanceof String) {
-            value = "'" + SqlUtil.clearQuotationMark((String) value) + "'";
-        }
-        return operation.where(name, value);
+        return operation.where(name, SqlUtil.standardValue(value));
     }
 }

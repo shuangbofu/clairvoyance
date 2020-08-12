@@ -15,7 +15,7 @@
           <a-input v-model="chart.name"></a-input>
         </a-form-model-item>
         <a-form-model-item label="图表类型">
-          <a-radio-group v-model="chart.chartType" @change="changeChartType">
+          <a-radio-group v-model="chartLayer.chartType" @change="changeChartType">
             <a-radio-button
               v-for="chartType in chartTypes"
               :key="chartType.name"
@@ -29,14 +29,19 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { chartTypes } from "../components/chartPaint.js";
 export default {
-  props: ["chart"],
   data() {
     return {
       visible: false,
       chartTypes
     };
+  },
+  computed: {
+    ...mapGetters('chart',[
+      'chart',
+      'chartLayer'])
   },
   methods: {
     changeChartType() {

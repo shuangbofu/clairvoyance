@@ -1,18 +1,16 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart;
 
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartInnerFilter;
 import cn.shuangbofu.clairvoyance.core.domain.field.ChartField;
+import cn.shuangbofu.clairvoyance.core.domain.field.DrillField;
 import cn.shuangbofu.clairvoyance.core.domain.field.Field;
-import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -33,40 +31,35 @@ import java.util.stream.Collectors;
 public class ChartSql implements Sql {
 
     /**
-     * 筛选器
-     */
-    List<ChartFilter> filters;
-
-    /**
      * 图内筛选器
      */
     List<ChartInnerFilter> innerFilters;
 
     /**
-     * 维度，groupBy
+     * 筛选器
      */
-    List<Dimension> x;
+    List<ChartFilter> filters;
 
     /**
-     * 数值，select
+     * 一个图表多个图层，下钻
      */
-    List<Value> y;
+    List<ChartLayer> layers;
 
     /**
-     * 排序
+     * 下钻字段
      */
-    Sort sort;
+    List<DrillField> drillFields;
 
-    /**
-     * 对比和次轴后期可以在这里扩展
-     */
+    @JsonIgnore
+    private DrillParam drillParam;
 
     public static ChartSql defaultValue() {
-        return new ChartSql().setFilters(new ArrayList<>())
+        return new ChartSql()
+                .setFilters(new ArrayList<>())
                 .setInnerFilters(new ArrayList<>())
-                .setX(new ArrayList<>())
-                .setY(new ArrayList<>())
-                .setSort(new Sort());
+                .setDrillFields(new ArrayList<>())
+                .setLayers(Lists.newArrayList(ChartLayer.defaultLayer()))
+                ;
     }
 
     public static ChartSql buildSql(String config, List<Field> fields) {
@@ -76,52 +69,61 @@ public class ChartSql implements Sql {
     }
 
     /**
+     * 设置下钻参数
+     *
+     * @param param
+     * @return
+     */
+    public ChartSql setDrill(DrillParam param) {
+        drillParam = param;
+        return this;
+    }
+
+    /**
      * @param fields
      */
     public void setRealFields(List<Field> fields) {
         List<ChartField> fieldList = Lists.newArrayList();
-        fieldList.addAll(getXY());
         fieldList.addAll(filters);
         fieldList.addAll(innerFilters);
+        fieldList.addAll(drillFields);
+
         for (ChartField field : fieldList) {
             field.setRealFields(fields);
         }
+        layers.forEach(layer -> layer.setFields(fields));
     }
 
     @Override
     public List<String> selects() {
-        List<String> selects = getXY().stream()
-                .map(FieldAlias::getQueryFinalName)
-                .collect(Collectors.toList());
-        if (selects.size() == 0) {
-            selects.add("1");
-        }
-        return selects;
-    }
-
-    private List<FieldAlias> getXY() {
-        List<FieldAlias> fieldAliases = new ArrayList<>();
-        fieldAliases.addAll(x);
-        fieldAliases.addAll(y);
-        return fieldAliases;
+        return getLayer().selects();
     }
 
     @Override
     public String groupBys() {
-        return x.stream()
-                .map(FieldAlias::getRealAliasName)
-                .collect(Collectors.joining(", "));
+        return getLayer().groupBys();
     }
 
     @Override
     public String wheres() {
         List<Filter> actualFilters = Lists.newArrayList();
-        if (filters != null && filters.size() > 0) {
-            actualFilters.addAll(filters);
+        actualFilters.addAll(filters);
+        actualFilters.addAll(innerFilters);
+
+        // 下钻
+        int toIndex = drillLevel() - 1;
+        List<Object> values = drillValues();
+        if (values.size() > 0 && toIndex > -1) {
+            List<DrillField> drillFields = this.drillFields.subList(0, toIndex);
+            if (drillFields.size() == values.size()) {
+                throw new RuntimeException("error");
+            }
+            for (int i = 0; i < drillFields.size(); i++) {
+                Drill drill = new Drill(drillFields.get(i), values.get(i));
+                actualFilters.add(drill);
+            }
         }
-        if (innerFilters != null && innerFilters.size() > 0) {
-            actualFilters.addAll(innerFilters);
-        }
+
         return actualFilters.stream().map((Filter::where))
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(" AND "));
@@ -129,27 +131,7 @@ public class ChartSql implements Sql {
 
     @Override
     public Pair<String, OrderType> sort() {
-        List<ChartField> chartFields = Lists.newArrayList();
-        if (sort == null) {
-            return null;
-        }
-        if (sort.isX()) {
-            chartFields.addAll(x);
-        } else {
-            chartFields.addAll(y);
-        }
-        Optional<ChartField> any = chartFields.stream().filter(i -> i.getId().equals(sort.getId())).findAny();
-        return any.map(fieldAlias -> new Pair<>(fieldAlias.getRealAliasName(), sort.getOrderType())).orElse(null);
-    }
-
-    private void check() {
-        // 检查sort
-        if (sort != null) {
-            Long fieldId = sort.getId();
-            if (fieldId == null || getXY().stream().noneMatch(i -> i.getId().equals(fieldId))) {
-                sort = null;
-            }
-        }
+        return getLayer().sort();
     }
 
     /**
@@ -160,8 +142,23 @@ public class ChartSql implements Sql {
     }
 
     public String toJSONString() {
-        check();
+        layers.forEach(ChartLayer::check);
         clear();
         return JSON.toJSONString(this);
+    }
+
+    @JsonIgnore
+    private ChartLayer getLayer() {
+        return layers.get(drillLevel());
+    }
+
+    @JsonIgnore
+    private int drillLevel() {
+        return Optional.ofNullable(drillParam).orElse(DrillParam.empty()).getLevel();
+    }
+
+    @JsonIgnore
+    private List<Object> drillValues() {
+        return Optional.ofNullable(drillParam).orElse(DrillParam.empty()).getValues();
     }
 }

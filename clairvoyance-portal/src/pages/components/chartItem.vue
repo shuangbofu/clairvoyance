@@ -31,7 +31,7 @@
     </div>
     <chart-box
       style="position: relative; width: calc(100% - 10px); height: 300px;"
-      :chart="chart"
+      :chart-layer="chart.sqlConfig.layers[0]"
       :data="chartData"
     />
   </div>
@@ -67,7 +67,7 @@ export default {
     },
     link2Editor() {
       this.$store.commit('chart/CLEAR_CHART')
-      this.$router.push({name: '编辑图表', query:{chartId: this.chart.chartId, workSheetId: this.chart.workSheetId}})
+      this.$router.push({name: '编辑图表', query:{chartId: this.chart.chartId}})
     }
   }
 };

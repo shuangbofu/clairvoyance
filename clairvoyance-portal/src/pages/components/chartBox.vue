@@ -1,8 +1,8 @@
 <template>
   <div class="chart-box-container">
     <slot name="header" />
-    <div v-if="chart.chartType === 'UNKNOWN'" class="unknown-chart">未选择图表类型</div>
-    <div v-else-if="chart.chartType === 'C2'" class="value-card">
+    <div v-if="chartLayer.chartType === 'UNKNOWN'" class="unknown-chart">未选择图表类型</div>
+    <div v-else-if="chartLayer.chartType === 'C2'" class="value-card">
       <div style="margin: auto;">
         <div class="label">{{valueCard.label}}</div>
         <div class="value">{{valueCard.value}}</div>
@@ -23,13 +23,13 @@ import "echarts/theme/infographic";
 import "echarts/theme/dark";
 import { getChartOption } from "./chartPaint.js";
 export default {
-  props: ["data", "chart"],
+  props: ["data", "chartLayer"],
   data() {
     return {};
   },
   computed: {
     chartOption() {
-      return getChartOption(this.chart, this.data);
+      return getChartOption(this.chartLayer, this.data);
     },
     valueCard() {
       let res = {};

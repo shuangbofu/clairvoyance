@@ -2,11 +2,12 @@ package cn.shuangbofu.clairvoyance.web.controller;
 
 import cn.shuangbofu.clairvoyance.core.db.Chart;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
+import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSql;
+import cn.shuangbofu.clairvoyance.core.domain.chart.DrillParam;
 import cn.shuangbofu.clairvoyance.core.domain.chart.SqlBuiler;
 import cn.shuangbofu.clairvoyance.core.loader.ChartLoader;
 import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
-import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.query.SqlQueryRunner;
 import cn.shuangbofu.clairvoyance.web.vo.ChartVO;
 import cn.shuangbofu.clairvoyance.web.vo.Result;
@@ -50,12 +51,13 @@ public class ChartController {
 
     @GetMapping("/data")
     @ApiOperation("查询图表数据")
-    public Result<List<Map<String, Object>>> getChartData(@RequestParam("chartId") Long chartId) {
+    public Result<List<Map<String, Object>>> getChartData(@RequestParam("chartId") Long chartId, @RequestBody(required = false) DrillParam param) {
         Chart chart = ChartLoader.byId(chartId);
         Long workSheetId = chart.getWorkSheetId();
         WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
         SourceTable table = SqlQueryRunner.getSourceTable(workSheet);
-        Sql chartSql = SqlBuiler.buildChartSql(chart.getSqlConfig(), workSheetId);
+        ChartSql chartSql = SqlBuiler.buildChartSql(chart.getSqlConfig(), workSheetId)
+                .setDrill(param);
         List<Map<String, Object>> result = table.run(chartSql);
         return Result.success(result);
     }

@@ -14,12 +14,13 @@
       </div>
       <div class="chart-main">
         <div class="chart-args">
+          <field-choose mode="drill" class="arg" />
           <field-choose mode="x" class="arg" />
           <field-choose mode="y" class="arg" />
         </div>
         <div style="height: calc(100vh - 167px); display:flex;">
           <chart-filter class="chart-filter-container" />
-          <chart-box class="chart-box" :chart="chart" :data="chartData">
+          <chart-box class="chart-box" :chart-layer="chartLayer" :data="chartData">
             <div slot="header" style="display:flex; align-items: center;">
               <a-icon
                 v-if="innerFilters.length > 0"
@@ -54,7 +55,7 @@
           </chart-box>
         </div>
       </div>
-      <right-controller :chart="chart" @refresh="saveChart" />
+      <right-controller @refresh="saveChart" />
     </div>
     <a-modal
       v-if="workSheet"
@@ -88,7 +89,8 @@ export default {
   computed: {
     ...mapGetters('chart',[
       'workSheet',
-      'chart',
+      'chartLayer',
+      'drillFields',
       'sqlConfig',
       'chartData',
       'innerFilters',

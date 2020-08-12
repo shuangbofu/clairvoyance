@@ -64,11 +64,7 @@ public abstract class Field {
 
     @JsonIgnore
     public String getAliasName() {
-        String title = this.title;
-        if (StringUtils.isNotEmpty(title)) {
-            title = name;
-        }
-        return title;
+        return StringUtils.emptyGet(title, name);
     }
 
     @JsonIgnore
