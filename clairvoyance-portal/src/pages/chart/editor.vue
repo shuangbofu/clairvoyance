@@ -26,7 +26,7 @@
             <div slot="header" style="display:flex; align-items: center;">
               <a-icon
                 v-if="innerFilters.length > 0"
-                style="font-size: 18px; color: #4876ff; margin-right: 10px;"
+                style="font-size: 18px; color: #4876FF; margin-right: 10px;"
                 type="filter"
               />
               <div

@@ -7,5 +7,5 @@ import lombok.Data;
  * 原始字段
  */
 @Data
-public class OriginField extends Field {
+public class OriginField extends AbstractField {
 }

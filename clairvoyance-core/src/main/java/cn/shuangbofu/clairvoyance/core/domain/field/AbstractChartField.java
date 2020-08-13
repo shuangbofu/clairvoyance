@@ -47,7 +47,7 @@ public abstract class AbstractChartField implements ChartField {
 
     @Override
     public String getRealAliasName() {
-        return getValue(Field::getAliasName);
+        return getValue(Field::getRealAliasName);
     }
 
     @Override

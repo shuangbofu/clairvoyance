@@ -1,6 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart;
 
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
@@ -86,11 +87,13 @@ public class ChartSql implements Sql {
         fieldList.addAll(filters);
         fieldList.addAll(innerFilters);
         fieldList.addAll(drillFields);
-
-        for (ChartField field : fieldList) {
-            field.setRealFields(fields);
-        }
+        fieldList.forEach(chartField -> chartField.setRealFields(fields));
         layers.forEach(layer -> layer.setFields(fields));
+        // drillFields设置维度为field
+        for (int i = 0; i < drillFields.size(); i++) {
+            List<Dimension> x = layers.get(i).x;
+            drillFields.get(i).setRealFields(new ArrayList<>(x));
+        }
     }
 
     @Override

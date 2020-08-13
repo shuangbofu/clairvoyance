@@ -2,10 +2,6 @@ package cn.shuangbofu.clairvoyance.core.domain.field;
 
 import cn.shuangbofu.clairvoyance.core.enums.ColumnType;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
-import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,21 +10,13 @@ import java.util.stream.Collectors;
 /**
  * Created by shuangbofu on 2020/8/6 14:40
  */
-@Data
-@Accessors(chain = true)
-public abstract class Field {
-    protected Long id;
-    protected String title;
-    protected ColumnType type;
-    protected String name;
-    protected String description;
-
-    public static List<Field> fromDb(List<cn.shuangbofu.clairvoyance.core.db.Field> fields) {
+public interface Field {
+    static List<Field> fromDb(List<cn.shuangbofu.clairvoyance.core.db.Field> fields) {
         return fields.stream().map(i -> Field.fromDb(fields, i)).collect(Collectors.toList());
     }
 
-    public static Field fromDb(List<cn.shuangbofu.clairvoyance.core.db.Field> fields, cn.shuangbofu.clairvoyance.core.db.Field field) {
-        Field finalField = null;
+    static Field fromDb(List<cn.shuangbofu.clairvoyance.core.db.Field> fields, cn.shuangbofu.clairvoyance.core.db.Field field) {
+        AbstractField finalField = null;
         String config = field.getConfig();
         switch (field.getFieldType()) {
             case origin:
@@ -57,18 +45,15 @@ public abstract class Field {
         return null;
     }
 
-    @JsonIgnore
-    public String getName() {
-        return name;
-    }
+    String getName();
 
-    @JsonIgnore
-    public String getAliasName() {
-        return StringUtils.emptyGet(title, name);
-    }
+    Long getId();
 
-    @JsonIgnore
-    public String getRealName() {
-        return getName();
-    }
+    String getTitle();
+
+    ColumnType getType();
+
+    String getRealName();
+
+    String getRealAliasName();
 }

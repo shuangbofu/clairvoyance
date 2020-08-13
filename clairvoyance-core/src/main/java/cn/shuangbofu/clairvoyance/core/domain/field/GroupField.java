@@ -23,7 +23,7 @@ import java.util.List;
         @JsonSubTypes.Type(value = FixedStepGroupField.class, name = GroupField.GroupMode.FIXED_STEP),
         @JsonSubTypes.Type(value = CustomStepGroupField.class, name = GroupField.GroupMode.CUSTOM_STEP)
 })
-public abstract class GroupField extends Field {
+public abstract class GroupField extends AbstractField {
     @JsonIgnore
     protected Field refField;
     private String mode;

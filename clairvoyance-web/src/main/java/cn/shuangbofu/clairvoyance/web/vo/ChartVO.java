@@ -4,7 +4,6 @@ import cn.shuangbofu.clairvoyance.core.db.Chart;
 import cn.shuangbofu.clairvoyance.core.domain.chart.AlarmConfig;
 import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSql;
 import cn.shuangbofu.clairvoyance.core.domain.chart.SqlBuiler;
-import cn.shuangbofu.clairvoyance.core.enums.ChartType;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -13,21 +12,13 @@ import lombok.experimental.Accessors;
  * Created by shuangbofu on 2020/7/30 下午11:08
  * <p>
  * 需要图表配置信息
- * {
- * tableID: xx,
- * x:[],
- * y:[],
- * config: {}
- * dashboardId:xxx
- * alarmconfig: {}
- * }
  */
 @Data
 @Accessors(chain = true)
 public class ChartVO {
 
     private Long chartId;
-    private ChartType chartType;
+    //    private ChartType chartType;
     private Long dashboardId;
     private Long workSheetId;
     private String layoutConfig;
@@ -38,7 +29,7 @@ public class ChartVO {
     public static ChartVO toVO(Chart chart) {
         // fields更新到sql
         return new ChartVO()
-                .setChartType(chart.getChartType())
+//                .setChartType(chart.getChartType())
                 .setName(chart.getName())
                 .setChartId(chart.getId())
                 .setDashboardId(chart.getDashboardId())
@@ -51,7 +42,7 @@ public class ChartVO {
 
     public Chart toModel() {
         Chart chart = new Chart()
-                .setChartType(chartType)
+//                .setChartType(chartType)
                 .setName(name)
                 .setId(chartId)
                 .setDashboardId(dashboardId)

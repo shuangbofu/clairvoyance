@@ -46,7 +46,7 @@ export default {
       try {
         return getChartOption(this.chartLayer, this.data);
       } catch(msg) {
-        this.$message.eror(msg)
+        this.$message.error(msg)
         return {}
       }
     },

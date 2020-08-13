@@ -9,7 +9,7 @@ import java.util.List;
  * 自定义聚合计算字段
  */
 @Data
-public class ComputeField extends Field {
+public class ComputeField extends AbstractField {
 
     String formula;
 

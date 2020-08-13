@@ -134,7 +134,7 @@ export default {
     justify-content: space-between;
     .title {
       font-size: 28px;
-      color: #4876ff;
+      color: #4876FF;
       .remarks {
         font-size: 14px;
         color: #777;
@@ -163,8 +163,8 @@ export default {
       }
       color: #888;
       &:hover {
-        color: #4876ff;
-        border: 1px solid #4876ff;
+        color: #4876FF;
+        border: 1px solid #4876FF;
       }
     }
     :nth-child(odd) {
