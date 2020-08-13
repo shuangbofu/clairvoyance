@@ -1,15 +1,19 @@
 package cn.shuangbofu.clairvoyance.web.controller;
 
 import cn.shuangbofu.clairvoyance.core.db.Chart;
+import cn.shuangbofu.clairvoyance.core.db.Dashboard;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
 import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSql;
 import cn.shuangbofu.clairvoyance.core.domain.chart.DrillParam;
 import cn.shuangbofu.clairvoyance.core.domain.chart.SqlBuiler;
 import cn.shuangbofu.clairvoyance.core.loader.ChartLoader;
+import cn.shuangbofu.clairvoyance.core.loader.DashBoardLoader;
 import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import cn.shuangbofu.clairvoyance.core.query.SqlQueryRunner;
+import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import cn.shuangbofu.clairvoyance.web.vo.ChartVO;
+import cn.shuangbofu.clairvoyance.web.vo.LayoutConfig;
 import cn.shuangbofu.clairvoyance.web.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +49,14 @@ public class ChartController {
         } else {
             Long id = ChartLoader.create(chart);
             chart.setId(id);
+
+            // 更新dashboard
+            Long dashboardId = chart.getDashboardId();
+            Dashboard dashboard = DashBoardLoader.byId(dashboardId);
+            LayoutConfig layoutConfig = JSON.parseObject(dashboard.getLayoutConfig(), LayoutConfig.class);
+            layoutConfig.getPositions().add(new LayoutConfig.Layout(layoutConfig.getMaxBottom(), id));
+            Dashboard newDash = new Dashboard().setId(dashboardId).setLayoutConfig(JSON.toJSONString(layoutConfig));
+            DashBoardLoader.update(newDash);
         }
         return Result.success(chart.getId());
     }

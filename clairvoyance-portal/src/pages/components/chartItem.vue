@@ -30,7 +30,7 @@
       </div>
     </div>
     <chart-box
-      style="position: relative; width: calc(100% - 10px); height: 300px;"
+      style="position: relative; width: 100%; height: 300px;"
       :chart-layer="chart.sqlConfig.layers[0]"
       :data="chartData"
     />

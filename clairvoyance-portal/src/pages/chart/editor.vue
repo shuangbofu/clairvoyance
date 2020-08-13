@@ -248,6 +248,15 @@ export default {
         .echarts {
           height: calc(100% - 55px);
         }
+        .value-card {
+          padding-top: 20%;
+          .label {
+            font-size: 200%;
+          }
+          .value {
+            font-size: 500%;
+          }
+        }
       }
       .chart-footer {
         padding: 10px;

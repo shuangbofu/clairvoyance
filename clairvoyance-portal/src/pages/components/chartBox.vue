@@ -100,13 +100,13 @@ export default {
   .value-card {
     height: 100%;
     text-align: center;
-    padding-top: 12%;
+    padding-top: 10%;
     .label {
-      font-size: 24px;
+      font-size: 120%;
       margin-right: 5%;
     }
     .value {
-      font-size: 112px;
+      font-size: 360%;
     }
   }
 }

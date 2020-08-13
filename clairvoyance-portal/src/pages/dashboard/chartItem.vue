@@ -5,7 +5,9 @@
         <a-tooltip placement="bottomLeft" :title="drillTip">
           <a-icon class="drill-tip" type="block" v-if="chart.sqlConfig.drillFields.length > 0" />
         </a-tooltip>
-        {{chart.name === '' ? '未命名图表' : chart.name}}
+        <span
+          v-if="chart.sqlConfig.layers[0].chartType !== 'C2'"
+        >{{chart.name === '' ? '未命名图表' : chart.name}}</span>
       </div>
       <div class="button-list">
         <a-icon class="button" type="edit" @click="link2Editor" />
@@ -137,6 +139,11 @@ export default {
   background: #fff;
   &:hover {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 16px 24px 0 rgba(0, 0, 0, 0.1);
+    .chart-header {
+      .button-list {
+        opacity: 1;
+      }
+    }
   }
   .chart-header {
     display: flex;
@@ -152,6 +159,7 @@ export default {
       }
     }
     .button-list {
+      opacity: 0;
       .button {
         margin-right: 10px;
         cursor: pointer;
