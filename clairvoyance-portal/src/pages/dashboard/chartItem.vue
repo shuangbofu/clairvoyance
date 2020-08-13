@@ -1,7 +1,12 @@
 <template>
   <div class="chart-container">
     <div class="chart-header">
-      <div class="title">{{chart.name === '' ? '未命名图表' : chart.name}}</div>
+      <div class="title">
+        <a-tooltip placement="bottomLeft" :title="drillTip">
+          <a-icon class="drill-tip" type="block" v-if="chart.sqlConfig.drillFields.length > 0" />
+        </a-tooltip>
+        {{chart.name === '' ? '未命名图表' : chart.name}}
+      </div>
       <div class="button-list">
         <a-icon class="button" type="edit" @click="link2Editor" />
         <a-icon class="button" type="redo" @click="fetchData" />
@@ -70,6 +75,15 @@ export default {
   computed: {
     fillInnerFilter() {
       return this.chart.sqlConfig.innerFilters.filter(i=>i.range.length > 0).length > 0
+    },
+    drillTip() {
+      const tip = this.chart.sqlConfig.drillFields.map(i=> {
+        return i.realAliasName + ' > '
+      }).toString().replace(/,/g,'')
+      if(tip) {
+        return tip.substring(0, tip.length - 3)
+      }
+      return ''
     }
   },
   components: {
@@ -126,6 +140,11 @@ export default {
     .title {
       font-size: 16px;
       font-weight: 500;
+      .drill-tip {
+        color: #4876ff;
+        font-weight: 300;
+        cursor: pointer;
+      }
     }
     .button-list {
       .button {

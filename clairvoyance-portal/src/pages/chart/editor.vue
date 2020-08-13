@@ -2,7 +2,7 @@
   <div style="editor-container">
     <a-page-header title="编辑图表" @back="saveChart(true); $router.go(-1);" />
     <div class="editor-main" v-if="sqlConfig">
-      <div class="left-container" v-if="workSheet">
+      <div class="left-container">
         <div class="top-desc" @click="previewVisible = true;">
           <div style="margin-left: 10px;">工作表</div>
           <div class="top-title">

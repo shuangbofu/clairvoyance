@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span style="cursor:pointer;" @click="onClick(0)">{{first}}</span>
+    <span style="cursor:pointer; color: #4876FF;" @click="onClick(0)">{{first}}</span>
     <span style="margin: 0 8px;">></span>
     <template v-for="(value, index) in arr">
       <span

@@ -5,6 +5,7 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
+import cn.shuangbofu.clairvoyance.core.domain.field.AbstractChartField;
 import cn.shuangbofu.clairvoyance.core.domain.field.ChartField;
 import cn.shuangbofu.clairvoyance.core.domain.field.Field;
 import cn.shuangbofu.clairvoyance.core.enums.ChartType;
@@ -78,7 +79,7 @@ public class ChartLayer implements Sql {
     @Override
     public String groupBys() {
         return x.stream()
-                .map(FieldAlias::getRealAliasName)
+                .map(AbstractChartField::getRealName)
                 .collect(Collectors.joining(", "));
     }
 

@@ -8,7 +8,7 @@ export default {
     chartId: '',
     chart: {},
 
-    workSheet: null,
+    workSheet: {},
     chartData: [],
 
     // 编辑筛选项
@@ -42,7 +42,7 @@ export default {
   mutations: {
     CLEAR_CHART(state) {
       state.chartData = []
-      state.workSheet = null
+      state.workSheet = {}
       state.drillLevel = 0
       state.drillValues = []
     },
@@ -75,7 +75,7 @@ export default {
         });
     },
     initWorkSheet({ state }, workSheetId) {
-      if (state.workSheet !== null) {
+      if (state.workSheet.title) {
         return
       }
       axios.get(`/workSheet?id=${workSheetId}`).then(data => {
