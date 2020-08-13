@@ -69,9 +69,9 @@ export default {
   },
   methods: {
     resize() {
-      console.log('resize')
       const ref =  this.$refs.chart
         if(ref) {
+          console.log('resize')
           ref.resize()
         }
     },

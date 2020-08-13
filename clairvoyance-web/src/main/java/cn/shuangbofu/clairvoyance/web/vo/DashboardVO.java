@@ -3,6 +3,7 @@ package cn.shuangbofu.clairvoyance.web.vo;
 import cn.shuangbofu.clairvoyance.core.db.Dashboard;
 import cn.shuangbofu.clairvoyance.core.domain.dashboard.GlobalFilter;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
+import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,7 +18,7 @@ import java.util.List;
 public class DashboardVO extends DashboardSimpleVO {
 
     @ApiModelProperty("布局配置")
-    private String dashboardLayout;
+    private LayoutConfig layoutConfig;
 
     /**
      * 全局过滤器配置
@@ -40,7 +41,7 @@ public class DashboardVO extends DashboardSimpleVO {
 //                .setTags(simpleVO.getTags())
         ;
 
-        vo.setDashboardLayout(dashboard.getLayoutConfig());
+        vo.setLayoutConfig(JSON.parseObject(dashboard.getLayoutConfig(), LayoutConfig.class));
         vo.setGlobalFilter(JSON.parseObject(dashboard.getFilterConfig(), GlobalFilter.class));
         vo.setCharts(charts);
 
@@ -53,11 +54,16 @@ public class DashboardVO extends DashboardSimpleVO {
      * @return
      */
     public Dashboard toModel() {
-        return new Dashboard().setId(getRefId())
-                .setRemarks(getRemarks())
-                .setName(getName())
-                .setLayoutConfig(dashboardLayout)
-                ;
+        Dashboard dashboard = new Dashboard()
+                .setId(getDashboardId())
+                .setLayoutConfig(JSON.toJSONString(layoutConfig));
+        if (StringUtils.isNotEmpty(getRemarks())) {
+            dashboard.setRemarks(getRemarks());
+        }
+        if (StringUtils.isNotEmpty(getName())) {
+            dashboard.setName(getName());
+        }
+        return dashboard;
     }
 }
 

@@ -35,7 +35,7 @@
       </div>
     </div>
     <div :style="{
-      height: `${301 - (drillParam.values.length > 0 ? 21: 0)}px`
+      height: `calc(100% - ${drillParam.values.length > 0 ? 50: 29}px)`
     }">
       <chart-box
         ref="chartBox"
@@ -118,6 +118,11 @@ export default {
       this.chartData = []
       this.drillParam.level = index
       this.fetchData()
+    },
+    resize() {
+      if(this.$refs.chartBox) {
+        this.$refs.chartBox.resize()
+      }
     }
   }
 };

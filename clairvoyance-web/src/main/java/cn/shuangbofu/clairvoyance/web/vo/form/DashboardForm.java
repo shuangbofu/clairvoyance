@@ -1,6 +1,8 @@
 package cn.shuangbofu.clairvoyance.web.vo.form;
 
 import cn.shuangbofu.clairvoyance.core.db.Dashboard;
+import cn.shuangbofu.clairvoyance.core.utils.JSON;
+import cn.shuangbofu.clairvoyance.web.vo.LayoutConfig;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,6 +35,7 @@ public class DashboardForm {
                 .setName(name)
                 .setTags(String.join(",", tags))
                 .setRemarks(remarks)
-                .setFilterConfig("{}");
+                .setFilterConfig("{}")
+                .setLayoutConfig(JSON.toJSONString(new LayoutConfig()));
     }
 }

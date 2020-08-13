@@ -26,7 +26,11 @@
               </div>
             </template>
             <template v-else>
-              <chart-item v-for="chart in charts" :chart="chart" :key="chart.id" />
+              <chart-grid
+                @update="updateLayout"
+                :layouts="dashboard.layoutConfig.positions"
+                :charts="charts"
+              />
             </template>
           </div>
         </div>
@@ -59,8 +63,8 @@
 </template>
 
 <script>
+import ChartGrid from './chartGrid'
 import Catalogue from "../components/catalogue";
-import ChartItem from "./chartItem";
 export default {
   data() {
     return {
@@ -68,23 +72,31 @@ export default {
       visible: false,
       confirmLoading: false,
       workSheets: [],
-      form: {}
+      form: {},
     };
   },
   components: {
     Catalogue,
-    ChartItem
+    ChartGrid
   },
   computed: {
     charts() {
       return this.dashboard.charts
-    }
+    },
   },
   methods: {
     chooseDashboard(id) {
       this.$axios.get(`/dashboard?id=${id}`).then(data => {
         this.dashboard = data;
         this.$refs.catRef.loaded();
+        // TODO 
+        if(this.dashboard.layoutConfig.positions.length == 0) {
+          this.dashboard.layoutConfig.positions = this.dashboard.charts.map(i=>{
+            return {
+              w:4,h:3,x:0,y:0,i:i.chartId
+            }
+          })
+        }
       });
     },
     addChart() {
@@ -121,6 +133,14 @@ export default {
           .toLowerCase()
           .indexOf(input.toLowerCase()) >= 0
       );
+    },
+    updateLayout(layout) {
+      this.$axios.put('/dashboard',{
+        dashboardId: this.dashboard.dashboardId,
+        layoutConfig: {
+          positions: layout
+        }
+      })
     }
   }
 };
@@ -128,13 +148,12 @@ export default {
 
 <style lang="less">
 .dashboard-main {
-  padding: 20px 0px;
   .dashboard-header {
     display: flex;
     justify-content: space-between;
     .title {
       font-size: 28px;
-      color: #4876FF;
+      color: #4876ff;
       .remarks {
         font-size: 14px;
         color: #777;
@@ -145,9 +164,6 @@ export default {
     }
   }
   .charts-container {
-    margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
     .empty-block {
       padding: 40px;
       border: 1px solid #e6e6e6;
@@ -158,23 +174,16 @@ export default {
       background: #fff;
       .icon {
         font-size: 60px;
-        // font-weight: 100;
         margin: auto;
       }
       color: #888;
       &:hover {
-        color: #4876FF;
-        border: 1px solid #4876FF;
+        color: #4876ff;
+        border: 1px solid #4876ff;
       }
     }
-    :nth-child(odd) {
-      &.chart-container {
-        margin-right: 20px;
-        max-width: calc(50% - 20px);
-      }
-    }
-    & > div {
-      margin-bottom: 20px;
+    .chart-container {
+      height: 100%;
     }
   }
 }
