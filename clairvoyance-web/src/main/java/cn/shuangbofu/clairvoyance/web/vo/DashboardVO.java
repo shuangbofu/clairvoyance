@@ -1,7 +1,7 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.core.db.Dashboard;
-import cn.shuangbofu.clairvoyance.core.domain.dashboard.GlobalFilter;
+import cn.shuangbofu.clairvoyance.core.loader.DashboardFilterLoader;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import io.swagger.annotations.ApiModel;
@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by shuangbofu on 2020/7/31 15:04
@@ -24,7 +25,7 @@ public class DashboardVO extends DashboardSimpleVO {
      * 全局过滤器配置
      */
     @ApiModelProperty("全局过滤器配置")
-    private GlobalFilter globalFilter;
+    private List<DashboardFilterVO> globalFilters;
 
     /**
      * 图表
@@ -40,9 +41,10 @@ public class DashboardVO extends DashboardSimpleVO {
                 .setRemarks(simpleVO.getRemarks())
 //                .setTags(simpleVO.getTags())
         ;
-
         vo.setLayoutConfig(JSON.parseObject(dashboard.getLayoutConfig(), LayoutConfig.class));
-        vo.setGlobalFilter(JSON.parseObject(dashboard.getFilterConfig(), GlobalFilter.class));
+
+        List<DashboardFilterVO> filters = DashboardFilterLoader.getListByDashboardId(dashboard.getId()).stream().map(DashboardFilterVO::toVO).collect(Collectors.toList());
+        vo.setGlobalFilters(filters);
         vo.setCharts(charts);
 
         return vo;

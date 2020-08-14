@@ -76,7 +76,7 @@ export default {
         }
     },
     onClick(e) {
-      console.log(this.chartLayer.x.length, this.chartLayer.y.length)
+      console.log(e)
       this.$emit('click',e)
     }
   }

@@ -6,6 +6,7 @@ import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.enums.NodeType;
 import cn.shuangbofu.clairvoyance.core.loader.ChartLoader;
 import cn.shuangbofu.clairvoyance.core.loader.DashBoardLoader;
+import cn.shuangbofu.clairvoyance.core.loader.DashboardFilterLoader;
 import cn.shuangbofu.clairvoyance.core.loader.NodeLoader;
 import cn.shuangbofu.clairvoyance.web.vo.*;
 import cn.shuangbofu.clairvoyance.web.vo.form.DashboardForm;
@@ -100,5 +101,17 @@ public class DashboardController {
     public Result<Boolean> saveDashboard(@RequestBody DashboardVO vo) {
         DashBoardLoader.update(vo.toModel());
         return Result.success(true);
+    }
+
+    @PutMapping("/filter")
+    public Result<Boolean> saveDashboardFilter(@RequestBody DashboardFilterVO dashboardFilterVO) {
+        DashboardFilterLoader.create(dashboardFilterVO.toModel());
+        return Result.success(true);
+    }
+
+    @GetMapping("/filter/range")
+    public Result<RangeResult> filterRange() {
+
+        return null;
     }
 }

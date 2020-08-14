@@ -2,10 +2,12 @@ package cn.shuangbofu.clairvoyance.core.utils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by shuangbofu on 2020/8/8 下午11:20
@@ -23,6 +25,16 @@ public class JSON {
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("parse json error");
+        }
+    }
+
+    public static <T> List<T> parseArray(String json, Class<T> tClass) {
+        try {
+            JavaType javaType = MAPPER.getTypeFactory().constructParametricType(tClass, List.class);
+            return MAPPER.readValue(json, javaType);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("parse json 2 array error");
         }
     }
 

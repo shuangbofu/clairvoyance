@@ -35,7 +35,7 @@ public class DashboardForm {
                 .setName(name)
                 .setTags(String.join(",", tags))
                 .setRemarks(remarks)
-                .setFilterConfig("{}")
+//                .setFilterConfig(JSON.toJSONString(new ArrayList<>()))
                 .setLayoutConfig(JSON.toJSONString(new LayoutConfig()));
     }
 }

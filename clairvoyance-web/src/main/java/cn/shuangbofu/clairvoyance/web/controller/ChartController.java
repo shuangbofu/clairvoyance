@@ -50,6 +50,7 @@ public class ChartController {
             Long id = ChartLoader.create(chart);
             chart.setId(id);
 
+            // FIXME: 2020/8/14
             // 更新dashboard
             Long dashboardId = chart.getDashboardId();
             Dashboard dashboard = DashBoardLoader.byId(dashboardId);

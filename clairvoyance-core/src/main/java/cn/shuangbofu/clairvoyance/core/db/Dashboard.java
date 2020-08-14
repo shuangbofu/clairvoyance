@@ -29,11 +29,6 @@ public class Dashboard extends Model<Dashboard> {
      */
     private String layoutConfig;
 
-    /**
-     * 仪表盘过滤器配置
-     */
-    private String filterConfig;
-
     public Dashboard() {
         // TODO 创建时设置默认的表盘布局配置和过滤器配置
 

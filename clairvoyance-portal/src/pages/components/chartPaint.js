@@ -10,7 +10,22 @@ export function getChartOption(chartLayer, data) {
     let xAxis = xs.map(i => {
       return {
         type: 'category',
-        data: data.map(values => values[i])
+        data: data.map(values => values[i]),
+        triggerEvent: true,
+        // axisPointer: {
+        //   label: {
+        //     formatter: function (params) {
+        //       console.log(params)
+        //       return 1
+        //       // var seriesValue = (params.seriesData[0] || {}).value;
+        //       // return params.value
+        //       // + (seriesValue != null
+        //       //     ? '\n' + echarts.format.addCommas(seriesValue)
+        //       //     : ''
+        //       // );
+        //     }
+        //   }
+        // }
       }
     })
     if (xs.length === 0) {
@@ -33,6 +48,7 @@ export function getChartOption(chartLayer, data) {
     const option = {
       tooltip: {
         trigger: 'item',
+        // trigger: 'axis',
         formatter: '{a} : {c}'
       },
       legend: {
