@@ -1,8 +1,8 @@
 import axios from 'axios'
-import {message} from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 
 const service = axios.create({
-    baseURL: '/',
+    baseURL: '/api',
     timeout: 30000
 })
 
@@ -22,7 +22,7 @@ service.interceptors.response.use(
         if (response.config.url.indexOf('/download') !== -1) {
             let filename = response.headers['content-disposition'].split('; ')[1].replace('filename=', '')
             let blob = new Blob([response.data]);
-            return {blob, filename}
+            return { blob, filename }
         }
 
         const res = response.data

@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  * Created by shuangbofu on 2020/7/30 下午9:25
  */
 @RestController
-@RequestMapping("/workSheet")
+@RequestMapping("/api/workSheet")
 @Api(tags = "工作表接口")
 public class WorkSheetController {
 

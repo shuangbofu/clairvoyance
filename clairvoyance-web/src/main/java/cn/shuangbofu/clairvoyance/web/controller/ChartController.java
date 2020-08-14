@@ -26,7 +26,7 @@ import java.util.Map;
  * Created by shuangbofu on 2020/7/30 下午10:43
  */
 @RestController
-@RequestMapping("/chart")
+@RequestMapping("/api/chart")
 @Api(tags = "图表接口")
 public class ChartController {
 

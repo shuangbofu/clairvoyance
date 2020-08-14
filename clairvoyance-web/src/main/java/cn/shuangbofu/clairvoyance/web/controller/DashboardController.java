@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * Created by shuangbofu on 2020/7/30 下午8:47
  */
 @RestController
-@RequestMapping("/dashboard")
+@RequestMapping("/api/dashboard")
 @Api(tags = "仪表盘接口")
 public class DashboardController {
 

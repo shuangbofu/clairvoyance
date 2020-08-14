@@ -16,7 +16,7 @@ import java.util.List;
  * Created by shuangbofu on 2020/8/4 12:02
  */
 @RestController
-@RequestMapping("/datasource")
+@RequestMapping("/api/datasource")
 public class DatasourceController {
 
     @GetMapping("/list")
