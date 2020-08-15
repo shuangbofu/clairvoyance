@@ -94,7 +94,9 @@ export default {
   },
   methods: {
     fetchData() {
-      this.$axios.post(`/chart/data/${this.chart.chartId}`,this.drillParam,{
+      this.$axios.post(`/chart/data/${this.chart.chartId}`,{
+        drillParam: this.drillParam
+      },{
           timeout: 10000000
         }).then(data => {
         this.chartData = data;

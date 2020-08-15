@@ -2,10 +2,12 @@ package cn.shuangbofu.clairvoyance.web.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 import lombok.Data;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by shuangbofu on 2020/8/13 下午10:02
@@ -16,7 +18,11 @@ public class LayoutConfig {
 
     @JsonIgnore
     public int getMaxBottom() {
-        return positions.stream().map(Layout::getBottom).max(Comparator.comparingInt(a -> a)).orElse(0);
+        return getPositions().stream().map(Layout::getBottom).max(Comparator.comparingInt(a -> a)).orElse(0);
+    }
+
+    public List<Layout> getPositions() {
+        return Optional.ofNullable(positions).orElse(Lists.newArrayList());
     }
 
     @Data

@@ -42,6 +42,7 @@
               v-if="f.aliasName && f.aliasName !== ''"
             >{{mode === 'y' ? f.aggregatorAlias : f.name}}</a-menu-item>
             <a-menu-item @click="setField(index)" key="3">设置字段</a-menu-item>
+            <a-menu-item @click="setFilter" key="4">结果筛选器</a-menu-item>
             <a-sub-menu key="aggregator" title="聚合函数" v-if="mode === 'y'">
               <a-menu-item :key="value" v-for="(label, value) in aggregatorFunc">{{label}}</a-menu-item>
             </a-sub-menu>
@@ -243,6 +244,10 @@
             },
             openDrill(id) {
               this.$store.dispatch('chart/openDrill',id)
+            },
+            setFilter(index) {
+                // 结果选择器
+                console.log(index)
             }
         }
     };

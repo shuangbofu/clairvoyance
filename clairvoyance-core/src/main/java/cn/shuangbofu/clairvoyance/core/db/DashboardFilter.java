@@ -29,6 +29,8 @@ public class DashboardFilter extends Model<DashboardFilter> {
     private String sheetFieldMap;
     private String template;
 
+    private Long parentId;
+
     public static AnimaQuery<DashboardFilter> from() {
         return s(DashboardFilter.class).where(DashboardFilter::getDeleted, false);
     }

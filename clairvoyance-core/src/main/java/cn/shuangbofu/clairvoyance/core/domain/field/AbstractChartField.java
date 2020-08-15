@@ -16,7 +16,7 @@ import java.util.function.Function;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class AbstractChartField implements ChartField {
+public abstract class AbstractChartField implements Field, ChartField {
 
     private Field realField;
 

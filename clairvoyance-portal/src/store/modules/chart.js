@@ -63,10 +63,13 @@ export default {
       });
     },
     fetchChartData({ state, commit }, chartId) {
+      const drillParam = {
+        level: state.drillLevel,
+        values: state.drillValues
+      }
       axios
         .post(`/chart/data/${chartId}`, {
-          level: state.drillLevel,
-          values: state.drillValues
+          drillParam
         }, {
           timeout: 10000000
         })

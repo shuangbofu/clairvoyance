@@ -3,7 +3,7 @@ package cn.shuangbofu.clairvoyance.web.vo;
 import cn.shuangbofu.clairvoyance.core.db.Chart;
 import cn.shuangbofu.clairvoyance.core.domain.chart.AlarmConfig;
 import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSql;
-import cn.shuangbofu.clairvoyance.core.domain.chart.SqlBuiler;
+import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSqlBuilder;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -37,7 +37,7 @@ public class ChartVO {
                 .setLayoutConfig(chart.getLayoutConfig())
                 .setAlarmConfig(JSON.parseObject(chart.getAlarmConfig(), AlarmConfig.class))
                 .setWorkSheetId(chart.getWorkSheetId())
-                .setSqlConfig(SqlBuiler.buildChartSql(chart.getSqlConfig(), chart.getWorkSheetId()));
+                .setSqlConfig(new ChartSqlBuilder(chart.getSqlConfig(), chart.getWorkSheetId()).build());
     }
 
     public Chart toModel() {
