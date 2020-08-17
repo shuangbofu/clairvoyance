@@ -1,16 +1,22 @@
 package cn.shuangbofu.clairvoyance.web.controller;
 
 import cn.shuangbofu.clairvoyance.core.db.Dashboard;
+import cn.shuangbofu.clairvoyance.core.db.DashboardFilter;
 import cn.shuangbofu.clairvoyance.core.db.Node;
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
+import cn.shuangbofu.clairvoyance.core.domain.chart.GlobalFilterParam;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ExactChartFilter;
 import cn.shuangbofu.clairvoyance.core.enums.NodeType;
 import cn.shuangbofu.clairvoyance.core.loader.ChartLoader;
 import cn.shuangbofu.clairvoyance.core.loader.DashBoardLoader;
 import cn.shuangbofu.clairvoyance.core.loader.DashboardFilterLoader;
 import cn.shuangbofu.clairvoyance.core.loader.NodeLoader;
+import cn.shuangbofu.clairvoyance.web.service.FieldService;
 import cn.shuangbofu.clairvoyance.web.vo.*;
 import cn.shuangbofu.clairvoyance.web.vo.form.DashboardForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.Folder;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -105,13 +112,51 @@ public class DashboardController {
 
     @PutMapping("/filter")
     public Result<Boolean> saveDashboardFilter(@RequestBody DashboardFilterVO dashboardFilterVO) {
-        DashboardFilterLoader.create(dashboardFilterVO.toModel());
+        create(dashboardFilterVO.setParentId(0L));
         return Result.success(true);
     }
 
-    @GetMapping("/filter/range")
-    public Result<RangeResult> filterRange() {
+    private void create(DashboardFilterVO filterVO) {
+        DashboardFilter dashboardFilter = filterVO.toModel();
+        Long id = DashboardFilterLoader.create(dashboardFilter);
+        List<DashboardFilterVO> children = filterVO.getChildren();
+        if (children != null && children.size() > 0) {
+            children.forEach(fVo -> create(fVo.setParentId(id)));
+        }
+    }
 
-        return null;
+    @PostMapping("/filter/range/{dashboardFilterId}")
+    public Result<RangeResult> filterRange(@PathVariable("dashboardFilterId") Long dashboardFilterId, @RequestBody List<GlobalFilterParam> params) {
+        List<DashboardFilterVO> filterVOS = null;
+        RangeResult rangeResult = new RangeResult();
+        if (params != null && params.size() > 0) {
+            List<Long> ids = params.stream().map(GlobalFilterParam::getDashboardFilterId).collect(Collectors.toList());
+            List<DashboardFilter> filters = DashboardFilterLoader.inIds(ids);
+            filterVOS = DashboardFilterVO.toVos(filters);
+        }
+
+        List<Object> range = Lists.newArrayList();
+        DashboardFilter dashboardFilter = DashboardFilterLoader.byId(dashboardFilterId);
+        DashboardFilterVO vo = DashboardFilterVO.toVO(dashboardFilter);
+        List<String> template = vo.getTemplate();
+        if (template != null && template.size() > 0) {
+            range.addAll(template);
+            return Result.success(new RangeResult(range));
+        }
+        for (Long workSheetId : vo.getSheetFieldMap().keySet()) {
+            List<ChartFilter> chartFilters = Lists.newArrayList();
+            if (filterVOS != null && filterVOS.size() > 0) {
+                filterVOS.forEach(filterVO -> {
+                    Long fieldId = filterVO.getSheetFieldMap().get(workSheetId);
+                    if (fieldId != null) {
+                        Optional<GlobalFilterParam> any = params.stream().filter(i -> i.getDashboardFilterId().equals(filterVO.getId())).findAny();
+                        any.ifPresent(globalFilterParam -> chartFilters.add(new ExactChartFilter(globalFilterParam.getRange(), filterVO.getIncluded(), fieldId)));
+                    }
+                });
+            }
+            RangeResult result = FieldService.getFieldRange(workSheetId, vo.getSheetFieldMap().get(workSheetId), chartFilters);
+            rangeResult.concat(result);
+        }
+        return Result.success(rangeResult);
     }
 }

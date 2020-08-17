@@ -45,6 +45,7 @@ export default {
       state.workSheet = {}
       state.drillLevel = 0
       state.drillValues = []
+      state.chart = {}
     },
     INIT_CHART(state, data) {
       state.chart = data

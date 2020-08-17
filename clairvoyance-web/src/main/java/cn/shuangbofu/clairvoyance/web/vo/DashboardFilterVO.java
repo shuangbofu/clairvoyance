@@ -27,6 +27,9 @@ public class DashboardFilterVO {
     private List<String> template;
     private List<DashboardFilterVO> children;
     private Long parentId;
+    private Boolean included;
+    private String name;
+    private Boolean visible;
 
     public static DashboardFilterVO toVO(DashboardFilter filter) {
         String sheetFieldMapStr = filter.getSheetFieldMap();
@@ -44,6 +47,9 @@ public class DashboardFilterVO {
             }
         }
         return new DashboardFilterVO()
+                .setName(filter.getName())
+                .setVisible(filter.getVisible())
+                .setIncluded(filter.getIncluded())
                 .setId(filter.getId())
                 .setParentId(filter.getParentId())
                 .setDashboardId(filter.getDashboardId())
@@ -76,7 +82,11 @@ public class DashboardFilterVO {
     }
 
     public DashboardFilter toModel() {
-        return new DashboardFilter().setDashboardId(dashboardId)
+        return new DashboardFilter()
+                .setVisible(visible)
+                .setName(name)
+                .setIncluded(included)
+                .setDashboardId(dashboardId)
                 .setTemplate(String.join(",", template))
                 .setSelectedCharts(selectedCharts.stream().map(Object::toString).collect(Collectors.joining(",")))
                 .setSheetFieldMap(sheetFieldMap.keySet().stream().map(i -> i + ":" + sheetFieldMap.get(i)).collect(Collectors.joining(",")));

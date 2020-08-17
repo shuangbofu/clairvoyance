@@ -13,7 +13,15 @@ public class DashboardFilterLoader {
         return insert.getId();
     }
 
+    public static DashboardFilter byId(Long id) {
+        return DashboardFilter.from().where(DashboardFilter::getId, id).one();
+    }
+
     public static List<DashboardFilter> getListByDashboardId(Long dashboardId) {
         return DashboardFilter.from().where(DashboardFilter::getDashboardId, dashboardId).all();
+    }
+
+    public static List<DashboardFilter> inIds(List<Long> dashboardFilterIds) {
+        return DashboardFilter.from().in(DashboardFilter::getId, dashboardFilterIds).all();
     }
 }

@@ -99,158 +99,158 @@
 </template>
 
 <script>
-    import draggable from 'vuedraggable'
-    import {mapGetters} from 'vuex'
+import draggable from 'vuedraggable'
+import {mapGetters} from 'vuex'
 
-    const sortMenus = [
-        {
-            name: "default",
-            title: "默认"
-        },
-        {
-            name: "asc",
-            title: "升序"
-        },
-        {
-            name: "desc",
-            title: "降序"
-        }
-    ];
-    const aggregatorFunc = {
-        SUM: "求和",
-        AVG: "平均值",
-        COUNT: "计数",
-        DISTINCT_COUNT: "去重计数",
-        MIN: "最小值",
-        MAX: "最大值"
-    };
-    export default {
-        props: ["mode"],
-        data() {
-            return {
-                sortMenus,
-                aggregatorFunc,
-                settingField: {},
-                settingFieldVisible: false,
-                settingFieldIndex: ""
-            };
-        },
-        components: {
-            draggable
-        },
-        computed: {
-            ...mapGetters('chart', [
-                'fields',
-                'chartLayer',
-                'drillFields',
-                'drillField',
-                'drillLevel'
-            ]),
-            arrData: {
-                get() {
-                    if(this.mode ==='drill') {
-                        return this.drillFields
-                    }
-                    return this.chartLayer[this.mode]
-                },set() {}
-            },
-            title() {
-                switch (this.mode) {
-                    case "x":
-                        return "维度";
-                    case "y":
-                        return "数值";
-                    case "drill":
-                        return "图层";
-                    default:
-                        return "";
+const sortMenus = [
+    {
+        name: "default",
+        title: "默认"
+    },
+    {
+        name: "asc",
+        title: "升序"
+    },
+    {
+        name: "desc",
+        title: "降序"
+    }
+];
+const aggregatorFunc = {
+    SUM: "求和",
+    AVG: "平均值",
+    COUNT: "计数",
+    DISTINCT_COUNT: "去重计数",
+    MIN: "最小值",
+    MAX: "最大值"
+};
+export default {
+    props: ["mode"],
+    data() {
+        return {
+            sortMenus,
+            aggregatorFunc,
+            settingField: {},
+            settingFieldVisible: false,
+            settingFieldIndex: ""
+        };
+    },
+    components: {
+        draggable
+    },
+    computed: {
+        ...mapGetters('chart', [
+            'fields',
+            'chartLayer',
+            'drillFields',
+            'drillField',
+            'drillLevel'
+        ]),
+        arrData: {
+            get() {
+                if(this.mode ==='drill') {
+                    return this.drillFields
                 }
-            }
+                return this.chartLayer[this.mode]
+            },set() {}
         },
-        methods: {
-            removeField(index) {
-                this.arrData.splice(index, 1);
-                this.saveChart();
-            },
-            handleMenuClick(e, field) {
-                const order = e.keyPath[1];
-                if (order === "sort" || !order) {
-                    return;
-                }
-                if (order === "aggregator") {
-                    field.aggregator = e.key;
-                }
-                this.saveChart();
-            },
-            setField(index) {
-                this.settingFieldVisible = true;
-                this.settingFieldIndex = index;
-                this.settingField = this.arrData[index];
-            },
-            finishSetField() {
-                const aliasName = this.settingField.aliasName
-                const tar = this.arrData.filter(i => i.id !== this.settingField.id).map(i => i.aliasName).find(i => i === aliasName)
-                if (tar) {
-                    this.$message.error('别名重复')
-                    return
-                }
-                Object.assign(this.arrData[this.settingFieldIndex], this.settingField);
-                this.settingFieldVisible = false;
-                this.saveChart();
-            },
-            setSort(field, orderType) {
-                const sort =
-                    orderType === "default"
-                        ? null
-                        : {
-                            id: field.id,
-                            axis: this.mode,
-                            orderType
-                        };
-                this.chartLayer.sort = sort;
-                this.saveChart();
-            },
-            saveChart() {
-                this.$store.dispatch('chart/saveChart')
-            },
-            removeDrillField(index) {
-                this.$store.dispatch('chart/removeDrillField', index)
-            },
-            onChange(e) {
-                if(e.added) {
-                    const element = e.added.element
-                    let index = e.added.newIndex -1
-                    if(index === -1) {
-                        index = 0
-                    }
-                    // x、y、下钻（图层）
-                    this.$store.dispatch('chart/addField', {
-                        data:element,
-                        name: this.mode,
-                        index
-                    })
-                } else if(e.moved) {
-                  // console.log(e.moved)
-                  const newIndex = e.moved.newIndex
-                  const oldIndex = e.moved.oldIndex
-                  this.$store.dispatch('chart/moveField',{
-                    newIndex,oldIndex,
-                    name: this.mode
-                  })
-                }
-            },
-            rollUp(index) {
-              this.$store.dispatch('chart/rollUp',index)
-            },
-            openDrill(id) {
-              this.$store.dispatch('chart/openDrill',id)
-            },
-            setFilter(index) {
-                // 结果选择器
-                console.log(index)
+        title() {
+            switch (this.mode) {
+                case "x":
+                    return "维度";
+                case "y":
+                    return "数值";
+                case "drill":
+                    return "图层";
+                default:
+                    return "";
             }
         }
-    };
+    },
+    methods: {
+        removeField(index) {
+            this.arrData.splice(index, 1);
+            this.saveChart();
+        },
+        handleMenuClick(e, field) {
+            const order = e.keyPath[1];
+            if (order === "sort" || !order) {
+                return;
+            }
+            if (order === "aggregator") {
+                field.aggregator = e.key;
+            }
+            this.saveChart();
+        },
+        setField(index) {
+            this.settingFieldVisible = true;
+            this.settingFieldIndex = index;
+            this.settingField = this.arrData[index];
+        },
+        finishSetField() {
+            const aliasName = this.settingField.aliasName
+            const tar = this.arrData.filter(i => i.id !== this.settingField.id).map(i => i.aliasName).find(i => i === aliasName)
+            if (tar) {
+                this.$message.error('别名重复')
+                return
+            }
+            Object.assign(this.arrData[this.settingFieldIndex], this.settingField);
+            this.settingFieldVisible = false;
+            this.saveChart();
+        },
+        setSort(field, orderType) {
+            const sort =
+                orderType === "default"
+                    ? null
+                    : {
+                        id: field.id,
+                        axis: this.mode,
+                        orderType
+                    };
+            this.chartLayer.sort = sort;
+            this.saveChart();
+        },
+        saveChart() {
+            this.$store.dispatch('chart/saveChart')
+        },
+        removeDrillField(index) {
+            this.$store.dispatch('chart/removeDrillField', index)
+        },
+        onChange(e) {
+            if(e.added) {
+                const element = e.added.element
+                let index = e.added.newIndex -1
+                if(index === -1) {
+                    index = 0
+                }
+                // x、y、下钻（图层）
+                this.$store.dispatch('chart/addField', {
+                    data:element,
+                    name: this.mode,
+                    index
+                })
+            } else if(e.moved) {
+              // console.log(e.moved)
+              const newIndex = e.moved.newIndex
+              const oldIndex = e.moved.oldIndex
+              this.$store.dispatch('chart/moveField',{
+                newIndex,oldIndex,
+                name: this.mode
+              })
+            }
+        },
+        rollUp(index) {
+          this.$store.dispatch('chart/rollUp',index)
+        },
+        openDrill(id) {
+          this.$store.dispatch('chart/openDrill',id)
+        },
+        setFilter(index) {
+            // 结果选择器
+            console.log(index)
+        }
+    }
+};
 </script>
 
 <style lang="less">

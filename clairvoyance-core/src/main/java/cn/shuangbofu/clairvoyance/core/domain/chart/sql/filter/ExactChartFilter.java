@@ -1,6 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter;
 
 import cn.shuangbofu.clairvoyance.core.meta.utils.SqlUtil;
+import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -15,6 +16,15 @@ import java.util.stream.Collectors;
 public class ExactChartFilter extends ChartFilter {
     public List<Object> range;
     public Boolean included;
+
+    public ExactChartFilter() {
+    }
+
+    public ExactChartFilter(List<String> range, Boolean included, Long refId) {
+        this.range = range.stream().filter(StringUtils::isNotEmpty).collect(Collectors.toList());
+        this.included = included;
+        setId(refId);
+    }
 
     @Override
     public String where() {

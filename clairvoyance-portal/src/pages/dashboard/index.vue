@@ -11,6 +11,7 @@
             <div class="button-list">
               <a-button icon="bar-chart" @click="addChart">添加图表</a-button>
               <a-button icon="highlight" disabled>设计</a-button>
+              <a-button icon="filter" @click="setGlobalFilterVisible = true;">全局筛选</a-button>
               <a-button icon="fullscreen" disabled>全屏</a-button>
               <a-button icon="share-alt" disabled>分享</a-button>
               <a-button icon="more" disabled>更多</a-button>
@@ -59,45 +60,50 @@
         </a-select>
       </a-form-model-item>
     </a-modal>
+    <a-modal
+      width="60%"
+      v-if="dashboard"
+      title="全局筛选"
+      :visible="setGlobalFilterVisible"
+      :confirm-loading="confirmLoading2"
+      :destroyOnClose="true"
+      @ok="handleSetGlobalFilterOk"
+      @cancel="() => {setGlobalFilterVisible = false;}"
+    >
+      <dashboard-filter />
+    </a-modal>
   </div>
 </template>
 
 <script>
 import ChartGrid from './chartGrid'
 import Catalogue from "../components/catalogue";
+import DashboardFilter from './dashboardFilter'
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      dashboard: null,
       visible: false,
       confirmLoading: false,
+      confirmLoading2: false,
       workSheets: [],
       form: {},
+      setGlobalFilterVisible: false
     };
   },
   components: {
     Catalogue,
-    ChartGrid
+    ChartGrid,
+    DashboardFilter
   },
   computed: {
-    charts() {
-      return this.dashboard.charts
-    },
+    ...mapGetters('dashboard',['charts','dashboard']),
   },
   methods: {
     chooseDashboard(id) {
-      this.$axios.get(`/dashboard?id=${id}`).then(data => {
-        this.dashboard = data;
+      this.$store.dispatch('dashboard/initDashboard',id).then(() => {
         this.$refs.catRef.loaded();
-        // TODO 
-        if(this.dashboard.layoutConfig.positions.length == 0) {
-          this.dashboard.layoutConfig.positions = this.dashboard.charts.map(i=>{
-            return {
-              w:4,h:3,x:0,y:0,i:i.chartId
-            }
-          })
-        }
-      });
+      })
     },
     addChart() {
       this.visible = true;
@@ -141,6 +147,9 @@ export default {
           positions: layout
         }
       })
+    },
+    handleSetGlobalFilterOk() {
+
     }
   }
 };

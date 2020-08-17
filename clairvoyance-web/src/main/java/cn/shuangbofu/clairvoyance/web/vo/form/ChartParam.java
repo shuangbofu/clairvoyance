@@ -17,5 +17,4 @@ public class ChartParam {
     private DrillParam drillParam;
 
     private List<GlobalFilterParam> globalFilterParams;
-
 }

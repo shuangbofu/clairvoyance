@@ -2,7 +2,7 @@ package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
 import cn.shuangbofu.clairvoyance.core.enums.SheetType;
-import cn.shuangbofu.clairvoyance.web.service.FieldVOloader;
+import cn.shuangbofu.clairvoyance.web.service.FieldService;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,7 +21,7 @@ public class WorkSheetVO extends WorkSheetSimpleVO {
     public static WorkSheetVO toVO(WorkSheet workSheet) {
         WorkSheetVO vo = new WorkSheetVO()
                 .setSheetType(workSheet.getSheetType())
-                .setFields(FieldVOloader.getAllFields(workSheet.getId()));
+                .setFields(FieldService.getAllFields(workSheet.getId()));
 
         vo.setWorkSheetId(workSheet.getId())
                 .setDescription(workSheet.getDescription())

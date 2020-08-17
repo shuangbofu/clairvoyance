@@ -6,8 +6,6 @@ import cn.shuangbofu.clairvoyance.core.db.Node;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.domain.chart.SqlBuiler;
-import cn.shuangbofu.clairvoyance.core.domain.field.GroupField;
-import cn.shuangbofu.clairvoyance.core.enums.FieldType;
 import cn.shuangbofu.clairvoyance.core.enums.NodeType;
 import cn.shuangbofu.clairvoyance.core.enums.SheetType;
 import cn.shuangbofu.clairvoyance.core.loader.DatasourceLoader;
@@ -20,7 +18,7 @@ import cn.shuangbofu.clairvoyance.core.meta.table.Column;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.query.SqlQueryRunner;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
-import cn.shuangbofu.clairvoyance.web.service.FieldVOloader;
+import cn.shuangbofu.clairvoyance.web.service.FieldService;
 import cn.shuangbofu.clairvoyance.web.vo.*;
 import cn.shuangbofu.clairvoyance.web.vo.form.Folder;
 import cn.shuangbofu.clairvoyance.web.vo.form.RangeRequestForm;
@@ -217,7 +215,7 @@ public class WorkSheetController {
      */
     @PostMapping("/preview/{workSheetId}")
     public Result<DataResult> previewData(@PathVariable(value = "workSheetId") Long workSheetId, @RequestBody PreviewFilter condition) {
-        condition.checkParams(FieldVOloader.getAllFields(workSheetId));
+        condition.checkParams(FieldService.getAllFields(workSheetId));
         WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
         SourceTable table = SqlQueryRunner.getSourceTable(workSheet);
 
@@ -239,27 +237,7 @@ public class WorkSheetController {
      */
     @PostMapping("/range")
     public Result<RangeResult> getRangeData(@RequestBody RangeRequestForm form) {
-        Field field = FieldLoader.getField(form.getFieldId());
-        RangeResult rangeResult = null;
-        if (field.getFieldType().equals(FieldType.origin)) {
-            String name = field.getName();
-            WorkSheet sheet = WorkSheetLoader.getSheet(form.getWorkSheetId());
-            SourceTable table = SqlQueryRunner.getSourceTable(sheet);
-
-            Sql selectColumn = SqlBuiler.select("`" + name + "`");
-
-            List<Map<String, Object>> result = table.run(selectColumn);
-            rangeResult = new RangeResult(result, name);
-        } else if (field.getFieldType().equals(FieldType.group)) {
-
-            List<Field> allFields = FieldLoader.getAllFields(form.getWorkSheetId());
-            GroupField groupField = (GroupField) cn.shuangbofu.clairvoyance.core.domain.field.Field.fromDb(allFields, field);
-            List<String> range = null;
-            if (groupField != null) {
-                range = groupField.getRange();
-            }
-            rangeResult = new RangeResult(range);
-        }
-        return Result.success(rangeResult);
+        RangeResult fieldRange = FieldService.getFieldRange(form.getWorkSheetId(), form.getFieldId(), null);
+        return Result.success(fieldRange);
     }
 }

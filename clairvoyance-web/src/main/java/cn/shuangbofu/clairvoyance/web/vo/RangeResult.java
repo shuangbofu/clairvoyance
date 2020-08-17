@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by shuangbofu on 2020/8/6 12:02
@@ -16,9 +15,15 @@ public class RangeResult {
     private List<Object> range;
     private int total;
 
+    public RangeResult() {
+        range = Lists.newArrayList();
+        total = 0;
+    }
+
     public RangeResult(List<Map<String, Object>> originResult, String fieldName) {
-        range = originResult.stream().map(i -> i.get(fieldName)).collect(Collectors.toList());
-        total = range.size();
+        this();
+        originResult.forEach(result -> range.add(result.get(fieldName)));
+        total += range.size();
     }
 
     public <T> RangeResult(List<T> range) {
@@ -26,5 +31,11 @@ public class RangeResult {
         objects.addAll(range);
         this.range = objects;
         total = range.size();
+    }
+
+    public RangeResult concat(RangeResult rangeResult) {
+        range.addAll(rangeResult.getRange());
+        total += rangeResult.getTotal();
+        return this;
     }
 }

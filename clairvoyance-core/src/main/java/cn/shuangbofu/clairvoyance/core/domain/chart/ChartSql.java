@@ -43,6 +43,8 @@ public class ChartSql implements Sql {
      */
     List<DrillField> drillFields;
 
+    private List<Filter> otherFilters;
+
     @JsonIgnore
     private List<Drill> drills;
     @JsonIgnore
@@ -50,6 +52,7 @@ public class ChartSql implements Sql {
 
     public ChartSql() {
         drills = new ArrayList<>();
+        otherFilters = new ArrayList<>();
         drillLevel = 0;
     }
 
@@ -78,6 +81,7 @@ public class ChartSql implements Sql {
         actualFilters.addAll(filters);
         actualFilters.addAll(innerFilters);
         actualFilters.addAll(drills);
+        actualFilters.addAll(otherFilters);
         return actualFilters.stream().map((Filter::where))
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(" AND "));

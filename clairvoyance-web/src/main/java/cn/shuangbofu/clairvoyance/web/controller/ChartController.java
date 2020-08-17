@@ -5,6 +5,8 @@ import cn.shuangbofu.clairvoyance.core.db.Dashboard;
 import cn.shuangbofu.clairvoyance.core.db.DashboardFilter;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
 import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSqlBuilder;
+import cn.shuangbofu.clairvoyance.core.domain.chart.GlobalFilterParam;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ExactChartFilter;
 import cn.shuangbofu.clairvoyance.core.loader.ChartLoader;
 import cn.shuangbofu.clairvoyance.core.loader.DashBoardLoader;
 import cn.shuangbofu.clairvoyance.core.loader.DashboardFilterLoader;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -69,21 +72,32 @@ public class ChartController {
     public Result<List<Map<String, Object>>> getChartData(@PathVariable("chartId") Long chartId, @RequestBody(required = false) ChartParam param) {
         Chart chart = ChartLoader.byId(chartId);
         Long workSheetId = chart.getWorkSheetId();
-        Long dashboardId = chart.getDashboardId();
 
         WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
         SourceTable table = SqlQueryRunner.getSourceTable(workSheet);
 
         ChartSqlBuilder sqlBuilder = new ChartSqlBuilder(chart.getSqlConfig(), workSheetId)
+                // 设置下钻属性
                 .setDrillParam(param.getDrillParam());
-
-        List<DashboardFilter> dashboardFilters = DashboardFilterLoader.getListByDashboardId(dashboardId);
-
-        List<DashboardFilterVO> dashboardFilterVOS = DashboardFilterVO.toVos(dashboardFilters);
-
-        List<DashboardFilterVO> filters = dashboardFilterVOS.stream().filter(i -> i.getSelectedCharts().contains(chartId)).collect(Collectors.toList());
-        // TODO filtervo 转换成最终执行的
-
+        List<GlobalFilterParam> globalFilterParams = param.getGlobalFilterParams();
+        if (globalFilterParams != null && globalFilterParams.size() > 0) {
+            List<Long> dashboardFilterIds = globalFilterParams.stream()
+                    .map(GlobalFilterParam::getDashboardFilterId).collect(Collectors.toList());
+            List<DashboardFilter> filters = DashboardFilterLoader.inIds(dashboardFilterIds);
+            DashboardFilterVO.toVos(filters).stream()
+                    .filter(i -> i.getSelectedCharts()
+                            .contains(chartId))
+                    .forEach(filterVO -> {
+                        Long fieldId = filterVO.getSheetFieldMap().get(workSheetId);
+                        Optional<GlobalFilterParam> any = globalFilterParams.stream().filter(p -> p.getDashboardFilterId().equals(filterVO.getId())).findAny();
+                        if (any.isPresent()) {
+                            ExactChartFilter exactChartFilter = new ExactChartFilter(any.get().getRange(), filterVO.getIncluded(), fieldId);
+                            // 添加全局过滤器
+                            sqlBuilder.addFilter(exactChartFilter);
+                        }
+                    });
+        }
+        // 执行SQL获得结果
         List<Map<String, Object>> result = table.run(sqlBuilder.build());
         return Result.success(result);
     }

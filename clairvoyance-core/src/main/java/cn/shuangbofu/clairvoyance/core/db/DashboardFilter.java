@@ -30,6 +30,9 @@ public class DashboardFilter extends Model<DashboardFilter> {
     private String template;
 
     private Long parentId;
+    private Boolean included;
+    private String name;
+    private Boolean visible;
 
     public static AnimaQuery<DashboardFilter> from() {
         return s(DashboardFilter.class).where(DashboardFilter::getDeleted, false);
