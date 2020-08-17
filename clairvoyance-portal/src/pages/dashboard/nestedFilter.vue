@@ -48,7 +48,7 @@ export default {
       this.$emit('input',value)
     },
     onClick(v) {
-      this.$store.commit('dashboard/changeActiveFilter',v)
+      this.$store.dispatch('dashboard/changeActiveFilter',v)
     }
   }
 }
@@ -65,6 +65,7 @@ export default {
   font-size: 13px;
   color: #888;
   border: 1px solid #e6e6e6;
+  cursor: pointer;
   &.active {
     color: #4876ff;
     border-color: #4876ff;

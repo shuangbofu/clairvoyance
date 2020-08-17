@@ -8,10 +8,7 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.GlobalFilterParam;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ExactChartFilter;
 import cn.shuangbofu.clairvoyance.core.enums.NodeType;
-import cn.shuangbofu.clairvoyance.core.loader.ChartLoader;
-import cn.shuangbofu.clairvoyance.core.loader.DashBoardLoader;
-import cn.shuangbofu.clairvoyance.core.loader.DashboardFilterLoader;
-import cn.shuangbofu.clairvoyance.core.loader.NodeLoader;
+import cn.shuangbofu.clairvoyance.core.loader.*;
 import cn.shuangbofu.clairvoyance.web.service.FieldService;
 import cn.shuangbofu.clairvoyance.web.vo.*;
 import cn.shuangbofu.clairvoyance.web.vo.form.DashboardForm;
@@ -126,7 +123,7 @@ public class DashboardController {
     }
 
     @PostMapping("/filter/range/{dashboardFilterId}")
-    public Result<RangeResult> filterRange(@PathVariable("dashboardFilterId") Long dashboardFilterId, @RequestBody List<GlobalFilterParam> params) {
+    public Result<RangeResult> filterRange(@PathVariable("dashboardFilterId") Long dashboardFilterId, @RequestBody(required = false) List<GlobalFilterParam> params) {
         List<DashboardFilterVO> filterVOS = null;
         RangeResult rangeResult = new RangeResult();
         if (params != null && params.size() > 0) {
@@ -158,5 +155,11 @@ public class DashboardController {
             rangeResult.concat(result);
         }
         return Result.success(rangeResult);
+    }
+
+    @GetMapping("/workSheet")
+    public Result<List<WorkSheetVO>> workSheetByDashboard(@RequestParam("dashboardId") Long dashboardId) {
+        List<Long> workSheetIds = ChartLoader.getWorkSheetIdsByDashboardId(dashboardId);
+        return Result.success(WorkSheetVO.toVOList(WorkSheetLoader.simpleInIds(workSheetIds)));
     }
 }

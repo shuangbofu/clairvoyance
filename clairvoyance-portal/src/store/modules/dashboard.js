@@ -3,21 +3,41 @@ export default {
   namespaced: true,
   state: {
     dashboard: null,
-    activeFilterId: 0
+    filterParams: {},
+
+    activeFilterId: 0,
+    // 打开全局过滤器时的工作表
+    workSheets: [],
+    fieldRange: [],
+
   },
   getters: {
     dashboard: state => state.dashboard,
     globalFilters: state => state.dashboard.globalFilters,
+    flatFilters: (state, getters) => {
+      const arr = []
+      flatFilterDeep(getters.globalFilters, arr)
+      return arr
+    },
     charts: state => state.dashboard.charts,
     activeFilterId: state => state.activeFilterId,
-    activeFilter: (state, getters) => {
-      return findFilterDeep(getters.globalFilters, state.activeFilterId)
+    activeFilter: (state, getters) => getters.flatFilters.find(i => i.id === state.activeFilterId),
+    workSheets: state => state.workSheets,
+    fieldRange: state => state.fieldRange,
+    filterParams: state => state.filterParams,
+    globalFilterParams: state => {
+      const filterParams = state.filterParams
+      return Object.keys(filterParams).map(i => Number(i))
+        .filter(i => filterParams[i] != null && filterParams[i] !== undefined)
+        .map(key => {
+          return {
+            dashboardFilterId: key,
+            range: [filterParams[key]]
+          }
+        })
     }
   },
   mutations: {
-    changeActiveFilter(state, id) {
-      state.activeFilterId = id
-    }
   },
   actions: {
     initDashboard({ state }, id) {
@@ -38,21 +58,36 @@ export default {
         state.dashboard = dashboard
       });
     },
+    changeActiveFilter({ state, dispatch }, id) {
+      state.activeFilterId = id
+      return dispatch('getRange')
+    },
     updateFitlers({ state }, value) {
       state.dashboard.globalFilters = value
+    },
+    initWorkSheets({ state }) {
+      return axios.get(`/dashboard/workSheet?dashboardId=${state.dashboard.dashboardId}`).then(data => {
+        state.workSheets = data
+      })
+    },
+    getRange({ state, getters }) {
+      const map = getters.activeFilter.sheetFieldMap
+      const reqForm = Object.keys(map).map(i => {
+        return {
+          workSheetId: i,
+          fieldId: map[i]
+        }
+      })
+      return axios.post('/workSheet/ranges', reqForm).then(data => {
+        state.fieldRange = data.range
+      })
     }
   },
 }
 
-function findFilterDeep(filters, id) {
-  let res = null;
-  filters.every(filter => {
-    if (filter.id === id) {
-      res = filter
-    } else if (filter.children.length > 0) {
-      res = findFilterDeep(filter.children, id)
-      return res != null
-    }
+function flatFilterDeep(filters, arr) {
+  filters.forEach(filter => {
+    arr.push(filter)
+    flatFilterDeep(filter.children, arr)
   })
-  return res;
 }

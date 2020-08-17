@@ -11,11 +11,36 @@
             <div class="button-list">
               <a-button icon="bar-chart" @click="addChart">添加图表</a-button>
               <a-button icon="highlight" disabled>设计</a-button>
-              <a-button icon="filter" @click="setGlobalFilterVisible = true;">全局筛选</a-button>
+              <a-button icon="filter" @click="openGlobalFilter">全局筛选</a-button>
               <a-button icon="fullscreen" disabled>全屏</a-button>
               <a-button icon="share-alt" disabled>分享</a-button>
               <a-button icon="more" disabled>更多</a-button>
             </div>
+          </div>
+          <div style="padding: 0 5px; margin-bottom: 5px;">
+            <a-icon
+              v-if="flatFilters.length > 0"
+              style="font-size: 18px; color: #4876FF; margin-right: 10px;"
+              type="filter"
+            />
+            <a-select
+              v-model="filterParams[filter.id]"
+              v-for="(filter, index) in flatFilters"
+              :key="index"
+              :allowClear="true"
+              show-search
+              :filter-option="filterOption"
+              style="width: 150px; margin-right: 10px;"
+              :placeholder="filter.name"
+              @dropdownVisibleChange="open => onFilterSelectDropdown(open, filter.id)"
+              @change="value => changeFilterValue(value, filter.id)"
+            >
+              <a-select-option
+                v-for="(value, index) in selectRange[filter.id]"
+                :value="value"
+                :key="index"
+              >{{value}}</a-select-option>
+            </a-select>
           </div>
           <div class="charts-container">
             <template v-if="charts.length ===0">
@@ -28,6 +53,7 @@
             </template>
             <template v-else>
               <chart-grid
+                ref="chartGrid"
                 @update="updateLayout"
                 :layouts="dashboard.layoutConfig.positions"
                 :charts="charts"
@@ -61,7 +87,7 @@
       </a-form-model-item>
     </a-modal>
     <a-modal
-      width="60%"
+      width="800px"
       v-if="dashboard"
       title="全局筛选"
       :visible="setGlobalFilterVisible"
@@ -80,6 +106,15 @@ import ChartGrid from './chartGrid'
 import Catalogue from "../components/catalogue";
 import DashboardFilter from './dashboardFilter'
 import { mapGetters } from 'vuex'
+
+function findParentFilters(id,filters,arr) {
+  const filter = filters.find(i=> i.id=== id)
+  if(filter) {
+    arr.push(filter)
+    findParentFilters(filter.parentId, filters, arr)
+  }
+}
+
 export default {
   data() {
     return {
@@ -87,8 +122,9 @@ export default {
       confirmLoading: false,
       confirmLoading2: false,
       workSheets: [],
+      selectRange: {},
       form: {},
-      setGlobalFilterVisible: false
+      setGlobalFilterVisible: false,
     };
   },
   components: {
@@ -97,7 +133,7 @@ export default {
     DashboardFilter
   },
   computed: {
-    ...mapGetters('dashboard',['charts','dashboard']),
+    ...mapGetters('dashboard',['charts','dashboard','flatFilters','filterParams','globalFilterParams']),
   },
   methods: {
     chooseDashboard(id) {
@@ -150,6 +186,34 @@ export default {
     },
     handleSetGlobalFilterOk() {
 
+    },
+    openGlobalFilter() {
+      this.setGlobalFilterVisible = true;
+      this.$store.dispatch('dashboard/initWorkSheets')
+      this.$store.dispatch('dashboard/getRange')
+    },
+    onFilterSelectDropdown(open, dashboardFilterId) {
+      if(!open){return}
+      const params = this.getFilterParentParams(dashboardFilterId)
+      this.$axios.post(`/dashboard/filter/range/${dashboardFilterId}`,params).then(data => {
+        this.selectRange[dashboardFilterId] = data.range
+        const ranges = {...this.selectRange}
+        ranges[dashboardFilterId] = data.range
+        this.selectRange = ranges
+      })
+    },
+    changeFilterValue(value, dashboardFilterId) {
+     const filter = this.flatFilters.find(i=>i.id === dashboardFilterId)
+     if(filter) {
+        this.$refs.chartGrid.refresh(filter.selectedCharts)
+     }
+    },
+    getFilterParentParams(id) {
+      let res  = []
+      findParentFilters(id, this.flatFilters, res)
+      res = res.filter(i=>i.id !== id)
+      const ids  = res.map(i=>i.id)
+      return this.globalFilterParams.filter(i=>ids.includes(i.dashboardFilterId))
     }
   }
 };

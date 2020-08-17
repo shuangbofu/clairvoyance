@@ -75,6 +75,9 @@ export default {
     this.fetchData();
   },
   computed: {
+    globalFilterParams() {
+      return this.$store.getters['dashboard/globalFilterParams']
+    },
     fillInnerFilter() {
       return this.chart.sqlConfig.innerFilters.filter(i=>i.range.length > 0).length > 0
     },
@@ -95,7 +98,8 @@ export default {
   methods: {
     fetchData() {
       this.$axios.post(`/chart/data/${this.chart.chartId}`,{
-        drillParam: this.drillParam
+        drillParam: this.drillParam,
+        globalFilterParams: this.globalFilterParams
       },{
           timeout: 10000000
         }).then(data => {
@@ -158,6 +162,7 @@ export default {
         color: #4876ff;
         font-weight: 300;
         cursor: pointer;
+        margin-right: 10px;
       }
     }
     .button-list {

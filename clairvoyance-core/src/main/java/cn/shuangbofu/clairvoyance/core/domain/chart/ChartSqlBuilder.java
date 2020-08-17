@@ -59,13 +59,6 @@ public class ChartSqlBuilder {
     }
 
     /**
-     * 全局筛选
-     */
-    private void setGlobalFilter() {
-
-    }
-
-    /**
      * 图表关联
      */
     private void setLink() {

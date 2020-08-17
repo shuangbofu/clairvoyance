@@ -21,7 +21,11 @@
         :i="item.i"
         :key="item.i.id"
       >
-        <chart-item ref="chartItem" :chart="charts.find(i=>i.chartId=== item.i)" />
+        <chart-item
+          :ref="`chartItem_${item.i}`"
+          :globalFilterParams="globalFilterParams"
+          :chart="charts.find(i=>i.chartId=== item.i)"
+        />
       </grid-item>
     </grid-layout>
   </div>
@@ -31,7 +35,7 @@
 import ChartItem from "./chartItem";
 import VueGridLayout from 'vue-grid-layout';
 export default {
-  props: ['layouts','charts'],
+  props: ['layouts','charts','globalFilterParams'],
   data() {
     return {
     }
@@ -48,7 +52,20 @@ export default {
     layoutUpdatedEvent(newLayout) {
       console.log(newLayout)
       this.$emit('update',newLayout)
-      this.$refs.chartItem[0].resize()
+      Object.values(this.$refs).forEach(refs => {
+        const ref = refs[0]
+        if(ref) {
+          ref.resize()
+        }
+      })
+    },
+    refresh(chartIds) {
+      chartIds.forEach(i=> {
+        const ref = this.$refs[`chartItem_${i}`][0]
+        if(ref) {
+          ref.fetchData()
+        }
+      })
     }
   }
 }

@@ -240,4 +240,15 @@ public class WorkSheetController {
         RangeResult fieldRange = FieldService.getFieldRange(form.getWorkSheetId(), form.getFieldId(), null);
         return Result.success(fieldRange);
     }
+
+    @PostMapping("/ranges")
+    public Result<RangeResult> getRangeData2(@RequestBody List<RangeRequestForm> forms) {
+        forms = forms.stream().distinct().collect(Collectors.toList());
+        RangeResult result = new RangeResult();
+        for (RangeRequestForm form : forms) {
+            RangeResult fieldRange = FieldService.getFieldRange(form.getWorkSheetId(), form.getFieldId(), null);
+            result.concat(fieldRange);
+        }
+        return Result.success(result);
+    }
 }

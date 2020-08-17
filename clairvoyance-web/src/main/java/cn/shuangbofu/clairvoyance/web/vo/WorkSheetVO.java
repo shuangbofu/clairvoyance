@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by shuangbofu on 2020/7/31 15:12
@@ -28,5 +29,9 @@ public class WorkSheetVO extends WorkSheetSimpleVO {
                 .setTitle(workSheet.getTitle())
                 .setTableName(workSheet.getTableName());
         return vo;
+    }
+
+    public static List<WorkSheetVO> toVOList(List<WorkSheet> workSheets) {
+        return workSheets.stream().map(WorkSheetVO::toVO).collect(Collectors.toList());
     }
 }

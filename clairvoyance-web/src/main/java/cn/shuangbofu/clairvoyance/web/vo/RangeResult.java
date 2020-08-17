@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by shuangbofu on 2020/8/6 12:02
@@ -31,6 +32,10 @@ public class RangeResult {
         objects.addAll(range);
         this.range = objects;
         total = range.size();
+    }
+
+    public List<Object> getRange() {
+        return range.stream().distinct().collect(Collectors.toList());
     }
 
     public RangeResult concat(RangeResult rangeResult) {
