@@ -41,7 +41,7 @@ export default {
   },
   actions: {
     initDashboard({ state }, id) {
-      return axios.get(`/dashboard?id=${id}`).then(data => {
+      return axios.get(`/dashboard?dashboardId=${id}`).then(data => {
         const dashboard = data;
         // TODO 
         if (dashboard.layoutConfig.positions.length == 0) {

@@ -43,6 +43,7 @@ public class ChartSql implements Sql {
      */
     List<DrillField> drillFields;
 
+    @JsonIgnore
     private List<Filter> otherFilters;
 
     @JsonIgnore

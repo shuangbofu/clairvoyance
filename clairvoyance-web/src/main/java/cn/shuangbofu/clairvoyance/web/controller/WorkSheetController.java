@@ -96,8 +96,8 @@ public class WorkSheetController {
      */
     @GetMapping
     @ApiOperation(("根据ID获取工作表"))
-    public Result<WorkSheetVO> one(@RequestParam("id") Long id) {
-        WorkSheet workSheet = WorkSheetLoader.getSheet(id);
+    public Result<WorkSheetVO> one(@RequestParam("workSheetId") Long workSheetId) {
+        WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
         return Result.success(WorkSheetVO.toVO(workSheet));
     }
 
