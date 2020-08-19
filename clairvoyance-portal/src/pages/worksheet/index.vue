@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     chooseWorkSheet(id) {
-      this.$axios.get(`/workSheet?id=${id}`).then(data => {
+      this.$axios.get(`/workSheet?workSheetId=${id}`).then(data => {
         this.workSheet = data;
         this.$refs.catRef.loaded();
       });

@@ -87,7 +87,7 @@ export default {
       if (state.workSheet.title) {
         return
       }
-      axios.get(`/workSheet?id=${workSheetId}`).then(data => {
+      axios.get(`/workSheet?workSheetId=${workSheetId}`).then(data => {
         state.workSheet = data
       });
     },

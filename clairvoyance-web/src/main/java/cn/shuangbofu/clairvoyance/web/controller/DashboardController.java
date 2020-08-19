@@ -74,10 +74,10 @@ public class DashboardController {
 
     @GetMapping
     @ApiOperation(("根据ID获取仪表盘（布局配置，图表列表）"))
-    public Result<DashboardVO> dashboard(@RequestParam("id") Long id) {
-        List<ChartVO> chartVOS = ChartLoader.getChartsByDshId(id).stream().map(ChartVO::toVO).collect(Collectors.toList());
+    public Result<DashboardVO> dashboard(@RequestParam("dashboardId") Long dashboardId) {
+        List<ChartVO> chartVOS = ChartLoader.getChartsByDshId(dashboardId).stream().map(ChartVO::toVO).collect(Collectors.toList());
 
-        Dashboard dashboard = DashBoardLoader.byId(id);
+        Dashboard dashboard = DashBoardLoader.byId(dashboardId);
 
         return Result.success(DashboardVO.toVO(dashboard, chartVOS));
     }

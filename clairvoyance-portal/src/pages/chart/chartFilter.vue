@@ -165,7 +165,7 @@ export default {
     }
     .icon {
       &:hover {
-        color: #4876ff;
+        color: #4876FF;
       }
     }
   }
