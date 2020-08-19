@@ -1,8 +1,8 @@
-export function getChartOption(chartLayer, data) {
-  const chartType = map[chartLayer.chartType]
+export function getChartOption(chartLayoutConfig, chartLayer, data) {
+  const chartType = map[chartLayoutConfig.chartType]
   const xs = chartLayer.x.map(i => i.realAliasName)
   const ys = chartLayer.y.map(i => i.realAliasName)
-  console.log(chartType)
+  // console.log(chartType)
 
   // 折线、柱状
   if (['line', 'bar', 'bar2'].includes(chartType)) {

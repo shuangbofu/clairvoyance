@@ -15,12 +15,8 @@
           <a-input v-model="chart.name"></a-input>
         </a-form-model-item>
         <a-form-model-item label="图表类型">
-          <a-radio-group v-model="chartLayer.chartType" @change="changeChartType">
-            <a-radio-button
-              v-for="chartType in chartTypes"
-              :key="chartType.name"
-              :value="chartType.name"
-            >{{chartType.title}}</a-radio-button>
+          <a-radio-group v-model="chartLayoutConfig.chartType" @change="changeChartType">
+            <a-radio-button v-for="ct in chartTypes" :key="ct.name" :value="ct.name">{{ct.title}}</a-radio-button>
           </a-radio-group>
         </a-form-model-item>
       </a-form-model>
@@ -41,7 +37,8 @@ export default {
   computed: {
     ...mapGetters('chart',[
       'chart',
-      'chartLayer'])
+      'chartLayer',
+      'chartLayoutConfig'])
   },
   methods: {
     changeChartType() {

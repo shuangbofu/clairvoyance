@@ -110,7 +110,7 @@ export default {
     color: #666;
     margin-bottom: 10px;
     .value {
-      color: #4876ff;
+      color: #4876FF;
       margin: 0 4px;
     }
   }

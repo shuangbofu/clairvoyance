@@ -30,7 +30,8 @@ public class JSON {
 
     public static <T> List<T> parseArray(String json, Class<T> tClass) {
         try {
-            JavaType javaType = MAPPER.getTypeFactory().constructParametricType(tClass, List.class);
+            JavaType javaType = MAPPER.getTypeFactory()
+                    .constructCollectionType(List.class, tClass);
             return MAPPER.readValue(json, javaType);
         } catch (IOException e) {
             e.printStackTrace();

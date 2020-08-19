@@ -22,7 +22,13 @@
           'height': chartMainheight
         }">
           <chart-filter class="chart-filter-container" />
-          <chart-box @click="onClick" class="chart-box" :chart-layer="chartLayer" :data="chartData">
+          <chart-box
+            @click="onClick"
+            class="chart-box"
+            :chart-layout-config="chartLayoutConfig"
+            :chart-layer="chartLayer"
+            :data="chartData"
+          >
             <div slot="header" style="display:flex; align-items: center;">
               <a-icon
                 v-if="innerFilters.length > 0"
@@ -99,6 +105,7 @@ export default {
   computed: {
     ...mapGetters('chart',[
       'workSheet',
+      'chartLayoutConfig',
       'chartLayer',
       'drillFields',
       'sqlConfig',

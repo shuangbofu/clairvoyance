@@ -42,8 +42,10 @@ public class WorkSheetLoader {
         return WorkSheet.from().select(SIMPLE_SELECT).order(WorkSheet::getGmtCreate, OrderBy.DESC).limit(limit);
     }
 
-    public static List<WorkSheet> simpleSearchByName(String name) {
-        return WorkSheet.from().select(SIMPLE_SELECT).like("%" + name).all();
+    public static List<WorkSheet> simpleSearchByNameLimit(String name, int limit) {
+        return WorkSheet.from().select(SIMPLE_SELECT)
+                .like("%" + name)
+                .limit(limit);
     }
 
     //-------------------------------------------------------------------------------------------------------

@@ -8,6 +8,10 @@ import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Created by shuangbofu on 2020/7/30 下午11:08
  * <p>
@@ -18,48 +22,49 @@ import lombok.experimental.Accessors;
 public class ChartVO {
 
     private Long chartId;
-    //    private ChartType chartType;
     private Long dashboardId;
     private Long workSheetId;
-    private String layoutConfig;
+    private List<ChartLayoutConfig> layoutConfigs;
     private AlarmConfig alarmConfig;
     private ChartSql sqlConfig;
     private String name;
 
     public static ChartVO toVO(Chart chart) {
+        ChartSql sqlConfig = new ChartSqlBuilder(chart.getSqlConfig(), chart.getWorkSheetId()).build();
+        List<ChartLayoutConfig> configs = JSON.parseArray(chart.getLayoutConfig(), ChartLayoutConfig.class);
+
+        if (configs == null || configs.size() == 0) {
+            configs = sqlConfig.getLayers().stream().map(i -> new ChartLayoutConfig().setChartType(i.getChartType())).collect(Collectors.toList());
+        }
         // fields更新到sql
         return new ChartVO()
-//                .setChartType(chart.getChartType())
                 .setName(chart.getName())
                 .setChartId(chart.getId())
                 .setDashboardId(chart.getDashboardId())
                 .setWorkSheetId(chart.getWorkSheetId())
-                .setLayoutConfig(chart.getLayoutConfig())
+                .setLayoutConfigs(configs)
                 .setAlarmConfig(JSON.parseObject(chart.getAlarmConfig(), AlarmConfig.class))
                 .setWorkSheetId(chart.getWorkSheetId())
-                .setSqlConfig(new ChartSqlBuilder(chart.getSqlConfig(), chart.getWorkSheetId()).build());
+                .setSqlConfig(sqlConfig);
     }
 
     public Chart toModel() {
         Chart chart = new Chart()
-//                .setChartType(chartType)
                 .setName(name)
                 .setId(chartId)
                 .setDashboardId(dashboardId)
                 .setWorkSheetId(workSheetId);
 
         if (!created()) {
-//            layoutConfig = new JSONObject();
+            layoutConfigs = new ArrayList<>();
             alarmConfig = new AlarmConfig();
             sqlConfig = ChartSql.defaultValue();
         }
 
         chart
-//                .setLayoutConfig(layoutConfig.toString())
+                .setLayoutConfig(JSON.toJSONString(layoutConfigs))
                 .setAlarmConfig(JSON.toJSONString(alarmConfig))
                 .setSqlConfig(sqlConfig.toJSONString());
-        // TODO 从config中解析type？ type有什么用？
-//                .setChartType()
         return chart;
     }
 

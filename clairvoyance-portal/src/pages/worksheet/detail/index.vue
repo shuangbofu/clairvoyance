@@ -53,7 +53,7 @@ export default {
     padding: 0 10px;
     .title {
       font-size: 28px;
-      color: #4876ff;
+      color: #4876FF;
       .description {
         font-size: 14px;
         color: #777;
