@@ -1,6 +1,5 @@
 package cn.shuangbofu.clairvoyance.core.db;
 
-import cn.shuangbofu.clairvoyance.core.enums.ChartType;
 import io.github.biezhi.anima.annotation.Column;
 import io.github.biezhi.anima.annotation.Table;
 import io.github.biezhi.anima.core.AnimaQuery;
@@ -22,7 +21,6 @@ public class Chart extends Model<Chart> {
     private Boolean deleted;
 
     private String name;
-    private ChartType chartType;
 
     private Long workSheetId;
     private Long dashboardId;

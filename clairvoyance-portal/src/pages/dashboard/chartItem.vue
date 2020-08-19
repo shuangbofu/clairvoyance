@@ -6,7 +6,7 @@
           <a-icon class="drill-tip" type="block" v-if="chart.sqlConfig.drillFields.length > 0" />
         </a-tooltip>
         <span
-          v-if="chart.sqlConfig.layers[0].chartType !== 'C2'"
+          v-if="chart.layoutConfigs[0].chartType !== 'C2'"
         >{{chart.name === '' ? '未命名图表' : chart.name}}</span>
       </div>
       <div class="button-list">
@@ -40,6 +40,7 @@
       height: `calc(100% - ${drillParam.values.length > 0 ? 50: 29}px)`
     }">
       <chart-box
+        :chart-layout-config="chart.layoutConfigs[0]"
         ref="chartBox"
         @click="onClick"
         style="position: relative; width: calc(100% - 10px); height: 100%;"

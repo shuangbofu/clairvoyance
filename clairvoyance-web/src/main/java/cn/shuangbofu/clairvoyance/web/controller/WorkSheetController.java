@@ -133,8 +133,8 @@ public class WorkSheetController {
      * @return
      */
     @GetMapping("/search")
-    public Result<List<WorkSheetSimpleVO>> listSearch(@RequestParam(value = "name") String name) {
-        return Result.success(WorkSheetSimpleVO.toSimpleVOList(WorkSheetLoader.simpleSearchByName(name)));
+    public Result<List<WorkSheetSimpleVO>> listSearch(@RequestParam(value = "name") String name, @RequestParam(required = false, defaultValue = "10") int limit) {
+        return Result.success(WorkSheetSimpleVO.toSimpleVOList(WorkSheetLoader.simpleSearchByNameLimit(name, limit)));
     }
 
     /**

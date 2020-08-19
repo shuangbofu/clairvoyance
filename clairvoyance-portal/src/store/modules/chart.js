@@ -23,6 +23,11 @@ export default {
     chartData: state => state.chartData,
     chart: state => state.chart,
     layers: (state, getters) => getters.sqlConfig.layers,
+
+    chartLayoutConfigs: state => state.chart.layoutConfigs,
+
+    chartLayoutConfig: (state, getters) => getters.chartLayoutConfigs[state.drillLevel],
+
     chartLayer: (state, getters) => getters.layers[state.drillLevel],
 
     // 下钻字段，图层中使用
@@ -186,19 +191,16 @@ export default {
     addField({ getters, dispatch }, { name, index, data }) {
       if (name === 'drill') {
         getters.drillFields.push(data)
-        console.log('add', {
-          x: [{ id: data.id }],
-          y: getters.chartLayer.y,
-          sort: getters.chartLayer.sort,
-          chartType: getters.chartLayer.chartType
-        })
         if (getters.drillFields.length > 1) {
-          console.log(data)
           getters.layers.push({
             x: [{ id: data.id }],
             y: getters.chartLayer.y,
             sort: getters.chartLayer.sort,
-            chartType: getters.chartLayer.chartType
+            // chartType: getters.chartLayer.chartType
+          })
+          getters.chartLayoutConfigs.push({
+            chartType: getters.chartLayoutConfig.chartType,
+            chartStyle: {}
           })
         }
       } else {
