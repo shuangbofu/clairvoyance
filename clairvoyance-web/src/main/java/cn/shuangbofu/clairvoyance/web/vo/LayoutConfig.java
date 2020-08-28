@@ -41,7 +41,7 @@ public class LayoutConfig {
             this.id = id;
             this.y = y;
             x = 0;
-            w = 4;
+            w = 6;
             h = 10;
         }
 

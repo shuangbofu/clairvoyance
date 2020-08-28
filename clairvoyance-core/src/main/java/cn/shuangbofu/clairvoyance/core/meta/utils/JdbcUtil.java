@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.meta.utils;
 
+import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
 import com.google.common.base.Stopwatch;
@@ -13,6 +14,7 @@ import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +33,9 @@ public class JdbcUtil {
     }
 
     public static List<Map<String, Object>> query(JdbcParam param, String sql) {
+        if (StringUtils.isEmpty(sql)) {
+            return new ArrayList<>();
+        }
         return roundExRt(() -> {
             String className = param.getClassName();
             Stopwatch stopwatch = Stopwatch.createStarted();

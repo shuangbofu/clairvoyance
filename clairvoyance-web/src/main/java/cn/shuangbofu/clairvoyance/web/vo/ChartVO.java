@@ -56,9 +56,15 @@ public class ChartVO {
                 .setWorkSheetId(workSheetId);
 
         if (!created()) {
-            layoutConfigs = new ArrayList<>();
-            alarmConfig = new AlarmConfig();
-            sqlConfig = ChartSql.defaultValue();
+            if (layoutConfigs == null) {
+                layoutConfigs = new ArrayList<>();
+            }
+            if (alarmConfig == null) {
+                alarmConfig = new AlarmConfig();
+            }
+            if (sqlConfig == null) {
+                sqlConfig = ChartSql.defaultValue();
+            }
         }
 
         chart

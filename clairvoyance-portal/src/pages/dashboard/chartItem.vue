@@ -40,7 +40,7 @@
       height: `calc(100% - ${drillParam.values.length > 0 ? 50: 29}px)`
     }">
       <chart-box
-        :chart-layout-config="chart.layoutConfigs[0]"
+        :chart-layout-config="chart.layoutConfigs[drillParam.level]"
         ref="chartBox"
         @click="onClick"
         style="position: relative; width: calc(100% - 10px); height: 100%;"

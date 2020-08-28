@@ -128,12 +128,10 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
         List<String> selects = sql.selects();
         String groupBys = sql.groupBys();
         Pair<String, OrderType> sort = sql.sort();
-
-        String selectsString = "*";
-        if (selects != null && selects.size() > 0) {
-            selectsString = String.join(",", selects);
+        if (selects == null || selects.size() == 0) {
+            return null;
         }
-        String sqlContent = String.format("SELECT %s FROM %s", selectsString, getTableName());
+        String sqlContent = String.format("SELECT %s FROM %s", String.join(",", selects), getTableName());
 
         if (StringUtils.isNotEmpty(wheres)) {
             sqlContent += " WHERE " + wheres;

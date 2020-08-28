@@ -67,13 +67,9 @@ public class ChartLayer implements Sql {
 
     @Override
     public List<String> selects() {
-        List<String> selects = getXY().stream()
+        return getXY().stream()
                 .map(FieldAlias::getQueryFinalName)
                 .collect(Collectors.toList());
-        if (selects.size() == 0) {
-            selects.add("1");
-        }
-        return selects;
     }
 
     @Override

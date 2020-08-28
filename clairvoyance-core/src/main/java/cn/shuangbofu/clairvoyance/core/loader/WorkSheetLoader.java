@@ -1,6 +1,8 @@
 package cn.shuangbofu.clairvoyance.core.loader;
 
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
+import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
+import io.github.biezhi.anima.core.AnimaQuery;
 import io.github.biezhi.anima.enums.OrderBy;
 
 import java.util.List;
@@ -43,9 +45,11 @@ public class WorkSheetLoader {
     }
 
     public static List<WorkSheet> simpleSearchByNameLimit(String name, int limit) {
-        return WorkSheet.from().select(SIMPLE_SELECT)
-                .like("%" + name)
-                .limit(limit);
+        AnimaQuery<WorkSheet> query = WorkSheet.from().select(SIMPLE_SELECT);
+        if (StringUtils.isNotEmpty(name)) {
+            query.like("%" + name);
+        }
+        return query.limit(limit);
     }
 
     //-------------------------------------------------------------------------------------------------------
