@@ -217,7 +217,8 @@ export default {
       getters.layers.splice(index, 1)
       if (getters.drillFields.length <= 1) {
         getters.sqlConfig.drillFields = []
-        getters.sqlConfig.layers.splice(1, getters.sqlConfig.layers.length - 1)
+        // console.log(getters.layers)
+        // getters.layers.splice(1, getters.layers.length - 1)
       }
       if (getters.drillLevel >= getters.drillFields.length && getters.drillLevel !== 0) {
         state.drillLevel = getters.drillFields.length - 1

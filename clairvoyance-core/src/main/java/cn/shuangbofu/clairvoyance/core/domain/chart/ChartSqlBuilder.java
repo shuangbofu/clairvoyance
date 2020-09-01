@@ -100,7 +100,7 @@ public class ChartSqlBuilder {
         layers.forEach(layer -> layer.setFields(fields));
         // drillFields设置维度为field
         for (int i = 0; i < drillFields.size(); i++) {
-            List<Dimension> x = layers.get(i).x;
+            List<Dimension> x = layers.get(i).getX();
             drillFields.get(i).setRealFields(new ArrayList<>(x));
         }
     }

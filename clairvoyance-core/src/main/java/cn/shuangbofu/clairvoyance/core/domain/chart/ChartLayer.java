@@ -2,6 +2,7 @@ package cn.shuangbofu.clairvoyance.core.domain.chart;
 
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.RowTotal;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
@@ -32,15 +33,18 @@ public class ChartLayer implements Sql {
     /**
      * 维度，groupBy
      */
-    List<Dimension> x;
+    private List<Dimension> x;
     /**
      * 数值，select
      */
-    List<Value> y;
+    private List<Value> y;
     /**
      * 排序
      */
-    Sort sort;
+    private Sort sort;
+
+    private RowTotal rowTotal;
+
     private ChartType chartType;
 
     /**
@@ -67,9 +71,13 @@ public class ChartLayer implements Sql {
 
     @Override
     public List<String> selects() {
-        return getXY().stream()
+        List<String> collect = getXY().stream()
                 .map(FieldAlias::getQueryFinalName)
                 .collect(Collectors.toList());
+        if (rowTotal != null) {
+            collect.add(rowTotal.setAllValues(y).getQueryFinalName());
+        }
+        return collect;
     }
 
     @Override

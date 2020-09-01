@@ -8,6 +8,8 @@ import lombok.Data;
 @Data
 public class ChartInnerFilter extends ExactChartFilter {
 
+    private Boolean showAll;
+
     @Override
     public String where() {
         included = true;

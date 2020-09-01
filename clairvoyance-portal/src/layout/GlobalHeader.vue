@@ -1,15 +1,15 @@
 <template>
-  <div style="width: 100%;line-height: 55px; display: flex;">
+  <div style="width: 100%;line-height: 45px; display: flex;">
     <!-- <a-icon
       class="trigger"
       :type="collapsed ? 'menu-unfold' : 'menu-fold'"
       @click="toggleCollpased"
     />-->
     <router-link to="/">
-      <img style="height: 54px; padding-top: 2px; margin: 0 30px;" src="@/assets/logo.png" />
+      <img style="height: 40px; padding-top: 2px; margin: 0 30px;" src="@/assets/logo.png" />
     </router-link>
     <i-menu
-      style="height: 64px; line-height: 64px;"
+      style="height: 50px; line-height: 50px;"
       theme="light"
       :collapsed="collapsed"
       :menu-data="menuData"

@@ -40,7 +40,7 @@ export default {
   -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   position: relative;
-  height: 64px;
+  height: 50px;
   background: #fff;
   border-bottom: 1px solid #e6e6e6;
   .trigger {
@@ -61,7 +61,7 @@ export default {
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 }
 .main-content {
-  height: calc(100vh - 64px);
+  height: calc(100vh - 50px);
   background: #f6f6f6;
   padding: 15px;
   // overflow: hidden;
