@@ -2,6 +2,7 @@ package cn.shuangbofu.clairvoyance.core.utils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -17,6 +18,7 @@ public class JSON {
     public static final ObjectMapper MAPPER = new ObjectMapper()
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
 //            .enable(SerializationFeature.INDENT_OUTPUT)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
 
     public static <T> T parseObject(String json, Class<T> tClass) {

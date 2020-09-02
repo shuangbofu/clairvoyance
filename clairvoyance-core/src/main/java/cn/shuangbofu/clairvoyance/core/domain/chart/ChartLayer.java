@@ -2,7 +2,6 @@ package cn.shuangbofu.clairvoyance.core.domain.chart;
 
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.RowTotal;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
@@ -12,11 +11,13 @@ import cn.shuangbofu.clairvoyance.core.domain.field.Field;
 import cn.shuangbofu.clairvoyance.core.enums.ChartType;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
+import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,8 +44,6 @@ public class ChartLayer implements Sql {
      */
     private Sort sort;
 
-    private RowTotal rowTotal;
-
     private ChartType chartType;
 
     /**
@@ -66,24 +65,26 @@ public class ChartLayer implements Sql {
         List<FieldAlias> fieldAliases = new ArrayList<>();
         fieldAliases.addAll(x);
         fieldAliases.addAll(y);
+        y.forEach(i -> i.setAllValues(fieldAliases));
         return fieldAliases;
+    }
+
+    public List<Value> getY() {
+        y.sort(Comparator.comparingInt(o -> (o.total() ? 1 : 0)));
+        return y;
     }
 
     @Override
     public List<String> selects() {
-        List<String> collect = getXY().stream()
-                .map(FieldAlias::getQueryFinalName)
-                .collect(Collectors.toList());
-        if (rowTotal != null) {
-            collect.add(rowTotal.setAllValues(y).getQueryFinalName());
-        }
-        return collect;
+        return getXY().stream().map(FieldAlias::getQueryFinalName)
+                .filter(StringUtils::isNotEmpty).collect(Collectors.toList());
     }
 
     @Override
     public String groupBys() {
         return x.stream()
                 .map(AbstractChartField::getRealName)
+                .filter(StringUtils::isNotEmpty)
                 .collect(Collectors.joining(", "));
     }
 

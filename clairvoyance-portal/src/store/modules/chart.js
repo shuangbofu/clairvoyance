@@ -214,14 +214,17 @@ export default {
     },
     removeDrillField({ dispatch, getters, state }, index) {
       getters.drillFields.splice(index, 1)
-      getters.layers.splice(index, 1)
+      if (getters.layers.length > 1) {
+        getters.layers.splice(index, 1)
+        getters.chartLayoutConfigs.splice(index, 1)
+      }
       if (getters.drillFields.length <= 1) {
         getters.sqlConfig.drillFields = []
-        // console.log(getters.layers)
-        // getters.layers.splice(1, getters.layers.length - 1)
+        state.drillValues = []
       }
       if (getters.drillLevel >= getters.drillFields.length && getters.drillLevel !== 0) {
-        state.drillLevel = getters.drillFields.length - 1
+        const level = getters.drillFields.length - 1
+        state.drillLevel = level > 0 ? level : 0
       }
       return dispatch('saveChart')
     },

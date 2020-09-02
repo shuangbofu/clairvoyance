@@ -2,8 +2,11 @@ package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.core.db.Chart;
 import cn.shuangbofu.clairvoyance.core.domain.chart.AlarmConfig;
+import cn.shuangbofu.clairvoyance.core.domain.chart.ChartLayer;
 import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSql;
 import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSqlBuilder;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
+import cn.shuangbofu.clairvoyance.core.enums.ChartType;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -34,7 +37,17 @@ public class ChartVO {
         List<ChartLayoutConfig> configs = JSON.parseArray(chart.getLayoutConfig(), ChartLayoutConfig.class);
 
         if (configs == null || configs.size() == 0) {
-            configs = sqlConfig.getLayers().stream().map(i -> new ChartLayoutConfig().setChartType(i.getChartType())).collect(Collectors.toList());
+            configs = sqlConfig.getLayers().stream()
+                    .map(i -> new ChartLayoutConfig().setChartType(i.getChartType()))
+                    .collect(Collectors.toList());
+        }
+        // 只有表格才有行总计
+        for (int i = 0; i < sqlConfig.getLayers().size(); i++) {
+            ChartLayer layer = sqlConfig.getLayers().get(i);
+            ChartLayoutConfig layoutConfig = configs.get(i);
+            if (!ChartType.C1.equals(layoutConfig.getChartType())) {
+                layer.getY().removeIf(Value::total);
+            }
         }
         // fields更新到sql
         return new ChartVO()

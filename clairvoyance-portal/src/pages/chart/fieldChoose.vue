@@ -16,7 +16,10 @@
         <div
           @click="rollUp(index)"
           v-if="mode ==='drill'"
-          :class="['drill-field', drillLevel === index ? 'in-level':'',drillLevel < index ? 'disabled' : '']"
+          :class="{
+          'drill-field':true, 
+          'in-level':drillLevel === index ,
+          'disabled':drillLevel < index }"
         >
           <div class="field-block-main">
             {{f.realAliasName}}
@@ -42,8 +45,8 @@
               v-if="f.aliasName && f.aliasName !== ''"
             >{{mode === 'y' ? f.aggregatorAlias : f.name}}</a-menu-item>
             <a-menu-item @click="setField(index)" key="3">设置字段</a-menu-item>
-            <a-menu-item @click="setFilter" key="4">结果筛选器</a-menu-item>
-            <a-sub-menu key="aggregator" title="聚合函数" v-if="mode === 'y'">
+            <a-menu-item @click="setFilter" key="4" v-if="!f.total">结果筛选器</a-menu-item>
+            <a-sub-menu key="aggregator" title="聚合函数" v-if="mode === 'y' && !f.total">
               <a-menu-item :key="value" v-for="(label, value) in aggregatorFunc">{{label}}</a-menu-item>
             </a-sub-menu>
             <a-sub-menu key="sort" title="排序">
@@ -56,7 +59,10 @@
           </a-menu>
           <div
             class="field-block-main"
-            :class="[drillField && index === 0 && mode === 'x' ? 'drill': '']"
+            :class="{
+              'drill':drillField && index === 0 && mode === 'x',
+              'row-total': f.total
+            }"
           >
             <a-icon type="down" />
             <a-icon
@@ -66,7 +72,7 @@
             />
             {{f.realAliasName}}
             <a-icon
-              v-if="!drillField || drillField.id !== f.id"
+              v-if="(!drillField || drillField.id !== f.id) && !f.total"
               @click="removeField(index)"
               class="close-icon"
               style="margin-left: 6px;"
@@ -328,6 +334,9 @@ export default {
         border: 2px solid red !important;
         background: transparent;
         line-height: 20px;
+      }
+      &.row-total {
+        border: 2px solid #4876ff;
       }
 
       .close-icon {

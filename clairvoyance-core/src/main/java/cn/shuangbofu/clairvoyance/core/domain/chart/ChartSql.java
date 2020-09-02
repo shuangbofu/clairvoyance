@@ -11,6 +11,7 @@ import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
@@ -42,10 +43,8 @@ public class ChartSql implements Sql {
      * 下钻字段
      */
     List<DrillField> drillFields;
-
     @JsonIgnore
     private List<Filter> otherFilters;
-
     @JsonIgnore
     private List<Drill> drills;
     @JsonIgnore
@@ -101,5 +100,11 @@ public class ChartSql implements Sql {
     @JsonIgnore
     private ChartLayer getLayer() {
         return layers.get(drillLevel);
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class Test {
+        private Boolean total;
     }
 }

@@ -30,7 +30,7 @@ public abstract class FieldAlias extends AbstractChartField {
     public String getQueryFinalName() {
         String queryName = getRealName();
         String finalAliasName = getRealAliasName();
-        if (StringUtils.isNotEmpty(finalAliasName)) {
+        if (StringUtils.isNotEmpty(finalAliasName) && StringUtils.isNotEmpty(queryName)) {
             return String.format(" %s AS `%s` ", queryName, finalAliasName);
         }
         return queryName;
