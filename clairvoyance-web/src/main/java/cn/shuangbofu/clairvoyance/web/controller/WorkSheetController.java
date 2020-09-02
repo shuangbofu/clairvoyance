@@ -6,6 +6,7 @@ import cn.shuangbofu.clairvoyance.core.db.Node;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.domain.chart.SqlBuiler;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ExactChartFilter;
 import cn.shuangbofu.clairvoyance.core.enums.NodeType;
 import cn.shuangbofu.clairvoyance.core.enums.SheetType;
 import cn.shuangbofu.clairvoyance.core.loader.DatasourceLoader;
@@ -25,6 +26,7 @@ import cn.shuangbofu.clairvoyance.web.vo.form.RangeRequestForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetImport;
 import cn.shuangbofu.clairvoyance.web.vo.preview.PreviewFilter;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -235,13 +238,15 @@ public class WorkSheetController {
      * @param form
      * @return
      */
-    @PostMapping("/range")
+    @PostMapping("/field/range")
     public Result<RangeResult> getRangeData(@RequestBody RangeRequestForm form) {
-        RangeResult fieldRange = FieldService.getFieldRange(form.getWorkSheetId(), form.getFieldId(), null);
+        List<ExactChartFilter> filters = Optional.ofNullable(form.getFilters()).orElse(Lists.newArrayList());
+        filters.forEach(f -> f.setIncluded(true));
+        RangeResult fieldRange = FieldService.getFieldRange(form.getWorkSheetId(), form.getFieldId(), Lists.newArrayList(filters));
         return Result.success(fieldRange);
     }
 
-    @PostMapping("/ranges")
+    @PostMapping("/field/ranges")
     public Result<RangeResult> getRangeData2(@RequestBody List<RangeRequestForm> forms) {
         forms = forms.stream().distinct().collect(Collectors.toList());
         RangeResult result = new RangeResult();

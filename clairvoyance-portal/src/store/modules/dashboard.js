@@ -78,7 +78,7 @@ export default {
           fieldId: map[i]
         }
       })
-      return axios.post('/workSheet/ranges', reqForm).then(data => {
+      return axios.post('/workSheet/field/ranges', reqForm).then(data => {
         state.fieldRange = data.range
       })
     }

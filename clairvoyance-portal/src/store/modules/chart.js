@@ -120,7 +120,7 @@ export default {
     },
     fetchRangeData({ state }) {
       state.rangeData = []
-      axios.post('/workSheet/range', {
+      axios.post('/workSheet/field/range', {
         workSheetId: state.workSheet.workSheetId,
         fieldId: state.editingFilter.id
       }, { timeout: 10000000 }).then(data => {
@@ -157,7 +157,7 @@ export default {
         Vue.set(targ, 'rangeData', filter.range)
         return
       }
-      axios.post('/workSheet/range', {
+      axios.post('/workSheet/field/range', {
         workSheetId: getters.workSheet.workSheetId,
         fieldId: id
       }, { timeout: 10000000 }).then(data => {

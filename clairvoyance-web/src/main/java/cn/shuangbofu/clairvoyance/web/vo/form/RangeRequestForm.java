@@ -1,7 +1,9 @@
 package cn.shuangbofu.clairvoyance.web.vo.form;
 
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ExactChartFilter;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -12,6 +14,7 @@ public class RangeRequestForm {
 
     private Long workSheetId;
     private Long fieldId;
+    private List<ExactChartFilter> filters;
 
     @Override
     public boolean equals(Object o) {
