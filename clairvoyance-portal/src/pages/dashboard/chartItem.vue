@@ -37,7 +37,7 @@
             </div>
         </div>
         <div :style="{
-      height: `calc(100% - ${drillParam.functionValues.length > 0 ? 50: 29}px)`
+      height: `calc(100% - ${drillParam.values.length > 0 ? 50: 29}px)`
     }">
             <chart-box
                     :chart-layer="chart.sqlConfig.layers[drillParam.level]"
@@ -49,11 +49,11 @@
             />
         </div>
         <drill-crumbs
-                :arr="drillParam.functionValues"
+                :arr="drillParam.values"
                 :first="chart.sqlConfig.drillFields[0].realAliasName"
                 @click="rollUp"
                 slot="footer"
-                v-if="drillParam.functionValues.length > 0"
+                v-if="drillParam.values.length > 0"
         />
     </div>
 </template>
@@ -69,7 +69,7 @@
                 chartData: [],
                 drillParam: {
                     level: 0,
-                    functionValues: []
+                    values: []
                 }
             };
         },
@@ -115,7 +115,7 @@
             // 和chart.js vuex中 下钻和上卷执行操作相同
             onClick(e) {
                 if (this.drillParam.level + 1 < this.chart.sqlConfig.drillFields.length) {
-                    this.drillParam.functionValues.push(e.name)
+                    this.drillParam.values.push(e.name)
                     this.drillParam.level += 1
                     this.fetchData()
                 }
@@ -124,7 +124,7 @@
                 if (index >= this.drillParam.level) {
                     return;
                 }
-                this.drillParam.functionValues = this.drillParam.functionValues.slice(0, index)
+                this.drillParam.values = this.drillParam.values.slice(0, index)
                 this.chartData = []
                 this.drillParam.level = index
                 this.fetchData()

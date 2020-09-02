@@ -50,7 +50,7 @@
             layoutUpdatedEvent(newLayout) {
                 console.log(newLayout)
                 this.$emit('update', newLayout)
-                Object.functionValues(this.$refs).forEach(refs => {
+                Object.values(this.$refs).forEach(refs => {
                     const ref = refs[0]
                     if (ref) {
                         ref.resize()
