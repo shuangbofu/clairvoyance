@@ -9,13 +9,17 @@
       </div>
     </div>
     <template v-else>
+      <div id="chart-box"></div>
       <v-chart
         @click="onClick"
         ref="chart"
-        theme="macarons"
+        theme="test"
         style="padding: 0;"
         :options="chartOption"
       />
+      <!-- {{chartLayer.x.map(i=>i.realAliasName)}} -->
+      <!-- {{chartLayer.y.map(i=>i.realAliasName)}} -->
+      <!-- <vue-antv-chart :data="data" :chartLayer="chartLayer" :chartLayoutConfig="chartLayoutConfig" /> -->
     </template>
     <slot name="footer" />
   </div>
@@ -31,6 +35,7 @@ import "echarts/theme/shine";
 import "echarts/theme/infographic";
 import "echarts/theme/dark";
 import { getChartOption } from "./chartPaint.js";
+// import VueAntvChart from './vue-antv-chart';
 export default {
   props: ["data", "chartLayer",'chartLayoutConfig'],
   data() {
@@ -40,6 +45,9 @@ export default {
     data() {
       this.resize()
     }
+  },
+  components: {
+    // VueAntvChart
   },
   computed: {
     chartOption() {

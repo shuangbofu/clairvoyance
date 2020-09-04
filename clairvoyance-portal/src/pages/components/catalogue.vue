@@ -327,7 +327,7 @@ export default {
     width: 100%;
     padding: 10px;
     overflow: auto;
-    height: calc(100vh - 94px);
+    height: calc(100vh - 84px);
     border: 1px solid #e6e6e6;
     background: #fff;
     box-shadow: 0 2px 4px rgba(0, 21, 41, 0.08);
@@ -345,7 +345,7 @@ export default {
     // padding: 20px;
     // border: 1px solid #e6e6e6;
     width: 100%;
-    height: calc(100vh - 95px);
+    height: calc(100vh - 85px);
     // background: #fff;
     overflow: auto;
     .spin {

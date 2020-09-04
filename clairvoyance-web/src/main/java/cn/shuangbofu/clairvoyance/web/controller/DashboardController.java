@@ -123,7 +123,7 @@ public class DashboardController {
     }
 
     @PostMapping("/filter/range/{dashboardFilterId}")
-    public Result<RangeResult> filterRange(@PathVariable("dashboardFilterId") Long dashboardFilterId, @RequestBody(required = false) List<GlobalFilterParam> params) {
+    public Result<List<Object>> filterRange(@PathVariable("dashboardFilterId") Long dashboardFilterId, @RequestBody(required = false) List<GlobalFilterParam> params) {
         List<DashboardFilterVO> filterVOS = null;
         RangeResult rangeResult = new RangeResult();
         if (params != null && params.size() > 0) {
@@ -138,7 +138,7 @@ public class DashboardController {
         List<String> template = vo.getTemplate();
         if (template != null && template.size() > 0) {
             range.addAll(template);
-            return Result.success(new RangeResult(range));
+            return Result.success(range);
         }
         for (Long workSheetId : vo.getSheetFieldMap().keySet()) {
             List<ChartFilter> chartFilters = Lists.newArrayList();
@@ -154,7 +154,7 @@ public class DashboardController {
             RangeResult result = FieldService.getFieldRange(workSheetId, vo.getSheetFieldMap().get(workSheetId), chartFilters);
             rangeResult.concat(result);
         }
-        return Result.success(rangeResult);
+        return Result.success(rangeResult.getRange());
     }
 
     @GetMapping("/workSheet")

@@ -9,21 +9,34 @@
               <div class="remarks">{{dashboard.remarks}}</div>
             </div>
             <div class="button-list">
-              <a-button icon="bar-chart" @click="addChart">添加图表</a-button>
+              <span class="button" @click="addChart">
+                <a-icon type="bar-chart" class="icon" />
+                <span class="text">添加图表</span>
+              </span>
+              <span class="button" @click="openGlobalFilter">
+                <a-icon type="filter" class="icon" />
+                <span class="text">全局筛选</span>
+              </span>
+              <span class="button">
+                <a-icon type="fullscreen" class="icon" />
+                <span class="text">全屏</span>
+              </span>
+              <!-- <a-button icon="bar-chart" @click="addChart">添加图表</a-button>
               <a-button icon="highlight" disabled>设计</a-button>
               <a-button icon="filter" @click="openGlobalFilter">全局筛选</a-button>
               <a-button icon="fullscreen" disabled>全屏</a-button>
               <a-button icon="share-alt" disabled>分享</a-button>
-              <a-button icon="more" disabled>更多</a-button>
+              <a-button icon="more" disabled>更多</a-button>-->
             </div>
           </div>
-          <div style="padding: 0 5px; margin-bottom: 5px;">
+          <div class="filter-container">
             <a-icon
               v-if="flatFilters.length > 0"
               style="font-size: 18px; color: #4876FF; margin-right: 10px;"
               type="filter"
             />
             <a-select
+              size="small"
               v-model="filterParams[filter.id]"
               v-for="(filter, index) in flatFilters"
               :key="index"
@@ -196,9 +209,9 @@ export default {
       if(!open){return}
       const params = this.getFilterParentParams(dashboardFilterId)
       this.$axios.post(`/dashboard/filter/range/${dashboardFilterId}`,params).then(data => {
-        this.selectRange[dashboardFilterId] = data.range
+        // this.selectRange[dashboardFilterId] = data.range
         const ranges = {...this.selectRange}
-        ranges[dashboardFilterId] = data.range
+        ranges[dashboardFilterId] = data
         this.selectRange = ranges
       })
     },
@@ -221,20 +234,51 @@ export default {
 
 <style lang="less">
 .dashboard-main {
+  // background: #fff;
+  // padding: 20px;
   .dashboard-header {
     display: flex;
     justify-content: space-between;
+    background: #fff;
+    padding: 10px;
+    border: 1px solid #e6e6e6;
+    border-bottom: none;
     .title {
-      font-size: 28px;
+      font-size: 20px;
       color: #4876ff;
       .remarks {
         font-size: 14px;
-        color: #777;
+        color: #666;
       }
     }
-    button {
-      margin-left: -1px;
+    .button-list {
+      .button {
+        cursor: pointer;
+        user-select: none;
+        margin-right: 20px;
+        font-size: 14px;
+        color: #777;
+        .text:hover {
+          color: #111;
+          border-bottom: 1.4px solid #4876ff;
+        }
+        .icon {
+          color: #4876ff;
+          font-size: 16px;
+          font-weight: 600;
+          line-height: 14px;
+          margin-right: 6px;
+        }
+      }
     }
+  }
+  .filter-container {
+    padding: 0 5px;
+    margin-bottom: 5px;
+    background: #fff;
+    padding: 10px;
+    border: 1px solid #e6e6e6;
+    border-top: none;
   }
   .charts-container {
     .empty-block {

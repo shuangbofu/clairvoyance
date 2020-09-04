@@ -239,21 +239,21 @@ public class WorkSheetController {
      * @return
      */
     @PostMapping("/field/range")
-    public Result<RangeResult> getRangeData(@RequestBody RangeRequestForm form) {
+    public Result<List<Object>> getRangeData(@RequestBody RangeRequestForm form) {
         List<ExactChartFilter> filters = Optional.ofNullable(form.getFilters()).orElse(Lists.newArrayList());
         filters.forEach(f -> f.setIncluded(true));
         RangeResult fieldRange = FieldService.getFieldRange(form.getWorkSheetId(), form.getFieldId(), Lists.newArrayList(filters));
-        return Result.success(fieldRange);
+        return Result.success(fieldRange.getRange());
     }
 
     @PostMapping("/field/ranges")
-    public Result<RangeResult> getRangeData2(@RequestBody List<RangeRequestForm> forms) {
+    public Result<List<Object>> getRangeData2(@RequestBody List<RangeRequestForm> forms) {
         forms = forms.stream().distinct().collect(Collectors.toList());
         RangeResult result = new RangeResult();
         for (RangeRequestForm form : forms) {
             RangeResult fieldRange = FieldService.getFieldRange(form.getWorkSheetId(), form.getFieldId(), null);
             result.concat(fieldRange);
         }
-        return Result.success(result);
+        return Result.success(result.getRange());
     }
 }
