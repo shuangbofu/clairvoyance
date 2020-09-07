@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
  */
 @Data
 public class Value extends FieldAlias {
-    // 行总计
-    private Boolean total;
     private AggregatorFunc aggregator;
     private String unit;
 
+    // 行总计
+    private Boolean total;
     @JsonIgnore
     private List<FieldAlias> allFields;
 

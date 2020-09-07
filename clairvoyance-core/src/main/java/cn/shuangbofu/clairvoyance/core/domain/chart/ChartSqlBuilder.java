@@ -93,7 +93,7 @@ public class ChartSqlBuilder {
         List<ChartLayer> layers = chartSql.getLayers();
         List<ChartField> fieldList = Lists.newArrayList();
         fieldList.addAll(chartSql.getFilters());
-        fieldList.addAll(chartSql.getInnerFilters());
+        fieldList.addAll(chartSql.getAllInnerFilters());
         fieldList.addAll(drillFields);
         fieldList.addAll(filters);
         fieldList.forEach(chartField -> chartField.setRealFields(fields));

@@ -2,10 +2,7 @@ package cn.shuangbofu.clairvoyance.core.utils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,15 +27,33 @@ public class JSON {
         }
     }
 
+    public static <T> T parseObject(Object fromValue, Class<T> tClass) {
+        return MAPPER.convertValue(fromValue, tClass);
+    }
+
+    public static JsonNode object2JsonNode(Object fromValue) {
+        return parseObject(fromValue, JsonNode.class);
+    }
+
+    public static JsonNode jsonString2JsonNode(String jsonString) {
+        return parseObject(jsonString, JsonNode.class);
+    }
+//
+//    public static JsonNode parse2JsonArray(Object fromValue) {
+//        return parseArray(fromValue, JsonNode.class);
+//    }
+
     public static <T> List<T> parseArray(String json, Class<T> tClass) {
         try {
-            JavaType javaType = MAPPER.getTypeFactory()
-                    .constructCollectionType(List.class, tClass);
-            return MAPPER.readValue(json, javaType);
+            return MAPPER.readValue(json, getJavaType(tClass));
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("parse json 2 array error");
         }
+    }
+
+    public static <T> List<T> parseArray(Object fromValue, Class<T> tClass) {
+        return MAPPER.convertValue(fromValue, getJavaType(tClass));
     }
 
     public static String toJSONString(Object object) {
@@ -48,5 +63,10 @@ public class JSON {
             e.printStackTrace();
             throw new RuntimeException("bean to json error");
         }
+    }
+
+    private static <T> JavaType getJavaType(Class<T> tClass) {
+        return MAPPER.getTypeFactory()
+                .constructCollectionType(List.class, tClass);
     }
 }

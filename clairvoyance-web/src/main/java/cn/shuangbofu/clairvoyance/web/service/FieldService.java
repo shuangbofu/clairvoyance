@@ -2,6 +2,7 @@ package cn.shuangbofu.clairvoyance.web.service;
 
 import cn.shuangbofu.clairvoyance.core.db.Field;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.AggregatorFunc;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.field.GroupField;
@@ -35,20 +36,25 @@ public class FieldService {
         return cn.shuangbofu.clairvoyance.core.domain.field.Field.fromDb(allFields);
     }
 
-    public static RangeResult getFieldRange(Long workSheetId, Long fieldId, List<ChartFilter> filters) {
+    public static RangeResult getFieldRange(Long workSheetId, Long fieldId, List<ChartFilter> filters, AggregatorFunc func) {
         Field field = FieldLoader.getField(fieldId);
         List<cn.shuangbofu.clairvoyance.core.domain.field.Field> fields = getFields(workSheetId);
 
         RangeResult rangeResult = null;
         if (field.getFieldType().equals(FieldType.origin)) {
-            String name = field.getName();
+            String fieldName = field.getName();
+            String title = field.getTitle();
             WorkSheet sheet = WorkSheetLoader.getSheet(workSheetId);
             SourceTable table = SqlQueryRunner.getSourceTable(sheet);
-
+            if (func != null) {
+                title = func.wrapWithTitle(title);
+                fieldName = func.wrapWithField(fieldName);
+            }
+            String selectName = String.format(" %s AS `%s` ", fieldName, title);
             List<Map<String, Object>> result = table.run(new Sql() {
                 @Override
                 public List<String> selects() {
-                    return Lists.newArrayList("`" + name + "`");
+                    return Lists.newArrayList(selectName);
                 }
 
                 @Override
@@ -61,8 +67,11 @@ public class FieldService {
                     return null;
                 }
             });
-            rangeResult = new RangeResult(result, name);
+            rangeResult = new RangeResult(result, title);
         } else if (field.getFieldType().equals(FieldType.group)) {
+            if (func != null) {
+                rangeResult = new RangeResult(Lists.newArrayList(1));
+            }
             Optional<cn.shuangbofu.clairvoyance.core.domain.field.Field> any = fields.stream().filter(i -> i.getId().equals(field.getId())).findAny();
             if (any.isPresent()) {
                 GroupField groupField = (GroupField) any.get();
@@ -71,5 +80,9 @@ public class FieldService {
             }
         }
         return rangeResult;
+    }
+
+    public static RangeResult getFieldRange(Long workSheetId, Long fieldId, List<ChartFilter> filters) {
+        return getFieldRange(workSheetId, fieldId, filters, null);
     }
 }

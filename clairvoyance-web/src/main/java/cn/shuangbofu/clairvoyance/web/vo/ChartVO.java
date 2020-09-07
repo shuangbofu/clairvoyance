@@ -13,7 +13,6 @@ import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by shuangbofu on 2020/7/30 下午11:08
@@ -35,12 +34,6 @@ public class ChartVO {
     public static ChartVO toVO(Chart chart) {
         ChartSql sqlConfig = new ChartSqlBuilder(chart.getSqlConfig(), chart.getWorkSheetId()).build();
         List<ChartLayoutConfig> configs = JSON.parseArray(chart.getLayoutConfig(), ChartLayoutConfig.class);
-
-        if (configs == null || configs.size() == 0) {
-            configs = sqlConfig.getLayers().stream()
-                    .map(i -> new ChartLayoutConfig().setChartType(i.getChartType()))
-                    .collect(Collectors.toList());
-        }
         // 只有表格才有行总计
         for (int i = 0; i < sqlConfig.getLayers().size(); i++) {
             ChartLayer layer = sqlConfig.getLayers().get(i);

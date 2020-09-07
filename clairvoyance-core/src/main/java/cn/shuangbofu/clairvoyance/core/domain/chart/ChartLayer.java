@@ -5,10 +5,10 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartInnerFilter;
 import cn.shuangbofu.clairvoyance.core.domain.field.AbstractChartField;
 import cn.shuangbofu.clairvoyance.core.domain.field.ChartField;
 import cn.shuangbofu.clairvoyance.core.domain.field.Field;
-import cn.shuangbofu.clairvoyance.core.enums.ChartType;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
@@ -32,26 +32,31 @@ import java.util.stream.Collectors;
 public class ChartLayer implements Sql {
 
     /**
+     * 图内筛选器
+     */
+    private List<ChartInnerFilter> innerFilters;
+
+    /**
      * 维度，groupBy
      */
     private List<Dimension> x;
+
     /**
      * 数值，select
      */
     private List<Value> y;
+
     /**
      * 排序
      */
     private Sort sort;
 
-    private ChartType chartType;
-
     /**
      * 对比和次轴后期可以在这里扩展
      */
-
     public static ChartLayer defaultLayer() {
         return new ChartLayer()
+                .setInnerFilters(new ArrayList<>())
                 .setX(new ArrayList<>())
                 .setY(new ArrayList<>())
                 .setSort(new Sort());

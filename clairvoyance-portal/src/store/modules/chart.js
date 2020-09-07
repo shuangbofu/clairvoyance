@@ -39,7 +39,11 @@ export default {
 
     sqlConfig: state => state.chart.sqlConfig,
     filters: (state, getters) => getters.sqlConfig.filters,
-    innerFilters: (state, getters) => getters.sqlConfig.innerFilters,
+
+
+    // allInnerFilters: (state, getters) => getters.sqlConfig.innerFilters,
+    // innerFilters: (state, getters) => getters.allInnerFilters[state.drillLevel],
+    innerFilters: (state, getters) => getters.chartLayer.innerFilters,
 
     editingFilter: state => state.editingFilter,
     rangeData: state => state.rangeData,
@@ -124,7 +128,7 @@ export default {
         workSheetId: state.workSheet.workSheetId,
         fieldId: state.editingFilter.id
       }, { timeout: 10000000 }).then(data => {
-        state.rangeData = disinct(data.range)
+        state.rangeData = disinct(data)
       })
 
     },
@@ -161,7 +165,7 @@ export default {
         workSheetId: getters.workSheet.workSheetId,
         fieldId: id
       }, { timeout: 10000000 }).then(data => {
-        let rangeData = disinct(data.range)
+        let rangeData = disinct(data)
         if (filter && !filter.included) {
           rangeData = rangeData.filter(i => !filter.range.includes(i))
         }
@@ -196,6 +200,7 @@ export default {
             x: [{ id: data.id }],
             y: getters.chartLayer.y,
             sort: getters.chartLayer.sort,
+            innerFilters: getters.innerFilters,
             // chartType: getters.chartLayer.chartType
           })
           getters.chartLayoutConfigs.push({

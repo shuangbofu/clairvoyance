@@ -79,7 +79,7 @@ export default {
         }
       })
       return axios.post('/workSheet/field/ranges', reqForm).then(data => {
-        state.fieldRange = data.range
+        state.fieldRange = data
       })
     }
   },

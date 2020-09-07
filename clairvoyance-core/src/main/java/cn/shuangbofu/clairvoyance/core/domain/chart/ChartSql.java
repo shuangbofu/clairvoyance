@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,10 +29,6 @@ import java.util.stream.Collectors;
 @Accessors(chain = true)
 public class ChartSql implements Sql {
     /**
-     * 图内筛选器
-     */
-    List<ChartInnerFilter> innerFilters;
-    /**
      * 筛选器
      */
     List<ChartFilter> filters;
@@ -43,6 +40,10 @@ public class ChartSql implements Sql {
      * 下钻字段
      */
     List<DrillField> drillFields;
+
+    /**
+     * 比如全局过滤器、图表联动的过滤条件
+     */
     @JsonIgnore
     private List<Filter> otherFilters;
     @JsonIgnore
@@ -59,7 +60,6 @@ public class ChartSql implements Sql {
     public static ChartSql defaultValue() {
         return new ChartSql()
                 .setFilters(new ArrayList<>())
-                .setInnerFilters(new ArrayList<>())
                 .setDrillFields(new ArrayList<>())
                 .setLayers(Lists.newArrayList(ChartLayer.defaultLayer()))
                 ;
@@ -79,7 +79,7 @@ public class ChartSql implements Sql {
     public String wheres() {
         List<Filter> actualFilters = Lists.newArrayList();
         actualFilters.addAll(filters);
-        actualFilters.addAll(innerFilters);
+        actualFilters.addAll(getLayer().getInnerFilters());
         actualFilters.addAll(drills);
         actualFilters.addAll(otherFilters);
         return actualFilters.stream().map((Filter::where))
@@ -100,6 +100,13 @@ public class ChartSql implements Sql {
     @JsonIgnore
     private ChartLayer getLayer() {
         return layers.get(drillLevel);
+    }
+
+    @JsonIgnore
+    public List<ChartInnerFilter> getAllInnerFilters() {
+        return layers.stream().map(ChartLayer::getInnerFilters)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
     @Data
