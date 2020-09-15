@@ -26,4 +26,9 @@ public class ConditionChartFilter extends ChartFilter {
         }
         return null;
     }
+
+    @Override
+    public void setup() {
+
+    }
 }

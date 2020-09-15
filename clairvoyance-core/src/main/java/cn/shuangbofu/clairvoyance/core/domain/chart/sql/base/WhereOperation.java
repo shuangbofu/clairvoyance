@@ -26,6 +26,16 @@ public enum WhereOperation {
     notEmpty("!= ''"),
     // TODO 日期怎么搞？
 
+    /**
+     * TODO
+     */
+    include(""),
+    notInclude(""),
+    startInclude(""),
+    endInclude(""),
+
+    // 区间
+    range(""),
     ;
 
     private final String symbol;

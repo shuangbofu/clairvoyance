@@ -15,12 +15,10 @@ import lombok.Data;
         @JsonSubTypes.Type(value = ExactChartFilter.class, name = ChartFilter.EXACT),
         @JsonSubTypes.Type(value = ConditionChartFilter.class, name = ChartFilter.CONDITION),
         @JsonSubTypes.Type(value = ExpressionChartFilter.class, name = ChartFilter.EXPRESSION),
-        @JsonSubTypes.Type(value = ChartInnerFilter.class, name = ChartFilter.INNER)
 })
-public abstract class ChartFilter extends AbstractChartField implements Filter {
+public abstract class ChartFilter extends AbstractChartField implements Filter, InnerFilter {
     public static final String EXACT = "exact";
     public static final String CONDITION = "condition";
     public static final String EXPRESSION = "expression";
-    public static final String INNER = "inner";
     public String filterType;
 }

@@ -5,6 +5,7 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.function.Function;
@@ -22,6 +23,8 @@ public class Value extends FieldAlias {
     private Boolean total;
     @JsonIgnore
     private List<FieldAlias> allFields;
+
+    private Formatter formatter;
 
     public void setAllValues(List<FieldAlias> allFields) {
         if (total()) {
@@ -66,5 +69,26 @@ public class Value extends FieldAlias {
     @JsonIgnore
     public boolean total() {
         return total != null && total;
+    }
+
+    @Data
+    public static class Formatter {
+
+        private CheckType check;
+        // 使用千分分隔符
+        private Boolean millesimal;
+        private FormatterUnit unit;
+        private Integer numDigit;
+        private Integer percentDigit;
+
+        @Getter
+        public enum CheckType {
+            num, percent
+        }
+
+        @Getter
+        public enum FormatterUnit {
+            ten_thousand, billion, k, g, m
+        }
     }
 }

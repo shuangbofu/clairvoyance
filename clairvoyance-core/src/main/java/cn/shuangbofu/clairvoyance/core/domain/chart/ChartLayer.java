@@ -5,7 +5,7 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartInnerFilter;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.field.AbstractChartField;
 import cn.shuangbofu.clairvoyance.core.domain.field.ChartField;
 import cn.shuangbofu.clairvoyance.core.domain.field.Field;
@@ -34,7 +34,7 @@ public class ChartLayer implements Sql {
     /**
      * 图内筛选器
      */
-    private List<ChartInnerFilter> innerFilters;
+    private List<ChartFilter> innerFilters;
 
     /**
      * 维度，groupBy

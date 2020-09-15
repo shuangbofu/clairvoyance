@@ -16,8 +16,17 @@ import java.util.stream.Collectors;
 public class ExactChartFilter extends ChartFilter {
     public List<Object> range;
     public Boolean included;
+    /**
+     * 是否显示全部
+     */
+    private Boolean showAll;
+    /**
+     * 保存的下拉列表
+     */
+    private List<Object> templates;
 
     public ExactChartFilter() {
+
     }
 
     public ExactChartFilter(List<String> range, Boolean included, Long refId) {
@@ -33,5 +42,10 @@ public class ExactChartFilter extends ChartFilter {
         }
         String values = range.stream().map(SqlUtil::standardValue).collect(Collectors.joining(", "));
         return " " + getRealName() + (!included ? " NOT" : "") + " IN ( " + values + ")";
+    }
+
+    @Override
+    public void setup() {
+        included = true;
     }
 }

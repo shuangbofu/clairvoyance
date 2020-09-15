@@ -5,9 +5,7 @@
         <a-tooltip :title="drillTip" placement="bottomLeft">
           <a-icon class="drill-tip" type="block" v-if="chart.sqlConfig.drillFields.length > 0" />
         </a-tooltip>
-        <span
-          v-if="chart.layoutConfigs[drillParam.level].chartType !== 'C2'"
-        >{{chart.name === '' ? '未命名图表' : chart.name}}</span>
+        <span v-if="layoutConfig.chartType !== 'C2'">{{chart.name === '' ? '未命名图表' : chart.name}}</span>
       </div>
       <div class="button-list">
         <a-icon @click="link2Editor" class="button" type="edit" />
@@ -40,8 +38,8 @@
       height: `calc(100% - ${drillParam.values.length > 0 ? 50: 40}px)`
     }">
       <chart-box
-        :chart-layer="chart.sqlConfig.layers[drillParam.level]"
-        :chart-layout-config="chart.layoutConfigs[drillParam.level]"
+        :chart-layer="layer"
+        :chart-layout-config="layoutConfig"
         :data="chartData"
         @click="onClick"
         ref="chartBox"
@@ -81,7 +79,13 @@
                 return this.$store.getters['dashboard/globalFilterParams']
             },
             fillInnerFilter() {
-                return this.chart.sqlConfig.innerFilters.filter(i => i.range.length > 0).length > 0
+                return this.layer.innerFilters.filter(i => i.range.length > 0).length > 0
+            },
+            layer() {
+                return this.chart.sqlConfig.layers[this.drillParam.level]
+            },
+            layoutConfig() {
+                return this.chart.layoutConfigs[this.drillParam.level]
             },
             drillTip() {
                 const tip = this.chart.sqlConfig.drillFields.map(i => {

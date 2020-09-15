@@ -1,19 +1,15 @@
 <template>
-  <div>
-    <a-layout>
-      <!-- <a-layout-sider v-model="collapsed" :collapsible="true" class="sider" :trigger="null">
+  <!-- <a-layout-sider v-model="collapsed" :collapsible="true" class="sider" :trigger="null">
         <global-sider :collapsed="collapsed" />
-      </a-layout-sider>-->
-      <a-layout>
-        <a-layout-header class="header">
-          <global-header @toggleCollpased="() => (collapsed = !collapsed)" :collapsed="collapsed" />
-        </a-layout-header>
-        <a-layout-content class="main-content">
-          <slot />
-        </a-layout-content>
-      </a-layout>
-    </a-layout>
-  </div>
+  </a-layout-sider>-->
+  <a-layout>
+    <a-layout-header class="header">
+      <global-header @toggleCollpased="() => (collapsed = !collapsed)" :collapsed="collapsed" />
+    </a-layout-header>
+    <a-layout-content class="main-content">
+      <slot />
+    </a-layout-content>
+  </a-layout>
 </template>
 
 <script>

@@ -18,4 +18,9 @@ public class ExpressionChartFilter extends ChartFilter {
         sql = SqlUtil.standardWhereSql(sql);
         return sql.replace("[" + getTitle() + "]", getRealName());
     }
+
+    @Override
+    public void setup() {
+
+    }
 }
