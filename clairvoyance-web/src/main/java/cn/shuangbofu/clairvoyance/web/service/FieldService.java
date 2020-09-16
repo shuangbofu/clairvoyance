@@ -16,6 +16,7 @@ import cn.shuangbofu.clairvoyance.web.vo.FieldSimpleVO;
 import cn.shuangbofu.clairvoyance.web.vo.RangeResult;
 import com.google.common.collect.Lists;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,15 +47,11 @@ public class FieldService {
             String title = field.getTitle();
             WorkSheet sheet = WorkSheetLoader.getSheet(workSheetId);
             SourceTable table = SqlQueryRunner.getSourceTable(sheet);
-            if (func != null) {
-                title = func.wrapWithTitle(title);
-                fieldName = func.wrapWithField(fieldName);
-            }
-            String selectName = String.format(" %s AS `%s` ", fieldName, title);
+
             List<Map<String, Object>> result = table.run(new Sql() {
                 @Override
                 public List<String> selects() {
-                    return Lists.newArrayList(selectName);
+                    return getSelectNames(fieldName, title, func);
                 }
 
                 @Override
@@ -84,5 +81,26 @@ public class FieldService {
 
     public static RangeResult getFieldRange(Long workSheetId, Long fieldId, List<ChartFilter> filters) {
         return getFieldRange(workSheetId, fieldId, filters, null);
+    }
+
+    private static List<String> getSelectNames(String fieldName, String title, AggregatorFunc... funcs) {
+        if (funcs == null) {
+            return Lists.newArrayList(getSelectName(fieldName, title, null));
+        }
+        if (funcs.length == 1) {
+            AggregatorFunc func = funcs[0];
+            if (AggregatorFunc.MAX.equals(func) || AggregatorFunc.MIN.equals(func)) {
+                return getSelectNames(fieldName, title, AggregatorFunc.MIN, AggregatorFunc.MIN);
+            }
+        }
+        return Arrays.stream(funcs).map(i -> getSelectName(fieldName, title, i)).collect(Collectors.toList());
+    }
+
+    private static String getSelectName(String fieldName, String title, AggregatorFunc func) {
+        if (func != null) {
+            title = func.wrapWithTitle(title);
+            fieldName = func.wrapWithField(fieldName);
+        }
+        return String.format(" %s AS `%s` ", fieldName, title);
     }
 }

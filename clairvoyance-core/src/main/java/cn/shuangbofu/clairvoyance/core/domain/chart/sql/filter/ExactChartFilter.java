@@ -45,7 +45,7 @@ public class ExactChartFilter extends ChartFilter {
     }
 
     @Override
-    public void setup() {
+    public void setupInner() {
         included = true;
     }
 }

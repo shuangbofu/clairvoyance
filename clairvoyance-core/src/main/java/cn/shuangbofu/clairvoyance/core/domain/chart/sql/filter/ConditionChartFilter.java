@@ -28,7 +28,7 @@ public class ConditionChartFilter extends ChartFilter {
     }
 
     @Override
-    public void setup() {
+    public void setupInner() {
 
     }
 }

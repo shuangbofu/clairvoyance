@@ -20,7 +20,7 @@ public class ExpressionChartFilter extends ChartFilter {
     }
 
     @Override
-    public void setup() {
+    public void setupInner() {
 
     }
 }

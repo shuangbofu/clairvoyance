@@ -21,6 +21,7 @@ public class Chart extends Model<Chart> {
     private Boolean deleted;
 
     private String name;
+    private String remarks;
 
     private Long workSheetId;
     private Long dashboardId;

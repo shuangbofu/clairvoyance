@@ -30,6 +30,7 @@ public class ChartVO {
     private AlarmConfig alarmConfig;
     private ChartSql sqlConfig;
     private String name;
+    private String remarks;
 
     public static ChartVO toVO(Chart chart) {
         ChartSql sqlConfig = new ChartSqlBuilder(chart.getSqlConfig(), chart.getWorkSheetId()).build();
@@ -45,6 +46,7 @@ public class ChartVO {
         // fields更新到sql
         return new ChartVO()
                 .setName(chart.getName())
+                .setRemarks(chart.getRemarks())
                 .setChartId(chart.getId())
                 .setDashboardId(chart.getDashboardId())
                 .setWorkSheetId(chart.getWorkSheetId())
@@ -56,6 +58,7 @@ public class ChartVO {
 
     public Chart toModel() {
         Chart chart = new Chart()
+                .setRemarks(remarks)
                 .setName(name)
                 .setId(chartId)
                 .setDashboardId(dashboardId)

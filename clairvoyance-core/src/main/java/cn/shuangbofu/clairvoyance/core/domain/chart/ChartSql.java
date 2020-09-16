@@ -24,6 +24,10 @@ import java.util.stream.Collectors;
  * Created by shuangbofu on 2020/7/30 下午11:09
  * <p>
  * 图表的SQL配置类
+ * 1、存储的配置（转成json）
+ * 2、传给前端的数据格式
+ * 3、从前端接受的数据格式
+ * 4、生成具体sql的类
  */
 @Data
 @Accessors(chain = true)
@@ -80,7 +84,7 @@ public class ChartSql implements Sql {
         List<Filter> actualFilters = Lists.newArrayList();
         actualFilters.addAll(filters);
         List<ChartFilter> innerFilters = getLayer().getInnerFilters();
-        innerFilters.forEach(InnerFilter::setup);
+        innerFilters.forEach(InnerFilter::setupInner);
         actualFilters.addAll(innerFilters);
         actualFilters.addAll(drills);
         actualFilters.addAll(otherFilters);

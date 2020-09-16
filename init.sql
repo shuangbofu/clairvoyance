@@ -4,6 +4,7 @@ CREATE TABLE `chart` (
   `gmt_modified` bigint(13) unsigned NOT NULL COMMENT '修改时间',
   `status` tinyint(1) unsigned NOT NULL COMMENT '逻辑删除',
   `name` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
+  `remarks` varchar(128) NOT NULL DEFAULT '' COMMENT '备注',
   `chart_type` int(4) unsigned NOT NULL DEFAULT '0' COMMENT '图表类型',
   `work_sheet_id` bigint(13) unsigned NOT NULL COMMENT '工作表ID',
   `dashboard_id` bigint(13) NOT NULL COMMENT '仪表盘ID',
