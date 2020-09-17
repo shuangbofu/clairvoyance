@@ -1,7 +1,11 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter;
 
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.AggregatorFunc;
+import cn.shuangbofu.clairvoyance.core.domain.field.Field;
 import cn.shuangbofu.clairvoyance.core.meta.utils.SqlUtil;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -41,11 +45,27 @@ public class ExactChartFilter extends ChartFilter {
             return null;
         }
         String values = range.stream().map(SqlUtil::standardValue).collect(Collectors.joining(", "));
-        return " " + getRealName() + (!included ? " NOT" : "") + " IN ( " + values + ")";
+        if (!isY()) {
+            return " " + getRealName() + (!included ? " NOT" : "") + " IN ( " + values + ")";
+        } else {
+            // TODO 根据不同聚合函数生成不同条件 FIXME
+            AggregatorFunc aggregator = getAggregator();
+        }
+        return null;
     }
 
     @Override
     public void setupInner() {
         included = true;
+    }
+
+    @JsonProperty("aggregator")
+    public AggregatorFunc getAggregator() {
+        Field realField = getRealField();
+        if (realField != null && isY()) {
+            Value value = (Value) realField;
+            return value.getAggregator();
+        }
+        return null;
     }
 }

@@ -41,7 +41,7 @@ public class Test3 {
 
     @Test
     public void testHive() {
-        HiveSourceDb hiveSourceDb = new HiveSourceDb(new JdbcParam("jdbc:hive://172.16.248.220:9002/hive", "hadoop", ""));
+        HiveSourceDb hiveSourceDb = new HiveSourceDb(new JdbcParam("jdbc:hive://172.16.248.220:7001/hive", "hadoop", ""));
 
         boolean valid = hiveSourceDb.isValid();
         System.out.println(valid);

@@ -93,7 +93,7 @@ public class Value extends FieldAlias {
         } else if (AggregatorFunc.AVG.equals(func)) {
             return getRowName(AggregatorFunc.SUM) + "/ " + allFields.size() + " ";
         } else {
-            // TODO 其他函数 字段间总计
+            // TODO 其他函数 字段间总计 FIXME
             return null;
         }
     }

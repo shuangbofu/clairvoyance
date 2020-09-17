@@ -20,9 +20,13 @@ public abstract class AbstractChartField implements ChartField {
 
     @JsonIgnore
     private Field realField;
-
     @Setter
     private Long id;
+
+    @JsonIgnore
+    public Field getRealField() {
+        return realField;
+    }
 
     @Override
     public void setRealFields(List<Field> fields) {

@@ -4,7 +4,6 @@ import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.InnerFilter;
 import cn.shuangbofu.clairvoyance.core.domain.field.DrillField;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
@@ -83,9 +82,7 @@ public class ChartSql implements Sql {
     public String wheres() {
         List<Filter> actualFilters = Lists.newArrayList();
         actualFilters.addAll(filters);
-        List<ChartFilter> innerFilters = getLayer().getInnerFilters();
-        innerFilters.forEach(InnerFilter::setupInner);
-        actualFilters.addAll(innerFilters);
+        actualFilters.addAll(getLayer().getInnerFilters());
         actualFilters.addAll(drills);
         actualFilters.addAll(otherFilters);
         return actualFilters.stream().map((Filter::where))

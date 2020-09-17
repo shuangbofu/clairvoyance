@@ -117,4 +117,12 @@ public class ChartLayer implements Sql {
             }
         }
     }
+
+    public List<ChartFilter> getInnerFilters() {
+        for (ChartFilter innerFilter : innerFilters) {
+            innerFilter.setupInner();
+            innerFilter.setValues(getY());
+        }
+        return innerFilters;
+    }
 }
