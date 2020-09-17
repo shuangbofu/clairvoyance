@@ -1,7 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter;
 
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.AggregatorFunc;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
 import cn.shuangbofu.clairvoyance.core.domain.field.AbstractChartField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +10,7 @@ import com.google.common.collect.Lists;
 import lombok.Data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by shuangbofu on 2020/8/1 11:14
@@ -28,18 +28,21 @@ public abstract class ChartFilter extends AbstractChartField implements Filter, 
     public static final String EXPRESSION = "expression";
     public String filterType;
 
-    private AggregatorFunc aggregator;
+    private Long uniqId;
 
     @JsonIgnore
     public boolean isY() {
-        return aggregator != null;
+        return uniqId != null;
     }
 
     @Override
     public void setValues(List<Value> values) {
-        // 如果是y轴直接设置为y轴选择的字段
+        // 如果是y轴上的字段，通过uniqueId对应设置为y轴选择的字段
         if (isY()) {
-            setRealFields(Lists.newArrayList(values));
+            List<Value> valueList = values.stream()
+                    .filter(i -> uniqId.equals(i.getUniqId()))
+                    .collect(Collectors.toList());
+            setRealFields(Lists.newArrayList(valueList));
         }
     }
 }

@@ -193,6 +193,7 @@ export default {
       }
     },
     addField({ getters, dispatch }, { name, index, data }) {
+      console.log(data)
       if (name === 'drill') {
         getters.drillFields.push(data)
         if (getters.drillFields.length > 1) {
