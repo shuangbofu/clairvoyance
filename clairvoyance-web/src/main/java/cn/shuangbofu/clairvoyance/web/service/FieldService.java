@@ -67,16 +67,16 @@ public class FieldService {
                     return null;
                 }
             });
-            rangeResult = new RangeResult(result, title);
+            rangeResult = new RangeResult(result);
         } else if (field.getFieldType().equals(FieldType.group)) {
             if (func != null) {
-                rangeResult = new RangeResult(Lists.newArrayList(1));
+                rangeResult = RangeResult.newRangeResult(Lists.newArrayList(1));
             }
             Optional<cn.shuangbofu.clairvoyance.core.domain.field.Field> any = fields.stream().filter(i -> i.getId().equals(field.getId())).findAny();
             if (any.isPresent()) {
                 GroupField groupField = (GroupField) any.get();
                 List<String> range = groupField.getRange();
-                rangeResult = new RangeResult(range);
+                rangeResult = RangeResult.newRangeResult(range);
             }
         }
         return rangeResult;
@@ -93,7 +93,12 @@ public class FieldService {
         if (funcs.length == 1) {
             AggregatorFunc func = funcs[0];
             if (AggregatorFunc.MAX.equals(func) || AggregatorFunc.MIN.equals(func)) {
-                return getSelectNames(fieldName, title, AggregatorFunc.MIN, AggregatorFunc.MIN);
+                return getSelectNames(fieldName, title, AggregatorFunc.MIN, AggregatorFunc.MAX);
+            } else {
+                // TODO 先补个零，没想明白需要什么
+                List<String> res = Lists.newArrayList("0");
+                res.add(getSelectName(fieldName, title, func));
+                return res;
             }
         }
         return Arrays.stream(funcs).map(i -> getSelectName(fieldName, title, i)).collect(Collectors.toList());

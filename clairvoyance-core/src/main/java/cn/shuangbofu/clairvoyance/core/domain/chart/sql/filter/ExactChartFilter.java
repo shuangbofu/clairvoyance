@@ -1,6 +1,5 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter;
 
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.AggregatorFunc;
 import cn.shuangbofu.clairvoyance.core.meta.utils.SqlUtil;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import lombok.Data;
@@ -42,13 +41,13 @@ public class ExactChartFilter extends AbstractInnerChartFilter implements InnerC
             return null;
         }
         String values = range.stream().map(SqlUtil::standardValue).collect(Collectors.joining(", "));
-        AggregatorFunc aggregator = getAggregator();
-        if (aggregator == null) {
-            return " " + getRealName() + (!included ? " NOT" : "") + " IN ( " + values + ")";
-        } else {
-            // TODO 根据不同聚合函数生成不同条件 FIXME
-        }
-        return null;
+//        AggregatorFunc aggregator = getAggregator();
+//        if (aggregator == null) {
+//            return " " + getRealName() + (!included ? " NOT" : "") + " IN ( " + values + ")";
+//        } else {
+//            // TODO 根据不同聚合函数生成不同条件 FIXME 不记得啥意思了。。
+//        }
+        return " " + getRealName() + (!included ? " NOT" : "") + " IN ( " + values + ")";
     }
 
     @Override

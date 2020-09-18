@@ -42,6 +42,9 @@ public class Chart extends Model<Chart> {
      */
     private String alarmConfig;
 
+    private String createUser;
+    private String modifyUser;
+
     public static AnimaQuery<Chart> from() {
         return s(Chart.class)
                 .where(Chart::getDeleted, false);

@@ -26,6 +26,9 @@ public class Node extends Model<Node> {
     private Long refId;
     private Long parentId;
 
+    private String createUser;
+    private String modifyUser;
+
     public static AnimaQuery<Node> from() {
         return s(Node.class)
                 .where(Node::getDeleted, false);

@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.base;
 
+import cn.shuangbofu.clairvoyance.core.meta.utils.SqlUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -28,6 +29,7 @@ public enum WhereOperation {
 
     include(""),
     notInclude(""),
+
     startInclude(""),
     endInclude(""),
 
@@ -47,18 +49,28 @@ public enum WhereOperation {
 
     public String where(String key, Object value) {
         WhereOperation op = this;
+        if (op.equals(range)) {
+            Object[] arr = (Object[]) value;
+            return String.format(" %s >= %s AND %s <= %s ", key, SqlUtil.standardValue(arr[0]), key, SqlUtil.standardValue(arr[1]));
+        }
+        String s = SqlUtil.standardValue(value);
         if (op.equals(empty)) {
-            value = "";
+            s = "";
             op = eq;
         } else if (op.equals(notEmpty)) {
-            value = "";
+            s = "";
             op = notEmpty;
+        } else if (op.equals(include)) {
+            return String.format("%s IN ( %s )", key, s);
+        } else if (op.equals(notInclude)) {
+            return String.format("%s NOT IN ( %s ) ", key, s);
+        } else if (op.equals(startInclude)) {
+            return key + " LIKE '%s" + value + "'";
+        } else if (op.equals(endInclude)) {
+            return key + " LIKE '" + value + "%s'";
         }
-
         // TODO 包含不支持 FIXME
-        if (op.toString().toLowerCase().contains("include")) {
-            return null;
-        }
-        return String.format("%s %s %s", key, op.symbol, value);
+
+        return String.format("%s %s %s", key, op.symbol, s);
     }
 }

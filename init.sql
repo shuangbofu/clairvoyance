@@ -11,6 +11,8 @@ CREATE TABLE `chart` (
   `layout_config` varchar(2048) NOT NULL DEFAULT '' COMMENT '图表布局配置',
   `sql_config` text NOT NULL COMMENT 'SQL配置',
   `alarm_config` varchar(2048) NOT NULL DEFAULT '' COMMENT '告警配置',
+  `create_user` varchar(64) NOT NULL DEFAULT '' COMMENT '创建用户',
+  `modify_user` varchar(64) NOT NULL DEFAULT '' COMMENT '修改用户',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -25,6 +27,8 @@ CREATE TABLE `dashboard` (
   `remarks` varchar(128) NOT NULL DEFAULT '' COMMENT '备注描述',
   `layout_config` varchar(2048) NOT NULL DEFAULT '' COMMENT '仪表盘布局配置',
   `filter_config` varchar(2048) NOT NULL DEFAULT '' COMMENT '全局过滤器配置',
+  `create_user` varchar(64) NOT NULL DEFAULT '' COMMENT '创建用户',
+  `modify_user` varchar(64) NOT NULL DEFAULT '' COMMENT '修改用户',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -38,6 +42,8 @@ CREATE TABLE `datasource` (
   `name` varchar(64) NOT NULL DEFAULT '' COMMENT '数据源名称',
   `type` int(4) unsigned NOT NULL COMMENT '数据源类型',
   `description` varchar(256) NOT NULL DEFAULT '' COMMENT '数据源描述',
+  `create_user` varchar(64) NOT NULL DEFAULT '' COMMENT '创建用户',
+  `modify_user` varchar(64) NOT NULL DEFAULT '' COMMENT '修改用户',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -51,6 +57,8 @@ CREATE TABLE `node` (
   `gmt_create` bigint(13) unsigned NOT NULL COMMENT '创建时间',
   `gmt_modified` bigint(13) unsigned NOT NULL COMMENT '修改时间',
   `status` tinyint(1) unsigned NOT NULL COMMENT '逻辑删除',
+  `create_user` varchar(64) NOT NULL DEFAULT '' COMMENT '创建用户',
+  `modify_user` varchar(64) NOT NULL DEFAULT '' COMMENT '修改用户',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

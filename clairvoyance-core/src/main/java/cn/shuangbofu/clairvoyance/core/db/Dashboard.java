@@ -29,6 +29,9 @@ public class Dashboard extends Model<Dashboard> {
      */
     private String layoutConfig;
 
+    private String createUser;
+    private String modifyUser;
+
     public Dashboard() {
         // TODO 创建时设置默认的表盘布局配置和过滤器配置
 

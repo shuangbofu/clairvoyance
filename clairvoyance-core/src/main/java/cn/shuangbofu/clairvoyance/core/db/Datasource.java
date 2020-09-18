@@ -26,6 +26,9 @@ public class Datasource extends Model<Datasource> {
     private String name;
     private String config;
 
+    private String createUser;
+    private String modifyUser;
+
     public static AnimaQuery<Datasource> from() {
         return s(Datasource.class)
                 .where(Datasource::getDeleted, false);

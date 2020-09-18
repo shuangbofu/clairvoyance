@@ -2,7 +2,9 @@ package cn.shuangbofu.clairvoyance.web.vo;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,6 +12,7 @@ import java.util.stream.Collectors;
 /**
  * Created by shuangbofu on 2020/8/6 12:02
  */
+@Accessors(chain = true)
 @Data
 public class RangeResult {
 
@@ -17,21 +20,17 @@ public class RangeResult {
     private int total;
 
     public RangeResult() {
-        range = Lists.newArrayList();
-        total = 0;
+
     }
 
-    public RangeResult(List<Map<String, Object>> originResult, String fieldName) {
+    public RangeResult(List<Map<String, Object>> originResult) {
         this();
-        originResult.forEach(result -> range.add(result.get(fieldName)));
+        range = originResult.stream().map(Map::values).flatMap(Collection::stream).collect(Collectors.toList());
         total += range.size();
     }
 
-    public <T> RangeResult(List<T> range) {
-        List<Object> objects = Lists.newArrayList();
-        objects.addAll(range);
-        this.range = objects;
-        total = range.size();
+    public static <T> RangeResult newRangeResult(List<T> range) {
+        return new RangeResult().setRange(Lists.newArrayList(range));
     }
 
     public List<Object> getRange() {

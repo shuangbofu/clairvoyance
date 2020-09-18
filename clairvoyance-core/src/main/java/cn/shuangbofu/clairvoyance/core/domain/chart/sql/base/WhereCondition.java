@@ -17,6 +17,6 @@ public class WhereCondition {
 
     @Override
     public String toString() {
-        return operation.where(name, SqlUtil.standardValue(value));
+        return value == null ? null : operation.where(name, SqlUtil.standardValue(value));
     }
 }
