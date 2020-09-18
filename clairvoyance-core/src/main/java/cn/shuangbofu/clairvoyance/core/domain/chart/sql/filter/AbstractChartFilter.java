@@ -14,6 +14,13 @@ import lombok.Data;
 public abstract class AbstractChartFilter extends AbstractChartField implements ChartFilter {
     public String filterType;
 
+    public boolean isHaving() {
+        // TODO 后续还有其他情况
+        return getAggregator() != null;
+    }
+
+    abstract String where0();
+
     @Override
     @JsonProperty("aggregator")
     public AggregatorFunc getAggregator() {
@@ -25,5 +32,15 @@ public abstract class AbstractChartFilter extends AbstractChartField implements 
             }
         }
         return null;
+    }
+
+    @Override
+    public String having() {
+        return isHaving() ? where0() : null;
+    }
+
+    @Override
+    public String where() {
+        return isHaving() ? null : where0();
     }
 }

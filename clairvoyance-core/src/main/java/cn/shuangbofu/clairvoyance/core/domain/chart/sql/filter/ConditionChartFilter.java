@@ -18,7 +18,7 @@ public class ConditionChartFilter extends AbstractInnerChartFilter implements In
     List<WhereCondition> conditions;
 
     @Override
-    public String where() {
+    public String where0() {
         if (conditions != null) {
             return conditions.stream().map(i -> {
                 i.setName(getRealName());

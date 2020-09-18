@@ -37,7 +37,7 @@ public class ExactChartFilter extends AbstractInnerChartFilter implements InnerC
     }
 
     @Override
-    public String where() {
+    public String where0() {
         if (range == null || range.size() == 0) {
             return null;
         }

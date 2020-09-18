@@ -12,6 +12,7 @@ import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
@@ -91,6 +92,12 @@ public class ChartSql implements Sql {
     }
 
     @Override
+    public String havings() {
+        return getLayer().getInnerFilters().stream().map(InnerChartFilter::having)
+                .filter(StringUtils::isNotEmpty).collect(Collectors.joining(" AND "));
+    }
+
+    @Override
     public Pair<String, OrderType> sort() {
         return getLayer().sort();
     }
@@ -109,5 +116,11 @@ public class ChartSql implements Sql {
         return layers.stream().map(ChartLayer::getInnerFilters)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class Test {
+        private Boolean total;
     }
 }

@@ -17,4 +17,9 @@ public interface ChartFilter extends ChartField, Filter {
 
     @JsonProperty("aggregator")
     AggregatorFunc getAggregator();
+
+    /**
+     * 获取having条件
+     */
+    String having();
 }

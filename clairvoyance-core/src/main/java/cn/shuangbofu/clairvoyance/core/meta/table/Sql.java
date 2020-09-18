@@ -20,6 +20,10 @@ public interface Sql {
         return null;
     }
 
+    default String havings() {
+        return null;
+    }
+
     default Pair<String, OrderType> sort() {
         return null;
     }

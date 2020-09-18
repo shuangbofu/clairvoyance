@@ -127,6 +127,7 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
         String wheres = sql.wheres();
         List<String> selects = sql.selects();
         String groupBys = sql.groupBys();
+        String havings = sql.havings();
         Pair<String, OrderType> sort = sql.sort();
         if (selects == null || selects.size() == 0) {
             return null;
@@ -139,6 +140,10 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
 
         if (StringUtils.isNotEmpty(groupBys)) {
             sqlContent += " GROUP BY " + groupBys;
+        }
+
+        if (StringUtils.isNotEmpty(havings)) {
+            sqlContent += " HAVING " + havings;
         }
 
         if (sort != null && StringUtils.isNotEmpty(sort.getFirst()) && sort.getSecond() != null) {

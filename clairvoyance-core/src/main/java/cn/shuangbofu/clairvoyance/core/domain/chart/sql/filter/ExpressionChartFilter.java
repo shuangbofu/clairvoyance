@@ -14,7 +14,7 @@ public class ExpressionChartFilter extends AbstractInnerChartFilter implements I
     private String sql;
 
     @Override
-    public String where() {
+    public String where0() {
         sql = SqlUtil.standardWhereSql(sql);
         return sql.replace("[" + getTitle() + "]", getRealName());
     }
