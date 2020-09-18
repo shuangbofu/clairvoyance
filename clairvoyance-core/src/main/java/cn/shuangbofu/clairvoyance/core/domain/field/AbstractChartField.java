@@ -22,21 +22,45 @@ public abstract class AbstractChartField implements ChartField {
     @Getter
     @Setter
     protected Long uniqId;
-
     @JsonIgnore
     private Field realField;
     @Setter
     private Long id;
 
+    @Override
+    public Long getUniqId() {
+        return uniqId;
+    }
+
     @JsonIgnore
+    @Override
     public Field getRealField() {
         return realField;
+    }
+
+    public void setRealField(Field field) {
+        realField = field;
     }
 
     @Override
     public void setRealFields(List<Field> fields) {
         Optional<Field> any = fields.stream().filter(i -> i.getId().equals(getId())).findAny();
-        any.ifPresent(i -> realField = any.get());
+        any.ifPresent(i -> setRealField(any.get()));
+    }
+
+    protected void setRealChartFields(List<Field> fields) {
+        fields.forEach(field -> {
+            if (field instanceof ChartField) {
+                ChartField chartField = (ChartField) field;
+                if (equal(chartField)) {
+                    setRealField(chartField);
+                }
+            } else {
+                if (field.getId().equals(getId())) {
+                    setRealField(field);
+                }
+            }
+        });
     }
 
     @Override

@@ -1,6 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter;
 
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.WhereCondition;
+import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -22,7 +23,9 @@ public class ConditionChartFilter extends AbstractInnerChartFilter implements In
             return conditions.stream().map(i -> {
                 i.setName(getRealName());
                 return i.toString();
-            }).collect(Collectors.joining(","));
+            })
+                    .filter(StringUtils::isNotEmpty)
+                    .collect(Collectors.joining(","));
         }
         return null;
     }

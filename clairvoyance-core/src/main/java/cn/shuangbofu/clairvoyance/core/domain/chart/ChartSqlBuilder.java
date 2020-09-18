@@ -6,6 +6,7 @@ import cn.shuangbofu.clairvoyance.core.domain.field.ChartField;
 import cn.shuangbofu.clairvoyance.core.domain.field.DrillField;
 import cn.shuangbofu.clairvoyance.core.domain.field.Field;
 import cn.shuangbofu.clairvoyance.core.loader.FieldLoader;
+import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import com.google.common.collect.Lists;
 import lombok.Setter;
@@ -110,13 +111,19 @@ public class ChartSqlBuilder {
                 // 设置图内选择器
                 filter.setupInner();
                 // 设置图内选择器部分是y轴上的字段
-                filter.setValues(Lists.newArrayList(layer.getY()));
+                filter.setRealFields(Lists.newArrayList(layer.getY()));
             });
             // 设置行总计需要的字段
             layer.getY().forEach(value -> value.setAllValues(Lists.newArrayList(layer.getX())));
+            // 排序设置字段
+            Sort sort = layer.getSort();
+            if (sort != null) {
+                sort.setRealFields(Lists.newArrayList(sort.isX() ? layer.getX() : layer.getY()));
+                sort.ifNull(() -> layer.setSort(null));
+            }
         });
         // 设置所有字段为实际字段
-        fieldList.forEach(chartField -> chartField.setRealFields(fields));
+        fieldList.forEach(chartField -> chartField.ifNull(() -> chartField.setRealFields(fields)));
         for (int i = 0; i < drillFields.size(); i++) {
             List<Dimension> x = chartSql.getLayers().get(i).getX();
             // drillFields设置维度字段

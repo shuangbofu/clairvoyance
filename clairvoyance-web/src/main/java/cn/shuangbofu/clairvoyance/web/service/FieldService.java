@@ -12,6 +12,7 @@ import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.query.SqlQueryRunner;
+import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import cn.shuangbofu.clairvoyance.web.vo.FieldSimpleVO;
 import cn.shuangbofu.clairvoyance.web.vo.RangeResult;
 import com.google.common.collect.Lists;
@@ -57,8 +58,10 @@ public class FieldService {
                 @Override
                 public String wheres() {
                     if (filters != null && filters.size() > 0) {
-                        return filters.stream().peek(filter -> filter.setRealFields(fields))
+                        return filters.stream()
+                                .peek(filter -> filter.setRealFields(fields))
                                 .map(Filter::where)
+                                .filter(StringUtils::isNotEmpty)
                                 .collect(Collectors.joining(" AND "));
                     }
                     return null;

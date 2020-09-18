@@ -7,19 +7,16 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.InnerChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.field.AbstractChartField;
-import cn.shuangbofu.clairvoyance.core.domain.field.ChartField;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -91,26 +88,9 @@ public class ChartLayer implements Sql {
 
     @Override
     public Pair<String, OrderType> sort() {
-        List<ChartField> chartFields = Lists.newArrayList();
         if (sort == null) {
             return null;
         }
-        if (sort.isX()) {
-            chartFields.addAll(x);
-        } else {
-            chartFields.addAll(y);
-        }
-        Optional<ChartField> any = chartFields.stream().filter(i -> i.getId().equals(sort.getId())).findAny();
-        return any.map(fieldAlias -> new Pair<>(fieldAlias.getRealAliasName(), sort.getOrderType())).orElse(null);
-    }
-
-    public void check() {
-        // 检查sort
-        if (sort != null) {
-            Long fieldId = sort.getId();
-            if (fieldId == null || getXY().stream().noneMatch(i -> i.getId().equals(fieldId))) {
-                sort = null;
-            }
-        }
+        return new Pair<>(sort.getRealAliasName(), sort.getOrderType());
     }
 }

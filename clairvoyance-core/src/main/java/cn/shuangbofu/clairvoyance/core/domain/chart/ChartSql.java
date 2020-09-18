@@ -8,16 +8,15 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.InnerChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.field.DrillField;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
+import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -87,7 +86,7 @@ public class ChartSql implements Sql {
         actualFilters.addAll(drills);
         actualFilters.addAll(otherFilters);
         return actualFilters.stream().map((Filter::where))
-                .filter(Objects::nonNull)
+                .filter(StringUtils::isNotEmpty)
                 .collect(Collectors.joining(" AND "));
     }
 
@@ -97,7 +96,6 @@ public class ChartSql implements Sql {
     }
 
     public String toJSONString() {
-        layers.forEach(ChartLayer::check);
         return JSON.toJSONString(this);
     }
 
@@ -111,11 +109,5 @@ public class ChartSql implements Sql {
         return layers.stream().map(ChartLayer::getInnerFilters)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class Test {
-        private Boolean total;
     }
 }
