@@ -3,6 +3,7 @@ package cn.shuangbofu.clairvoyance.web.config;
 import cn.shuangbofu.clairvoyance.core.db.Chart;
 import cn.shuangbofu.clairvoyance.core.domain.chart.ChartLayer;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.InnerChartFilter;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -23,7 +24,7 @@ public class FixData {
             for (int i = 0; i < layersNode.size(); i++) {
                 JsonNode filtersNode = innerFiltersNode.isArray() ? innerFiltersNode : innerFiltersNode.get(i + "");
                 if (filtersNode != null) {
-                    List<ChartFilter> chartInnerFilters = JSON.parseArray(filtersNode, ChartFilter.class);
+                    List<InnerChartFilter> chartInnerFilters = JSON.parseArray(filtersNode, InnerChartFilter.class);
 
                     ChartLayer chartLayer = chartLayers.get(i);
                     if (chartLayer != null) {

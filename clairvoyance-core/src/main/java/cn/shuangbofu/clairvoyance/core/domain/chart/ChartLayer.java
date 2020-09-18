@@ -5,13 +5,13 @@ import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Dimension;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.InnerChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.field.AbstractChartField;
 import cn.shuangbofu.clairvoyance.core.domain.field.ChartField;
-import cn.shuangbofu.clairvoyance.core.domain.field.Field;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -34,7 +34,7 @@ public class ChartLayer implements Sql {
     /**
      * 图内筛选器
      */
-    private List<ChartFilter> innerFilters;
+    private List<InnerChartFilter> innerFilters;
 
     /**
      * 维度，groupBy
@@ -62,15 +62,11 @@ public class ChartLayer implements Sql {
                 .setSort(new Sort());
     }
 
-    public void setFields(List<Field> fields) {
-        getXY().forEach(field -> field.setRealFields(fields));
-    }
-
-    private List<FieldAlias> getXY() {
+    @JsonIgnore
+    public List<FieldAlias> getXY() {
         List<FieldAlias> fieldAliases = new ArrayList<>();
         fieldAliases.addAll(x);
         fieldAliases.addAll(y);
-        y.forEach(i -> i.setAllValues(fieldAliases));
         return fieldAliases;
     }
 
@@ -116,13 +112,5 @@ public class ChartLayer implements Sql {
                 sort = null;
             }
         }
-    }
-
-    public List<ChartFilter> getInnerFilters() {
-        for (ChartFilter innerFilter : innerFilters) {
-            innerFilter.setupInner();
-            innerFilter.setValues(getY());
-        }
-        return innerFilters;
     }
 }

@@ -15,7 +15,6 @@ public abstract class FieldAlias extends AbstractChartField {
 
     protected String aliasName;
     private String description;
-    private Long uniqId;
 
     @Override
     public String getRealAliasName() {

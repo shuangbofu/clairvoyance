@@ -4,6 +4,7 @@ import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.InnerChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.field.DrillField;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Created by shuangbofu on 2020/7/30 下午11:09
  * <p>
- * 图表的SQL配置类
+ * 图表的SQL配置类（以下作用）
  * 1、存储的配置（转成json）
  * 2、传给前端的数据格式
  * 3、从前端接受的数据格式
@@ -48,7 +49,7 @@ public class ChartSql implements Sql {
      * 比如全局过滤器、图表联动的过滤条件
      */
     @JsonIgnore
-    private List<Filter> otherFilters;
+    private List<ChartFilter> otherFilters;
     @JsonIgnore
     private List<Drill> drills;
     @JsonIgnore
@@ -106,7 +107,7 @@ public class ChartSql implements Sql {
     }
 
     @JsonIgnore
-    public List<ChartFilter> getAllInnerFilters() {
+    public List<InnerChartFilter> getAllInnerFilters() {
         return layers.stream().map(ChartLayer::getInnerFilters)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());

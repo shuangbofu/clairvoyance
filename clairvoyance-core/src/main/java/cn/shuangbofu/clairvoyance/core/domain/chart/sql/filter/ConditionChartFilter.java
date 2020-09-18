@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  */
 @Data
 @Accessors(chain = true)
-public class ConditionChartFilter extends ChartFilter {
+public class ConditionChartFilter extends AbstractInnerChartFilter implements InnerChartFilter {
 
     List<WhereCondition> conditions;
 
@@ -20,7 +20,7 @@ public class ConditionChartFilter extends ChartFilter {
     public String where() {
         if (conditions != null) {
             return conditions.stream().map(i -> {
-                i.setName(getRealAliasName());
+                i.setName(getRealName());
                 return i.toString();
             }).collect(Collectors.joining(","));
         }

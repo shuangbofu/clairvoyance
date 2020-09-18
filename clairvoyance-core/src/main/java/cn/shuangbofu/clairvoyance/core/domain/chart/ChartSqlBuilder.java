@@ -20,7 +20,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class ChartSqlBuilder {
     private final ChartSql chartSql;
-    private final List<ChartFilter> filters;
+    private final List<ChartFilter> otherFilters;
     @Setter
     private List<Field> fields;
     @Setter
@@ -28,7 +28,7 @@ public class ChartSqlBuilder {
 
     public ChartSqlBuilder(String chartSqlConfig) {
         chartSql = JSON.parseObject(chartSqlConfig, ChartSql.class);
-        filters = new ArrayList<>();
+        otherFilters = new ArrayList<>();
     }
 
     public ChartSqlBuilder(String chartSqlConfig, Long workSheetId) {
@@ -42,16 +42,17 @@ public class ChartSqlBuilder {
     }
 
     public void addFilter(ChartFilter filter) {
-        filters.add(filter);
+        otherFilters.add(filter);
     }
 
     public ChartSql build() {
         if (fields == null || fields.size() == 0) {
             throw new RuntimeException("fields not set");
         }
+        // 加入其他过滤器
+        chartSql.getOtherFilters().addAll(otherFilters);
         // 初始化字段到所有chartField中
-        setRealFields();
-        chartSql.getOtherFilters().addAll(filters);
+        initFields();
         if (drillParam != null) {
             setDrill();
         }
@@ -88,20 +89,38 @@ public class ChartSqlBuilder {
 
     }
 
-    private void setRealFields() {
+    /**
+     * 初始化所有字段
+     */
+    private void initFields() {
         List<DrillField> drillFields = chartSql.getDrillFields();
-        List<ChartLayer> layers = chartSql.getLayers();
         List<ChartField> fieldList = Lists.newArrayList();
+        // 筛选器中的字段
         fieldList.addAll(chartSql.getFilters());
+        // 图内选择器中的字段
         fieldList.addAll(chartSql.getAllInnerFilters());
+        // 下钻字段中的字段
         fieldList.addAll(drillFields);
-        fieldList.addAll(filters);
+        // 其他过滤器
+        fieldList.addAll(chartSql.getOtherFilters());
+        chartSql.getLayers().forEach(layer -> {
+            // 加入xy轴字段
+            fieldList.addAll(layer.getXY());
+            layer.getInnerFilters().forEach(filter -> {
+                // 设置图内选择器
+                filter.setupInner();
+                // 设置图内选择器部分是y轴上的字段
+                filter.setValues(Lists.newArrayList(layer.getY()));
+            });
+            // 设置行总计需要的字段
+            layer.getY().forEach(value -> value.setAllValues(Lists.newArrayList(layer.getX())));
+        });
+        // 设置所有字段为实际字段
         fieldList.forEach(chartField -> chartField.setRealFields(fields));
-        layers.forEach(layer -> layer.setFields(fields));
-        // drillFields设置维度为field
         for (int i = 0; i < drillFields.size(); i++) {
-            List<Dimension> x = layers.get(i).getX();
-            drillFields.get(i).setRealFields(new ArrayList<>(x));
+            List<Dimension> x = chartSql.getLayers().get(i).getX();
+            // drillFields设置维度字段
+            drillFields.get(i).setRealFields(Lists.newArrayList(x));
         }
     }
 }

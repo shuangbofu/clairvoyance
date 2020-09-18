@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class ExpressionChartFilter extends ChartFilter {
+public class ExpressionChartFilter extends AbstractInnerChartFilter implements InnerChartFilter {
     private String sql;
 
     @Override

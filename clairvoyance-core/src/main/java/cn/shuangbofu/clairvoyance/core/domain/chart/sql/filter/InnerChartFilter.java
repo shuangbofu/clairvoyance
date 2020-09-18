@@ -1,21 +1,19 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter;
 
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.List;
 
 /**
- * Created by shuangbofu on 2020/9/14 19:51
+ * Created by shuangbofu on 2020/9/17 下午11:36
  */
-public interface InnerFilter extends Filter {
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "filterType", visible = true)
+public interface InnerChartFilter extends ChartFilter {
     /**
      * innerFilter的特殊处理
      */
     void setupInner();
 
-    /**
-     * @param values
-     */
     void setValues(List<Value> values);
 }

@@ -26,9 +26,6 @@ public enum WhereOperation {
     notEmpty("!= ''"),
     // TODO 日期怎么搞？
 
-    /**
-     * TODO
-     */
     include(""),
     notInclude(""),
     startInclude(""),
@@ -56,6 +53,11 @@ public enum WhereOperation {
         } else if (op.equals(notEmpty)) {
             value = "";
             op = notEmpty;
+        }
+
+        // TODO 包含不支持 FIXME
+        if (op.toString().toLowerCase().contains("include")) {
+            return null;
         }
         return String.format("%s %s %s", key, op.symbol, value);
     }

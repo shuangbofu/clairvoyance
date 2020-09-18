@@ -4,6 +4,7 @@ import cn.shuangbofu.clairvoyance.core.enums.ColumnType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
@@ -17,6 +18,10 @@ import java.util.function.Function;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AbstractChartField implements ChartField {
+
+    @Getter
+    @Setter
+    protected Long uniqId;
 
     @JsonIgnore
     private Field realField;
