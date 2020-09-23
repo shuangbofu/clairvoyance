@@ -14,7 +14,6 @@ import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.*;
@@ -135,11 +134,5 @@ public class ChartSql implements Sql {
         });
         origin.clear();
         return res;
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class Test {
-        private Boolean total;
     }
 }
