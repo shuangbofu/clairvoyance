@@ -67,6 +67,7 @@ public class ChartVO {
         if (!created()) {
             if (layoutConfigs == null) {
                 layoutConfigs = new ArrayList<>();
+                layoutConfigs.add(new ChartLayoutConfig());
             }
             if (alarmConfig == null) {
                 alarmConfig = new AlarmConfig();

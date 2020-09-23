@@ -27,10 +27,28 @@ public class JdbcParam {
         this.jdbcUrl = jdbcUrl;
         this.username = username;
         this.password = password;
+        if (className == null) {
+            String[] split = jdbcUrl.split(":");
+            if (split.length > 1) {
+                className = getClassName(split[1]);
+            }
+        }
     }
 
     public static JdbcParam mysqlDefault(String ip, String db, String username, String password) {
         return new JdbcParam("jdbc:mysql://" + ip + ":3306/" + db + "?useSSL=false", username, password);
+    }
+
+    public String getClassName(String tok) {
+        switch (tok) {
+            case "mysql":
+                return MYSQL_DRIVER_CLASS_NAME;
+            case "hive":
+            case "hive2":
+                return HIVE_DRIVER_CLASS_NAME;
+            default:
+                return null;
+        }
     }
 
     @Override

@@ -1,7 +1,7 @@
 export function getChartOption(chartLayoutConfig, chartLayer, data) {
   const chartType = map[chartLayoutConfig.chartType]
-  const xs = chartLayer.x.map(i => i.realAliasName)
-  const ys = chartLayer.y.map(i => i.realAliasName)
+  const xs = chartLayer.x.map(i => i.uniqId)
+  const ys = chartLayer.y.map(i => i.uniqId)
   // console.log(chartType)
 
   // 折线、柱状
@@ -63,6 +63,7 @@ export function getChartOption(chartLayoutConfig, chartLayer, data) {
       option.xAxis = yAxis
       option.yAxis = xAxis
     }
+    console.log(option)
     return option
     // 饼图
   } else if (chartType === 'pie') {

@@ -120,7 +120,8 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
     @Override
     public List<Map<String, Object>> run(Sql sql) {
         String sqlContent = createSql(sql);
-        return query(sqlContent);
+        List<Map<String, Object>> result = query(sqlContent);
+        return sql.convertResult(result);
     }
 
     private String createSql(Sql sql) {

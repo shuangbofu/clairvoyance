@@ -41,8 +41,7 @@ public class JdbcUtil {
             Stopwatch stopwatch = Stopwatch.createStarted();
             LOGGER.info("SQL SUBMIT ===> {} ({})", sql, className);
             List<Map<String, Object>> result = getQueryRunner(param).query(sql, new MapListHandler());
-            stopwatch.stop();
-            LOGGER.info("SQL RESULT ===> [{}ms] {} ({})", stopwatch.elapsed(TimeUnit.MILLISECONDS), sql, className);
+            LOGGER.info("SQL END ===> [{}ms] {} ({})", stopwatch.stop().elapsed(TimeUnit.MILLISECONDS), sql, className);
             return result;
         }, "query error");
     }

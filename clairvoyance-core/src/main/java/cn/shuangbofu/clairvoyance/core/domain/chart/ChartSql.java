@@ -1,10 +1,12 @@
 package cn.shuangbofu.clairvoyance.core.domain.chart;
 
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.FieldAlias;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.InnerChartFilter;
+import cn.shuangbofu.clairvoyance.core.domain.field.AbstractChartField;
 import cn.shuangbofu.clairvoyance.core.domain.field.DrillField;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
@@ -15,9 +17,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -116,6 +116,25 @@ public class ChartSql implements Sql {
         return layers.stream().map(ChartLayer::getInnerFilters)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Map<String, Object>> convertResult(List<Map<String, Object>> origin) {
+        List<FieldAlias> xy = getLayer().getXY();
+        Map<String, Long> mapping = xy.stream().collect(Collectors.toMap(FieldAlias::getRealAliasName, AbstractChartField::getUniqId));
+        List<Map<String, Object>> res = new ArrayList<>();
+        origin.forEach(map -> {
+            Map<String, Object> newMap = new HashMap<>();
+            for (String key : map.keySet()) {
+                Long v = mapping.get(key);
+                if (v != null) {
+                    newMap.put(v.toString(), map.get(key));
+                }
+            }
+            res.add(newMap);
+        });
+        origin.clear();
+        return res;
     }
 
     @Data
