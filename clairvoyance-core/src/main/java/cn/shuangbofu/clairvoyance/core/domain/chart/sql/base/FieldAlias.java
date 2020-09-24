@@ -15,6 +15,12 @@ public abstract class FieldAlias extends AbstractChartField {
 
     protected String aliasName;
     private String description;
+    /**
+     * 对齐方式，与SQL无关
+     */
+    private Alignment alignment;
+
+    private Long uniqId;
 
     @Override
     public String getRealAliasName() {
@@ -31,17 +37,19 @@ public abstract class FieldAlias extends AbstractChartField {
         String queryName = getRealName();
         String finalAliasName = getRealAliasName();
         if (StringUtils.isNotEmpty(finalAliasName) && StringUtils.isNotEmpty(queryName)) {
-            return String.format(" %s AS `%s` ", queryName, getRealAliasName());
+            return String.format(" %s AS `%s` ", queryName, finalAliasName);
         }
         return queryName;
     }
 
-    @Override
-    public String getName() {
-        return getRealName();
-    }
-
     protected String getRealAliasName0() {
         return super.getRealAliasName();
+    }
+
+    public enum Alignment {
+        /**
+         *
+         */
+        left, right, center
     }
 }
