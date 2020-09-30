@@ -25,6 +25,7 @@ public class Datasource extends Model<Datasource> {
 
     private String name;
     private String config;
+    private String dbName;
 
     private String createUser;
     private String modifyUser;

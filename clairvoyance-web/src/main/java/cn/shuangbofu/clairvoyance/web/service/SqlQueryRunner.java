@@ -1,4 +1,4 @@
-package cn.shuangbofu.clairvoyance.core.query;
+package cn.shuangbofu.clairvoyance.web.service;
 
 import cn.shuangbofu.clairvoyance.core.db.Datasource;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
@@ -17,7 +17,7 @@ public class SqlQueryRunner {
             Datasource datasource = DatasourceLoader.getSource(sheet.getDatasourceId());
             SourceDb sourceDb = getSourceDb(datasource);
             if (sourceDb != null) {
-                SourceTable sourceTable = sourceDb.sourceTable(sheet.getTableName());
+                SourceTable sourceTable = sourceDb.sourceTable(datasource.getDbName() + "." + sheet.getTableName());
                 if (sourceTable != null) {
                     return sourceTable;
                 }

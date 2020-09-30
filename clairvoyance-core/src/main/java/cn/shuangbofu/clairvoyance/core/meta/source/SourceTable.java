@@ -19,4 +19,8 @@ public interface SourceTable {
     List<Map<String, Object>> run(Sql sql);
 
     String getTableName();
+
+    String createSql(Sql sql);
+
+    SourceDb getSourceDb();
 }

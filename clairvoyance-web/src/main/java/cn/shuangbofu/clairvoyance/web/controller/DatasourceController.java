@@ -4,7 +4,7 @@ import cn.shuangbofu.clairvoyance.core.db.Datasource;
 import cn.shuangbofu.clairvoyance.core.loader.DatasourceLoader;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.table.Column;
-import cn.shuangbofu.clairvoyance.core.query.SqlQueryRunner;
+import cn.shuangbofu.clairvoyance.web.service.SqlQueryRunner;
 import cn.shuangbofu.clairvoyance.web.vo.DatasourceSimpleVO;
 import cn.shuangbofu.clairvoyance.web.vo.Result;
 import cn.shuangbofu.clairvoyance.web.vo.form.DatasourceForm;

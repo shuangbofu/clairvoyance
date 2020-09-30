@@ -3,32 +3,29 @@ package cn.shuangbofu.clairvoyance.core.meta.table;
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.meta.source.JdbcSourceDb;
-import cn.shuangbofu.clairvoyance.core.meta.source.SourceDb;
-import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.utils.JdbcUtil;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.alibaba.druid.pool.DruidPooledConnection;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by shuangbofu on 2020/8/3 下午9:58
  */
-public abstract class JdbcSourceTable implements SourceTable, SourceDb {
+public abstract class JdbcSourceTable extends AbstractSourceTable {
 
-    private final String tableName;
     private final JdbcSourceDb sourceDb;
     private Pair<String, List<Column>> metaInfo;
 
     public JdbcSourceTable(String tableName, JdbcSourceDb sourceDb) {
+        super(sourceDb, tableName);
         this.sourceDb = sourceDb;
-        this.tableName = tableName;
     }
 
-    @Override
-    public String name() {
-        return tableName;
+    protected String formatName(String origin) {
+        return "`" + origin + "`";
     }
 
     @Override
@@ -41,49 +38,8 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
         return getMetaInfos().getSecond();
     }
 
-    @Override
-    public List<Map<String, Object>> query(String sql) {
-        return sourceDb.query(sql);
-    }
-
-    @Override
-    public long insert(String sql) {
-        return sourceDb.insert(sql);
-    }
-
-    @Override
-    public long update(String sql) {
-        return sourceDb.update(sql);
-    }
-
-    @Override
-    public int execute(String sql) {
-        return sourceDb.execute(sql);
-    }
-
     protected DruidPooledConnection getConnection() {
         return sourceDb.getConnection();
-    }
-
-    @Override
-    public List<String> tables() {
-        return sourceDb.tables();
-    }
-
-    @Override
-    public List<SourceTable> sourceTables() {
-        return sourceDb.sourceTables();
-    }
-
-    @Override
-    public SourceTable sourceTable(String tableName) {
-        return sourceDb.sourceTable(tableName);
-    }
-
-
-    @Override
-    public boolean isValid() {
-        return sourceDb.isValid();
     }
 
     private String showCreateTable() {
@@ -118,13 +74,7 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
     }
 
     @Override
-    public List<Map<String, Object>> run(Sql sql) {
-        String sqlContent = createSql(sql);
-        List<Map<String, Object>> result = query(sqlContent);
-        return sql.convertResult(result);
-    }
-
-    private String createSql(Sql sql) {
+    public String createSql(Sql sql) {
         String wheres = sql.wheres();
         List<String> selects = sql.selects();
         String groupBys = sql.groupBys();
@@ -160,6 +110,8 @@ public abstract class JdbcSourceTable implements SourceTable, SourceDb {
 
     @Override
     public String getTableName() {
-        return "`" + name().trim() + "`";
+        return Arrays.stream(name().split("\\."))
+                .map(this::formatName)
+                .collect(Collectors.joining("."));
     }
 }

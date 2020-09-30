@@ -5,12 +5,11 @@ import cn.shuangbofu.clairvoyance.core.meta.source.JdbcSourceDb;
 import com.google.common.collect.Lists;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by shuangbofu on 2020/8/4 11:51
  */
-public class PrestoSourceTable extends JdbcSourceTable {
+public class PrestoSourceTable extends cn.shuangbofu.clairvoyance.core.meta.table.JdbcSourceTable {
 
     public PrestoSourceTable(String tableName, JdbcSourceDb sourceDb) {
         super(tableName, sourceDb);
@@ -56,16 +55,17 @@ public class PrestoSourceTable extends JdbcSourceTable {
     }
 
     @Override
-    public String getTableName() {
-        return "\"" + name() + "\"";
+    protected String formatName(String origin) {
+        return "\"" + origin + "\"";
     }
 
     @Override
-    public List<Map<String, Object>> query(String sql) {
-        if (sql.contains("SELECT 1 FROM " + getTableName())) {
-            return Lists.newArrayList();
+    public String createSql(Sql sql) {
+        String sqlContent = super.createSql(sql);
+        if (sqlContent.contains("SELECT 1 FROM " + getTableName())) {
+            return null;
         }
-        return super.query(convertQuotes(sql));
+        return convertQuotes(sqlContent);
     }
 
     private String convertQuotes(String sql) {

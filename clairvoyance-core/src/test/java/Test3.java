@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,6 +47,13 @@ public class Test3 {
         boolean valid = hiveSourceDb.isValid();
         System.out.println(valid);
 
+    }
+
+    @Test
+    public void tst() {
+        PrestoSourceDb prestoSourceDb = new PrestoSourceDb(new JdbcParam("jdbc:presto://172.16.248.220:9999/hive/test", "hadoop", ""));
+        List<Map<String, Object>> query = prestoSourceDb.query("select * from \"test\".\"user\" limit 2");
+        System.out.println(query);
     }
 
 

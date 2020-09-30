@@ -118,7 +118,7 @@ public class ChartSqlBuilder {
             // 排序设置字段
             Sort sort = layer.getSort();
             if (sort != null) {
-                sort.setRealFields(Lists.newArrayList(sort.isX() ? layer.getX() : layer.getY()));
+                sort.setRealFields(Lists.newArrayList(layer.getXY()));
                 sort.ifNull(() -> layer.setSort(null));
             }
         });

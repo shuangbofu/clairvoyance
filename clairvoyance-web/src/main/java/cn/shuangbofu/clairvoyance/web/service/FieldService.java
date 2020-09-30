@@ -11,7 +11,6 @@ import cn.shuangbofu.clairvoyance.core.loader.FieldLoader;
 import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
-import cn.shuangbofu.clairvoyance.core.query.SqlQueryRunner;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import cn.shuangbofu.clairvoyance.web.vo.FieldSimpleVO;
 import cn.shuangbofu.clairvoyance.web.vo.RangeResult;

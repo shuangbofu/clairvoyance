@@ -1,5 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.meta.utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,6 +19,7 @@ public class JdbcParam {
     private String jdbcUrl;
     private String username;
     private String password;
+    @JsonIgnore
     private String className;
 
     public JdbcParam() {

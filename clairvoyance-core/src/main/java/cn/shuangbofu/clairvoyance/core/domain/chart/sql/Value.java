@@ -9,8 +9,6 @@ import lombok.Getter;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by shuangbofu on 2020/8/1 11:20
@@ -27,6 +25,8 @@ public class Value extends FieldAlias {
      * 行总计
      */
     private Boolean total;
+    private Position position;
+
     @JsonIgnore
     private List<FieldAlias> allFields;
 
@@ -44,7 +44,7 @@ public class Value extends FieldAlias {
     @Override
     public String getRealName() {
         if (total()) {
-            return getRowName(aggregator);
+            return null;
         }
         String name = super.getRealName();
         return withAggregator(agg -> agg.wrapWithField(name), name);
@@ -53,12 +53,6 @@ public class Value extends FieldAlias {
     @Override
     @JsonProperty("aggregatorAlias")
     public String getRealAliasName0() {
-        if (total()) {
-            if (aggregator == null) {
-                return "行总计";
-            }
-            return "行" + aggregator.getDesc();
-        }
         String title = super.getRealAliasName0();
         return withAggregator(agg -> agg.wrapWithTitle(title), title);
     }
@@ -81,21 +75,11 @@ public class Value extends FieldAlias {
         return total != null && total;
     }
 
-    /**
-     * TODO presto需要修改函数
-     */
-    public String getRowName(AggregatorFunc func) {
-        Stream<FieldAlias> fieldAliasStream = allFields.stream().filter(i -> i != this);
-        if (AggregatorFunc.SUM.equals(func)) {
-            return fieldAliasStream
-                    .map(i -> String.format("IFNULL(%s, 0)", i.getRealName()))
-                    .collect(Collectors.joining(" + "));
-        } else if (AggregatorFunc.AVG.equals(func)) {
-            return getRowName(AggregatorFunc.SUM) + "/ " + allFields.size() + " ";
-        } else {
-            // TODO 其他函数 字段间总计 FIXME
-            return null;
-        }
+    public enum Position {
+        /**
+         *
+         */
+        left, right
     }
 
     /**
@@ -113,23 +97,26 @@ public class Value extends FieldAlias {
             num, percent
         }
 
-        @Getter
-        public enum FormatterUnit {
-            ten_thousand, billion, k, g, m
-        }
-
         @Data
-        public static class NumFormatter {
+        public static class PercentFormatter {
             private int digit;
         }
 
         @Data
-        public static class PercentFormatter extends NumFormatter {
+        public static class NumFormatter extends PercentFormatter {
             /**
              * 使用千分分隔符
              */
             private Boolean millesimal;
-            private FormatterUnit unit;
+
+            /**
+             * 10000        万
+             * 100000000    亿
+             * 1000         千
+             * 1000000      M
+             * 1000000000   G
+             */
+            private int unit;
         }
     }
 }
