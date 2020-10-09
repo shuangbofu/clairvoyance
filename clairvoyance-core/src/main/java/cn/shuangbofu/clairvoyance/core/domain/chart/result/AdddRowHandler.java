@@ -85,7 +85,7 @@ public class AdddRowHandler extends AbstractResultHandler {
                 Object obj2 = o2.get(row.getUniqId().toString());
                 int i = 0;
                 if (obj1 instanceof Number && obj2 instanceof Number) {
-                    i = ((Integer) obj1) - ((Integer) obj2);
+                    i = Double.compare(Double.parseDouble(obj1.toString()), Double.parseDouble(obj2.toString()));
                 } else {
                     if (obj1 instanceof Number) {
                         i = 1;
