@@ -111,15 +111,12 @@ public class ChartSqlBuilder {
                 // 设置图内选择器
                 filter.setupInner();
                 // 设置图内选择器部分是y轴上的字段
-                filter.setRealFields(Lists.newArrayList(layer.getY()));
+                filter.setRealFields(Lists.newArrayList(layer.getYWithoutRow()));
             });
-            // 设置行总计需要的字段
-            layer.getY().forEach(value -> value.setAllValues(Lists.newArrayList(layer.getX())));
             // 排序设置字段
             Sort sort = layer.getSort();
             if (sort != null) {
                 sort.setRealFields(Lists.newArrayList(layer.getXY()));
-                sort.ifNull(() -> layer.setSort(null));
             }
         });
         // 设置所有字段为实际字段

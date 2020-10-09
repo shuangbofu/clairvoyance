@@ -20,7 +20,7 @@ public class RangeResult {
     private int total;
 
     public RangeResult() {
-
+        range = Lists.newArrayList();
     }
 
     public RangeResult(List<Map<String, Object>> originResult) {

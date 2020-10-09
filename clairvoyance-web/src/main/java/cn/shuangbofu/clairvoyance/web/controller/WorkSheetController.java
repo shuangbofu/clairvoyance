@@ -6,6 +6,7 @@ import cn.shuangbofu.clairvoyance.core.db.Node;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.domain.chart.SqlBuiler;
+import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ExactChartFilter;
 import cn.shuangbofu.clairvoyance.core.enums.NodeType;
 import cn.shuangbofu.clairvoyance.core.enums.SheetType;
@@ -251,7 +252,8 @@ public class WorkSheetController {
         forms = forms.stream().distinct().collect(Collectors.toList());
         RangeResult result = new RangeResult();
         for (RangeRequestForm form : forms) {
-            RangeResult fieldRange = FieldService.getFieldRange(form.getWorkSheetId(), form.getFieldId(), Lists.newArrayList(form.getFilters()), form.getAggregator());
+            List<ChartFilter> filters = Lists.newArrayList(Optional.ofNullable(form.getFilters()).orElse(Lists.newArrayList()));
+            RangeResult fieldRange = FieldService.getFieldRange(form.getWorkSheetId(), form.getFieldId(), filters, form.getAggregator());
             result.concat(fieldRange);
         }
         return Result.success(result.getRange());

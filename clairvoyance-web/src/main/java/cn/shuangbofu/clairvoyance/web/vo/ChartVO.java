@@ -40,7 +40,7 @@ public class ChartVO {
             ChartLayer layer = sqlConfig.getLayers().get(i);
             ChartLayoutConfig layoutConfig = configs.get(i);
             if (!ChartType.C1.equals(layoutConfig.getChartType())) {
-                layer.getY().removeIf(Value::total);
+                layer.getYWithoutRow().removeIf(Value::total);
             }
         }
         // fields更新到sql

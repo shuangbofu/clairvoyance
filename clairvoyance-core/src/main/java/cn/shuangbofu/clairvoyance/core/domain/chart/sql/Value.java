@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 
-import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -27,19 +26,10 @@ public class Value extends FieldAlias {
     private Boolean total;
     private Position position;
 
-    @JsonIgnore
-    private List<FieldAlias> allFields;
-
     /**
      * 字段值显示格式
      */
     private Formatter formatter;
-
-    public void setAllValues(List<FieldAlias> allFields) {
-        if (total()) {
-            this.allFields = allFields;
-        }
-    }
 
     @Override
     public String getRealName() {

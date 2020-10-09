@@ -17,6 +17,7 @@ import lombok.experimental.Accessors;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -63,13 +64,33 @@ public class ChartLayer implements Sql {
     public List<FieldAlias> getXY() {
         List<FieldAlias> fieldAliases = new ArrayList<>();
         fieldAliases.addAll(x);
-        fieldAliases.addAll(y);
+        fieldAliases.addAll(getYWithoutRow());
         return fieldAliases;
     }
 
+    /**
+     * 拼接sql使用
+     *
+     * @return
+     */
+    @JsonIgnore
+    public List<Value> getYWithoutRow() {
+        return y.stream().filter(i -> !i.total()).collect(Collectors.toList());
+    }
+
+    /**
+     * 转成json使用
+     *
+     * @return
+     */
     public List<Value> getY() {
         y.sort(Comparator.comparingInt(o -> (o.total() ? 1 : 0)));
         return y;
+    }
+
+    public Value getRow() {
+        Optional<Value> any = y.stream().filter(Value::total).findAny();
+        return any.orElse(null);
     }
 
     @Override

@@ -12,8 +12,6 @@ import java.util.List;
  */
 @Data
 public class Sort extends AbstractChartField {
-    private static final String AXIS_X = "x";
-    private String axis;
     private OrderType orderType;
 
     @Override
