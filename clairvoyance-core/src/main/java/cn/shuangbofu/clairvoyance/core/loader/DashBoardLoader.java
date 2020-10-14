@@ -1,6 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.loader;
 
 import cn.shuangbofu.clairvoyance.core.db.Dashboard;
+import cn.shuangbofu.clairvoyance.core.utils.Functions;
 
 import java.util.List;
 
@@ -22,6 +23,12 @@ public class DashBoardLoader {
     }
 
     public static void update(Dashboard dashboard) {
-        dashboard.update();
+        Functions.ifNotNullThen(dashboard, dashboard::update);
+    }
+
+    public static boolean delete(Long dashboardId) {
+        return new Dashboard()
+                .setId(dashboardId)
+                .delete() > 0;
     }
 }

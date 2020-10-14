@@ -47,7 +47,7 @@ public class WorkSheetLoader {
     public static List<WorkSheet> simpleSearchByNameLimit(String name, int limit) {
         AnimaQuery<WorkSheet> query = WorkSheet.from().select(SIMPLE_SELECT);
         if (StringUtils.isNotEmpty(name)) {
-            query.like("%" + name);
+            query.like(WorkSheet::getTableName, "%" + name);
         }
         return query.limit(limit);
     }

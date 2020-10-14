@@ -6,6 +6,7 @@ import cn.shuangbofu.clairvoyance.core.db.DashboardFilter;
 import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
 import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSqlBuilder;
 import cn.shuangbofu.clairvoyance.core.domain.chart.GlobalFilterParam;
+import cn.shuangbofu.clairvoyance.core.domain.chart.LinkedParam;
 import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ExactChartFilter;
 import cn.shuangbofu.clairvoyance.core.loader.ChartLoader;
 import cn.shuangbofu.clairvoyance.core.loader.DashBoardLoader;
@@ -64,6 +65,8 @@ public class ChartController {
             layoutConfig.getPositions().add(new LayoutConfig.Layout(layoutConfig.getMaxBottom(), id));
             Dashboard newDash = new Dashboard().setId(dashboardId).setLayoutConfig(JSON.toJSONString(layoutConfig));
             DashBoardLoader.update(newDash);
+
+            // TODO 如果sqlConfig中包含钻取的配置，那么需要去掉当前图表的工作表作为主表的多表关联
         }
         return Result.success(chart.getId());
     }
@@ -79,7 +82,20 @@ public class ChartController {
         ChartSqlBuilder sqlBuilder = new ChartSqlBuilder(chart.getSqlConfig(), workSheetId)
                 // 设置下钻属性
                 .setDrillParam(param.getDrillParam());
-        List<GlobalFilterParam> globalFilterParams = param.getGlobalFilterParams();
+
+        setGlobalFilters(sqlBuilder, param.getGlobalFilterParams(), chartId, workSheetId);
+        setLinkedParam(sqlBuilder, param.getLinkedParam());
+
+        // 执行SQL获得结果
+        List<Map<String, Object>> result = table.run(sqlBuilder.build());
+        return Result.success(result);
+    }
+
+    private void setLinkedParam(ChartSqlBuilder sqlBuilder, LinkedParam param) {
+
+    }
+
+    private void setGlobalFilters(ChartSqlBuilder sqlBuilder, List<GlobalFilterParam> globalFilterParams, Long chartId, Long workSheetId) {
         if (globalFilterParams != null && globalFilterParams.size() > 0) {
             List<Long> dashboardFilterIds = globalFilterParams.stream()
                     .map(GlobalFilterParam::getDashboardFilterId).collect(Collectors.toList());
@@ -97,8 +113,5 @@ public class ChartController {
                         }
                     });
         }
-        // 执行SQL获得结果
-        List<Map<String, Object>> result = table.run(sqlBuilder.build());
-        return Result.success(result);
     }
 }

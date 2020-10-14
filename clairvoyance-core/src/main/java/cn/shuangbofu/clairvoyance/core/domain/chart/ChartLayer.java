@@ -52,11 +52,18 @@ public class ChartLayer implements Sql {
     /**
      * 对比和次轴后期可以在这里扩展
      */
+
+    /**
+     * 次轴
+     */
+    private List<Value> yOptional;
+
     public static ChartLayer defaultLayer() {
         return new ChartLayer()
                 .setInnerFilters(new ArrayList<>())
                 .setX(new ArrayList<>())
                 .setY(new ArrayList<>())
+                .setYOptional(new ArrayList<>())
                 .setSort(new Sort());
     }
 
@@ -75,7 +82,9 @@ public class ChartLayer implements Sql {
      */
     @JsonIgnore
     public List<Value> getYWithoutRow() {
-        return y.stream().filter(i -> !i.total()).collect(Collectors.toList());
+        List<Value> y = this.y.stream().filter(i -> !i.total()).collect(Collectors.toList());
+        y.addAll(yOptional);
+        return y;
     }
 
     /**
@@ -88,7 +97,12 @@ public class ChartLayer implements Sql {
         return y;
     }
 
+    @JsonIgnore
     public Value getRow() {
+        // 设置次轴不允许是表格
+        if (yOptional.size() > 0) {
+            return null;
+        }
         Optional<Value> any = y.stream().filter(Value::total).findAny();
         return any.orElse(null);
     }

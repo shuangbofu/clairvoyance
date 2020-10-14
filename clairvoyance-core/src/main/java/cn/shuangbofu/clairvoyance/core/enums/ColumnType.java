@@ -31,9 +31,9 @@ public enum ColumnType {
      */
     public static ColumnType valueOfType(String type) {
         type = type.toLowerCase();
-        if (type.contains("varchar")) {
+        if (type.toLowerCase().contains("varchar") || type.toLowerCase().contains("string")) {
             return text;
-        } else if (type.contains("date")) {
+        } else if (type.toLowerCase().contains("date")) {
             return date;
         } else {
             return value;

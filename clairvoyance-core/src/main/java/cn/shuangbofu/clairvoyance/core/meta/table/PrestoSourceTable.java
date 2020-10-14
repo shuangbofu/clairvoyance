@@ -2,6 +2,7 @@ package cn.shuangbofu.clairvoyance.core.meta.table;
 
 import cn.shuangbofu.clairvoyance.core.domain.Pair;
 import cn.shuangbofu.clairvoyance.core.meta.source.JdbcSourceDb;
+import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -62,7 +63,7 @@ public class PrestoSourceTable extends cn.shuangbofu.clairvoyance.core.meta.tabl
     @Override
     public String createSql(Sql sql) {
         String sqlContent = super.createSql(sql);
-        if (sqlContent.contains("SELECT 1 FROM " + getTableName())) {
+        if (StringUtils.isEmpty(sqlContent) || sqlContent.contains("SELECT 1 FROM " + getTableName())) {
             return null;
         }
         return convertQuotes(sqlContent);

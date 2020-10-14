@@ -63,6 +63,7 @@ export default {
       return dispatch('getRange')
     },
     updateFitlers({ state }, value) {
+      console.log(value)
       state.dashboard.globalFilters = value
     },
     initWorkSheets({ state }) {

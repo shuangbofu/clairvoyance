@@ -61,13 +61,6 @@ public class ChartSqlBuilder {
     }
 
     /**
-     * 图表关联
-     */
-    private void setLink() {
-
-    }
-
-    /**
      * 配置的下钻
      */
     private void setDrill() {

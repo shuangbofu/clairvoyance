@@ -14,6 +14,7 @@ import cn.shuangbofu.clairvoyance.web.vo.*;
 import cn.shuangbofu.clairvoyance.web.vo.form.DashboardForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.Folder;
 import com.google.common.collect.Lists;
+import io.github.biezhi.anima.Anima;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static cn.shuangbofu.clairvoyance.core.utils.Functions.ifNotNullThen;
+import static cn.shuangbofu.clairvoyance.core.utils.Functions.ifThen;
 
 /**
  * Created by shuangbofu on 2020/7/30 下午8:47
@@ -82,6 +86,17 @@ public class DashboardController {
         return Result.success(DashboardVO.toVO(dashboard, chartVOS));
     }
 
+    @DeleteMapping("/{dashboardId}")
+    public Result<Boolean> removeDashboard(@PathVariable("dashboardId") Long dashboardId) {
+        Anima.atomic(() -> {
+            DashBoardLoader.delete(dashboardId);
+            NodeLoader.removeByRefId(dashboardId, NodeType.dashboard);
+        }).catchException(e -> {
+            throw new RuntimeException(e);
+        });
+        return Result.success(true);
+    }
+
     /**
      * 创建文件夹
      *
@@ -93,6 +108,36 @@ public class DashboardController {
     public Result<Folder> createFolder(@RequestBody Folder folder) {
         Long id = NodeLoader.newNode(folder.toNode().setNodeType(NodeType.dashboard));
         return Result.success(folder.setId(id));
+    }
+
+    @PutMapping("/folder")
+    public Result<Boolean> modifyFolder(@RequestBody Folder folder) {
+        NodeLoader.update(folder.toNode());
+        return Result.success(true);
+    }
+
+
+    /**
+     * 修改名称、remarks、parentId等等
+     *
+     * @param form
+     * @return
+     */
+    @PutMapping
+    public Result<Boolean> modifyDashboard(@RequestBody DashboardForm form) {
+        Long dashboardId = form.getDashboardId();
+        Dashboard origin = DashBoardLoader.byId(dashboardId);
+        ifNotNullThen(origin, () -> {
+            Node node = NodeLoader.getNodeByRefId(dashboardId, NodeType.dashboard);
+            ifNotNullThen(node, () -> {
+                Long newParentId = form.getParentId();
+                String newName = form.getName();
+                ifThen(!node.getParentId().equals(newParentId), () -> node.setParentId(newParentId));
+                ifThen(!node.getName().equals(newName), () -> node.setName(newName));
+                NodeLoader.update(node);
+            });
+        });
+        return Result.success(true);
     }
 
     /**

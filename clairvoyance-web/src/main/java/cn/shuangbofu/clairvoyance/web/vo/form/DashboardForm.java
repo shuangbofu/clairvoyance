@@ -6,6 +6,7 @@ import cn.shuangbofu.clairvoyance.web.vo.LayoutConfig;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,10 @@ import java.util.List;
  */
 @Data
 @ApiModel("仪表盘")
+@Accessors(chain = true)
 public class DashboardForm {
+
+    private Long dashboardId;
 
     @ApiModelProperty("名称")
     private String name;

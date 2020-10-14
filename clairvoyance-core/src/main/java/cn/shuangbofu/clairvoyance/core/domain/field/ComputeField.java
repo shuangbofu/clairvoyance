@@ -19,6 +19,12 @@ public class ComputeField extends AbstractField {
         return "";
     }
 
+    @Override
+    public String getRealName() {
+
+        return null;
+    }
+
     public void setFields(List<Field> fields) {
 
     }
