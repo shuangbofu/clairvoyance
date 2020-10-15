@@ -1,17 +1,18 @@
 package cn.shuangbofu.clairvoyance.web.service;
 
-import cn.shuangbofu.clairvoyance.core.db.Field;
-import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.AggregatorFunc;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
-import cn.shuangbofu.clairvoyance.core.domain.field.GroupField;
-import cn.shuangbofu.clairvoyance.core.enums.FieldType;
-import cn.shuangbofu.clairvoyance.core.loader.FieldLoader;
-import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
+import cn.shuangbofu.clairvoyance.core.chart.sql.base.AggregatorFunc;
+import cn.shuangbofu.clairvoyance.core.chart.sql.base.Filter;
+import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ChartFilter;
+import cn.shuangbofu.clairvoyance.core.field.*;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
+import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
+import cn.shuangbofu.clairvoyance.web.dao.SheetFieldDao;
+import cn.shuangbofu.clairvoyance.web.dao.WorkSheetDao;
+import cn.shuangbofu.clairvoyance.web.entity.SheetField;
+import cn.shuangbofu.clairvoyance.web.entity.WorkSheet;
+import cn.shuangbofu.clairvoyance.web.enums.FieldType;
 import cn.shuangbofu.clairvoyance.web.vo.FieldSimpleVO;
 import cn.shuangbofu.clairvoyance.web.vo.RangeResult;
 import com.google.common.collect.Lists;
@@ -28,24 +29,24 @@ import java.util.stream.Collectors;
 public class FieldService {
 
     public static List<FieldSimpleVO> getAllFields(Long workSheetId) {
-        List<Field> fields = FieldLoader.getAllFields(workSheetId);
-        return FieldSimpleVO.toVOs(fields);
+        List<SheetField> sheetFields = SheetFieldDao.getAllFields(workSheetId);
+        return FieldSimpleVO.toVOs(sheetFields);
     }
 
-    public static List<cn.shuangbofu.clairvoyance.core.domain.field.Field> getFields(Long workSheetId) {
-        List<Field> allFields = FieldLoader.getAllFields(workSheetId);
-        return cn.shuangbofu.clairvoyance.core.domain.field.Field.fromDb(allFields);
+    public static List<Field> getFields(Long workSheetId) {
+        List<SheetField> allSheetFields = SheetFieldDao.getAllFields(workSheetId);
+        return fromDb(allSheetFields);
     }
 
     public static RangeResult getFieldRange(Long workSheetId, Long fieldId, List<ChartFilter> filters, AggregatorFunc func) {
-        Field field = FieldLoader.getField(fieldId);
-        List<cn.shuangbofu.clairvoyance.core.domain.field.Field> fields = getFields(workSheetId);
+        SheetField sheetField = SheetFieldDao.getField(fieldId);
+        List<Field> fields = getFields(workSheetId);
 
         RangeResult rangeResult = null;
-        if (field.getFieldType().equals(FieldType.origin)) {
-            String fieldName = field.getName();
-            String title = field.getTitle();
-            WorkSheet sheet = WorkSheetLoader.getSheet(workSheetId);
+        if (sheetField.getFieldType().equals(FieldType.origin)) {
+            String fieldName = sheetField.getName();
+            String title = sheetField.getTitle();
+            WorkSheet sheet = WorkSheetDao.getSheet(workSheetId);
             SourceTable table = SqlQueryRunner.getSourceTable(sheet);
 
             List<Map<String, Object>> result = table.run(new Sql() {
@@ -67,11 +68,11 @@ public class FieldService {
                 }
             });
             rangeResult = new RangeResult(result);
-        } else if (field.getFieldType().equals(FieldType.group)) {
+        } else if (sheetField.getFieldType().equals(FieldType.group)) {
             if (func != null) {
                 rangeResult = RangeResult.newRangeResult(Lists.newArrayList(1));
             }
-            Optional<cn.shuangbofu.clairvoyance.core.domain.field.Field> any = fields.stream().filter(i -> i.getId().equals(field.getId())).findAny();
+            Optional<Field> any = fields.stream().filter(i -> i.getId().equals(sheetField.getId())).findAny();
             if (any.isPresent()) {
                 GroupField groupField = (GroupField) any.get();
                 List<String> range = groupField.getRange();
@@ -109,5 +110,39 @@ public class FieldService {
             fieldName = func.wrapWithField(fieldName);
         }
         return String.format(" %s AS `%s` ", fieldName, title);
+    }
+
+    public static List<Field> fromDb(List<SheetField> sheetFields) {
+        return sheetFields.stream().map(i -> fromDb(sheetFields, i)).collect(Collectors.toList());
+    }
+
+    public static Field fromDb(List<SheetField> sheetFields, SheetField sheetField) {
+        AbstractField finalField = null;
+        String config = sheetField.getConfig();
+        switch (sheetField.getFieldType()) {
+            case origin:
+                finalField = new OriginField();
+                break;
+            case group:
+                GroupField groupField = JSON.parseObject(config, GroupField.class);
+                Optional<SheetField> any = sheetFields.stream().filter(i -> i.getId().equals(groupField.getRefId())).findAny();
+                any.ifPresent(value -> groupField.setRefField(fromDb(sheetFields, value)));
+                finalField = groupField;
+                break;
+            case computed:
+                ComputeField computeField = JSON.parseObject(config, ComputeField.class);
+                computeField.setFields(fromDb(sheetFields));
+                finalField = computeField;
+                break;
+            default:
+                break;
+        }
+        if (finalField != null) {
+            return finalField.setId(sheetField.getId())
+                    .setName(sheetField.getName())
+                    .setTitle(sheetField.getTitle())
+                    .setType(ColumnType.valueOf(sheetField.getColumnType().name()));
+        }
+        return null;
     }
 }

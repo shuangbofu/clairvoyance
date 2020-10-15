@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.web.vo.preview;
 
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.WhereCondition;
+import cn.shuangbofu.clairvoyance.core.chart.sql.base.WhereCondition;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import cn.shuangbofu.clairvoyance.web.vo.FieldSimpleVO;
 import lombok.Data;

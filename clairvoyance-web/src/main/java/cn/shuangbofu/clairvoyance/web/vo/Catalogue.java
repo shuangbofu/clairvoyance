@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import cn.shuangbofu.clairvoyance.core.db.Node;
+import cn.shuangbofu.clairvoyance.web.entity.Node;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Data;
 

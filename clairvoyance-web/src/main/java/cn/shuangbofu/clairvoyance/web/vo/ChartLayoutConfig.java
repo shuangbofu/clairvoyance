@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import cn.shuangbofu.clairvoyance.core.enums.ChartType;
+import cn.shuangbofu.clairvoyance.web.enums.ChartType;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.experimental.Accessors;

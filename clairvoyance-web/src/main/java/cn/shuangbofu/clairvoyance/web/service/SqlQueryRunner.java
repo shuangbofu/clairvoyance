@@ -1,11 +1,11 @@
 package cn.shuangbofu.clairvoyance.web.service;
 
-import cn.shuangbofu.clairvoyance.core.db.Datasource;
-import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
-import cn.shuangbofu.clairvoyance.core.loader.DatasourceLoader;
 import cn.shuangbofu.clairvoyance.core.meta.source.*;
 import cn.shuangbofu.clairvoyance.core.meta.utils.JdbcParam;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
+import cn.shuangbofu.clairvoyance.web.dao.DatasourceDao;
+import cn.shuangbofu.clairvoyance.web.entity.Datasource;
+import cn.shuangbofu.clairvoyance.web.entity.WorkSheet;
 
 /**
  * Created by shuangbofu on 2020/8/4 11:35
@@ -14,7 +14,7 @@ public class SqlQueryRunner {
 
     public static SourceTable getSourceTable(WorkSheet sheet) {
         if (sheet.getSheetType().fromSource()) {
-            Datasource datasource = DatasourceLoader.getSource(sheet.getDatasourceId());
+            Datasource datasource = DatasourceDao.getSource(sheet.getDatasourceId());
             SourceDb sourceDb = getSourceDb(datasource);
             if (sourceDb != null) {
                 SourceTable sourceTable = sourceDb.sourceTable(datasource.getDbName() + "." + sheet.getTableName());
@@ -28,7 +28,7 @@ public class SqlQueryRunner {
     }
 
     public static SourceDb getSourceDb(Long datasourceId) {
-        Datasource datasource = DatasourceLoader.getSource(datasourceId);
+        Datasource datasource = DatasourceDao.getSource(datasourceId);
         return getSourceDb(datasource);
     }
 

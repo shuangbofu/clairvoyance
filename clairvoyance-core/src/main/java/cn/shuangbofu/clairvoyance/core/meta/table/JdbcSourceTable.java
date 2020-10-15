@@ -1,9 +1,9 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
-import cn.shuangbofu.clairvoyance.core.domain.Pair;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
+import cn.shuangbofu.clairvoyance.core.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.meta.source.JdbcSourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.utils.JdbcUtil;
+import cn.shuangbofu.clairvoyance.core.utils.Pair;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.alibaba.druid.pool.DruidPooledConnection;
 

@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.web.vo.form;
 
-import cn.shuangbofu.clairvoyance.core.db.Node;
+import cn.shuangbofu.clairvoyance.web.entity.Node;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

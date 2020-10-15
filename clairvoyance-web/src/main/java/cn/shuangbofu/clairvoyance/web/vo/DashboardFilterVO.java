@@ -1,7 +1,7 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import cn.shuangbofu.clairvoyance.core.db.DashboardFilter;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
+import cn.shuangbofu.clairvoyance.web.entity.DashboardFilter;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;

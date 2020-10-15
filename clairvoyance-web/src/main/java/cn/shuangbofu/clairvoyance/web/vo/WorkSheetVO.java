@@ -1,7 +1,7 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
-import cn.shuangbofu.clairvoyance.core.enums.SheetType;
+import cn.shuangbofu.clairvoyance.web.entity.WorkSheet;
+import cn.shuangbofu.clairvoyance.web.enums.SheetType;
 import cn.shuangbofu.clairvoyance.web.service.FieldService;
 import lombok.Data;
 import lombok.experimental.Accessors;

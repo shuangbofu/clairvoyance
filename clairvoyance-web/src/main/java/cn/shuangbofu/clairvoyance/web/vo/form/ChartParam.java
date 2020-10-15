@@ -1,8 +1,8 @@
 package cn.shuangbofu.clairvoyance.web.vo.form;
 
-import cn.shuangbofu.clairvoyance.core.domain.chart.DrillParam;
-import cn.shuangbofu.clairvoyance.core.domain.chart.GlobalFilterParam;
-import cn.shuangbofu.clairvoyance.core.domain.chart.LinkedParam;
+import cn.shuangbofu.clairvoyance.core.chart.DrillParam;
+import cn.shuangbofu.clairvoyance.core.chart.GlobalFilterParam;
+import cn.shuangbofu.clairvoyance.core.chart.LinkedParam;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
+import cn.shuangbofu.clairvoyance.web.entity.WorkSheet;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

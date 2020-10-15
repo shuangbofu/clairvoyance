@@ -1,7 +1,7 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import cn.shuangbofu.clairvoyance.core.db.Datasource;
-import cn.shuangbofu.clairvoyance.core.enums.DatasourceType;
+import cn.shuangbofu.clairvoyance.web.entity.Datasource;
+import cn.shuangbofu.clairvoyance.web.enums.DatasourceType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

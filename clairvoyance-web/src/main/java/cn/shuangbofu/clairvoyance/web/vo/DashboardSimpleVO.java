@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import cn.shuangbofu.clairvoyance.core.db.Dashboard;
+import cn.shuangbofu.clairvoyance.web.entity.Dashboard;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -1,24 +1,24 @@
 package cn.shuangbofu.clairvoyance.web.controller;
 
-import cn.shuangbofu.clairvoyance.core.db.Datasource;
-import cn.shuangbofu.clairvoyance.core.db.Field;
-import cn.shuangbofu.clairvoyance.core.db.Node;
-import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
-import cn.shuangbofu.clairvoyance.core.domain.Pair;
-import cn.shuangbofu.clairvoyance.core.domain.chart.SqlBuiler;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ExactChartFilter;
-import cn.shuangbofu.clairvoyance.core.enums.NodeType;
-import cn.shuangbofu.clairvoyance.core.enums.SheetType;
-import cn.shuangbofu.clairvoyance.core.loader.DatasourceLoader;
-import cn.shuangbofu.clairvoyance.core.loader.FieldLoader;
-import cn.shuangbofu.clairvoyance.core.loader.NodeLoader;
-import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
+import cn.shuangbofu.clairvoyance.core.chart.SqlBuiler;
+import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ExactChartFilter;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import cn.shuangbofu.clairvoyance.core.meta.table.Column;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
+import cn.shuangbofu.clairvoyance.core.utils.Pair;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
+import cn.shuangbofu.clairvoyance.web.dao.DatasourceDao;
+import cn.shuangbofu.clairvoyance.web.dao.NodeDao;
+import cn.shuangbofu.clairvoyance.web.dao.SheetFieldDao;
+import cn.shuangbofu.clairvoyance.web.dao.WorkSheetDao;
+import cn.shuangbofu.clairvoyance.web.entity.Datasource;
+import cn.shuangbofu.clairvoyance.web.entity.Node;
+import cn.shuangbofu.clairvoyance.web.entity.SheetField;
+import cn.shuangbofu.clairvoyance.web.entity.WorkSheet;
+import cn.shuangbofu.clairvoyance.web.enums.NodeType;
+import cn.shuangbofu.clairvoyance.web.enums.SheetType;
 import cn.shuangbofu.clairvoyance.web.service.FieldService;
 import cn.shuangbofu.clairvoyance.web.service.SqlQueryRunner;
 import cn.shuangbofu.clairvoyance.web.vo.*;
@@ -55,11 +55,11 @@ public class WorkSheetController {
     @GetMapping("/catalogue")
     @ApiOperation("工作表目录")
     public Result<List<Catalogue<WorkSheetSimpleVO>>> workSheetFolders() {
-        Pair<List<Node>, List<Long>> allNodesPair = NodeLoader.getAllNodesPair(NodeType.workSheet);
+        Pair<List<Node>, List<Long>> allNodesPair = NodeDao.getAllNodesPair(NodeType.workSheet);
         return Result.success(
                 Catalogue.getList(allNodesPair.getFirst(),
                         WorkSheetSimpleVO.toSimpleVOList(
-                                WorkSheetLoader.simpleInIds(allNodesPair.getSecond())
+                                WorkSheetDao.simpleInIds(allNodesPair.getSecond())
                         )
                 )
         );
@@ -75,7 +75,7 @@ public class WorkSheetController {
     @ApiOperation("修改字段")
     @ApiParam(name = "id", defaultValue = "1", required = true)
     public Result<Boolean> updateField(@RequestBody FieldSimpleVO fieldSimpleVO) {
-        FieldLoader.update(fieldSimpleVO.toModel());
+        SheetFieldDao.update(fieldSimpleVO.toModel());
         return Result.success(true);
     }
 
@@ -89,7 +89,7 @@ public class WorkSheetController {
     @PutMapping
     @ApiOperation("修改工作表备注和标题，只修改title和description")
     public Result<Boolean> updateWorkSheet(@RequestBody WorkSheetForm form) {
-        return Result.success(WorkSheetLoader.update(form.toModel()));
+        return Result.success(WorkSheetDao.update(form.toModel()));
     }
 
 
@@ -101,7 +101,7 @@ public class WorkSheetController {
     @GetMapping
     @ApiOperation(("根据ID获取工作表"))
     public Result<WorkSheetVO> one(@RequestParam("workSheetId") Long workSheetId) {
-        WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
+        WorkSheet workSheet = WorkSheetDao.getSheet(workSheetId);
         return Result.success(WorkSheetVO.toVO(workSheet));
     }
 
@@ -114,7 +114,7 @@ public class WorkSheetController {
     @PostMapping("/folder")
     @ApiOperation("创建文件夹")
     public Result<Folder> createFolder(@RequestBody Folder folder) {
-        Long id = NodeLoader.newNode(folder.toNode().setNodeType(NodeType.workSheet));
+        Long id = NodeDao.newNode(folder.toNode().setNodeType(NodeType.workSheet));
         return Result.success(folder.setId(id));
     }
 
@@ -127,7 +127,7 @@ public class WorkSheetController {
      */
     @GetMapping("/list")
     public Result<List<WorkSheetSimpleVO>> listLimit(@RequestParam(value = "limit", required = false, defaultValue = "10000") int limit) {
-        return Result.success(WorkSheetSimpleVO.toSimpleVOList(WorkSheetLoader.simpleAllLimit(limit)));
+        return Result.success(WorkSheetSimpleVO.toSimpleVOList(WorkSheetDao.simpleAllLimit(limit)));
     }
 
     /**
@@ -138,7 +138,7 @@ public class WorkSheetController {
      */
     @GetMapping("/search")
     public Result<List<WorkSheetSimpleVO>> listSearch(@RequestParam(value = "name") String name, @RequestParam(required = false, defaultValue = "10") int limit) {
-        return Result.success(WorkSheetSimpleVO.toSimpleVOList(WorkSheetLoader.simpleSearchByNameLimit(name, limit)));
+        return Result.success(WorkSheetSimpleVO.toSimpleVOList(WorkSheetDao.simpleSearchByNameLimit(name, limit)));
     }
 
     /**
@@ -151,7 +151,7 @@ public class WorkSheetController {
     public Result<Boolean> importFromDatasource(@RequestBody WorkSheetImport workSheetImport) {
         Long datasourceId = workSheetImport.getDatasourceId();
 
-        Datasource datasource = DatasourceLoader.getSource(datasourceId);
+        Datasource datasource = DatasourceDao.getSource(datasourceId);
 
         SourceDb sourceDb = SqlQueryRunner.getSourceDb(datasource);
 
@@ -172,11 +172,11 @@ public class WorkSheetController {
                     .setName(StringUtils.emptyGet(datasource.getName(), sourceDb::name))
                     .setNodeType(NodeType.workSheet)
                     .setParentId(folderNodeId);
-            folderNodeId = NodeLoader.newNode(folder);
+            folderNodeId = NodeDao.newNode(folder);
         }
 
         for (String table : tables) {
-            boolean exist = WorkSheetLoader.existSheet(datasourceId, table);
+            boolean exist = WorkSheetDao.existSheet(datasourceId, table);
             if (exist) {
                 continue;
             }
@@ -189,19 +189,19 @@ public class WorkSheetController {
                     .setTableName(table)
                     .setDatasourceId(datasourceId)
                     .setLastSyncTime(System.currentTimeMillis());
-            Long workSheetId = WorkSheetLoader.insert(workSheet);
+            Long workSheetId = WorkSheetDao.insert(workSheet);
 
             List<Column> columns = sourceTable.columns();
             AtomicInteger count = new AtomicInteger();
-            List<Field> fields = columns.stream().map(col ->
-                    Field.newColumn(col.getName(), col.getComment(), col.getType())
+            List<SheetField> sheetFields = columns.stream().map(col ->
+                    SheetField.newColumn(col.getName(), col.getComment(), col.getType())
                             .setSeqNo(count.incrementAndGet())
                             .setWorkSheetId(workSheetId)
             )
                     .collect(Collectors.toList());
-            FieldLoader.insertBatch(fields);
+            SheetFieldDao.insertBatch(sheetFields);
 
-            NodeLoader.newNode(
+            NodeDao.newNode(
                     new Node()
                             .setName(workSheet.getTableName())
                             .setRefId(workSheetId)
@@ -220,7 +220,7 @@ public class WorkSheetController {
     @PostMapping("/preview/{workSheetId}")
     public Result<DataResult> previewData(@PathVariable(value = "workSheetId") Long workSheetId, @RequestBody PreviewFilter condition) {
         condition.checkParams(FieldService.getAllFields(workSheetId));
-        WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
+        WorkSheet workSheet = WorkSheetDao.getSheet(workSheetId);
         SourceTable table = SqlQueryRunner.getSourceTable(workSheet);
 
         List<Map<String, Object>> result = table.run(condition);

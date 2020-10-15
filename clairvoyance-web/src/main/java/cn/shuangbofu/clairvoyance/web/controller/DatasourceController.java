@@ -1,9 +1,9 @@
 package cn.shuangbofu.clairvoyance.web.controller;
 
-import cn.shuangbofu.clairvoyance.core.db.Datasource;
-import cn.shuangbofu.clairvoyance.core.loader.DatasourceLoader;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.table.Column;
+import cn.shuangbofu.clairvoyance.web.dao.DatasourceDao;
+import cn.shuangbofu.clairvoyance.web.entity.Datasource;
 import cn.shuangbofu.clairvoyance.web.service.SqlQueryRunner;
 import cn.shuangbofu.clairvoyance.web.vo.DatasourceSimpleVO;
 import cn.shuangbofu.clairvoyance.web.vo.Result;
@@ -21,14 +21,14 @@ public class DatasourceController {
 
     @GetMapping("/list")
     public Result<List<DatasourceSimpleVO>> listAll() {
-        return Result.success(DatasourceSimpleVO.toVOs(DatasourceLoader.simpleList()));
+        return Result.success(DatasourceSimpleVO.toVOs(DatasourceDao.simpleList()));
     }
 
     @PostMapping("/ping")
     public Result<Boolean> ping(@RequestParam(value = "datasourceId", required = false) Long datasourceId, @RequestBody(required = false) DatasourceForm form) {
         Datasource datasource;
         if (datasourceId != null) {
-            datasource = DatasourceLoader.getSource(datasourceId);
+            datasource = DatasourceDao.getSource(datasourceId);
         } else if (form != null) {
             datasource = form.pingDatasource();
         } else {
@@ -45,7 +45,7 @@ public class DatasourceController {
         if (!connectivity) {
             throw new RuntimeException("datasource connect error");
         }
-        DatasourceLoader.insert(datasource);
+        DatasourceDao.insert(datasource);
         return Result.success(true);
     }
 

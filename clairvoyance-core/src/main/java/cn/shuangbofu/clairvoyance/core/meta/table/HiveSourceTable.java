@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
-import cn.shuangbofu.clairvoyance.core.domain.Pair;
+import cn.shuangbofu.clairvoyance.core.utils.Pair;
 import cn.shuangbofu.clairvoyance.core.meta.source.JdbcSourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.utils.JdbcUtil;
 import com.alibaba.druid.util.StringUtils;

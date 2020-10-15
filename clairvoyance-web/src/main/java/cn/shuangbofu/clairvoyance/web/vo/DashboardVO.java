@@ -1,10 +1,10 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import cn.shuangbofu.clairvoyance.core.db.Dashboard;
-import cn.shuangbofu.clairvoyance.core.db.DashboardFilter;
-import cn.shuangbofu.clairvoyance.core.loader.DashboardFilterLoader;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
+import cn.shuangbofu.clairvoyance.web.dao.DashboardFilterDao;
+import cn.shuangbofu.clairvoyance.web.entity.Dashboard;
+import cn.shuangbofu.clairvoyance.web.entity.DashboardFilter;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -43,7 +43,7 @@ public class DashboardVO extends DashboardSimpleVO {
         ;
         vo.setLayoutConfig(JSON.parseObject(dashboard.getLayoutConfig(), LayoutConfig.class));
 
-        List<DashboardFilter> dashboardFilters = DashboardFilterLoader.getListByDashboardId(dashboard.getId());
+        List<DashboardFilter> dashboardFilters = DashboardFilterDao.getListByDashboardId(dashboard.getId());
 
         List<DashboardFilterVO> filters = DashboardFilterVO.toTreeList(dashboardFilters);
         vo.setGlobalFilters(filters);

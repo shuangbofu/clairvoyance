@@ -1,12 +1,14 @@
 package cn.shuangbofu.clairvoyance.web.config;
 
-import cn.shuangbofu.clairvoyance.core.db.Chart;
-import cn.shuangbofu.clairvoyance.core.domain.chart.ChartLayer;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ChartFilter;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.InnerChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.ChartLayer;
+import cn.shuangbofu.clairvoyance.core.chart.ChartSql;
+import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.sql.filter.InnerChartFilter;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
+import cn.shuangbofu.clairvoyance.web.entity.Chart;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
 
 import java.util.*;
 
@@ -46,7 +48,7 @@ public class FixData {
     }
 
     private static void fixChart(Chart chart) {
-        chart.setSqlConfig(chart.getSqlConfig().replace("\"inner\"", "\"" + ChartFilter.EXACT + "\""));
+//        chart.setSqlConfig(chart.getSqlConfig().replace("\"inner\"", "\"" + ChartFilter.EXACT + "\""));
 //        chart.setSqlConfig(convertInnerFiltersStructure2(chart.getSqlConfig()));
 //        List<ChartLayoutConfig> configs = JSON.parseArray(chart.getLayoutConfig(), ChartLayoutConfig.class);
 //        List<ChartType> chartTypes = new ArrayList<>();
@@ -72,7 +74,11 @@ public class FixData {
 //        }
 //        chart.setSqlConfig(JSON.toJSONString(node));
 //        System.out.println(chart.getSqlConfig());
-        chart.update();
+//        chart.update();
+
+        ChartSql chartSql = JSON.parseObject(chart.getSqlConfig(), ChartSql.class);
+        chartSql.getLayers().forEach(chartLayer -> chartLayer.setYOptional(Lists.newArrayList()));
+        new Chart().setSqlConfig(JSON.toJSONString(chartSql)).setId(chart.getId()).update();
     }
 
     private static String convertInnerFiltersStructure(String oldJson) {

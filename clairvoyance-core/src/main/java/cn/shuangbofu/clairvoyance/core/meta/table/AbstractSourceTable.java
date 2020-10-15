@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
-import cn.shuangbofu.clairvoyance.core.domain.chart.result.ResultHandler;
+import cn.shuangbofu.clairvoyance.core.chart.result.ResultHandler;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
 import com.google.common.collect.Lists;

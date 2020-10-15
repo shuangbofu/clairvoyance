@@ -1,33 +1,18 @@
 package cn.shuangbofu.clairvoyance.web.controller;
 
-import cn.shuangbofu.clairvoyance.core.db.Chart;
-import cn.shuangbofu.clairvoyance.core.db.Dashboard;
-import cn.shuangbofu.clairvoyance.core.db.DashboardFilter;
-import cn.shuangbofu.clairvoyance.core.db.WorkSheet;
-import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSqlBuilder;
-import cn.shuangbofu.clairvoyance.core.domain.chart.GlobalFilterParam;
-import cn.shuangbofu.clairvoyance.core.domain.chart.LinkedParam;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ExactChartFilter;
-import cn.shuangbofu.clairvoyance.core.loader.ChartLoader;
-import cn.shuangbofu.clairvoyance.core.loader.DashBoardLoader;
-import cn.shuangbofu.clairvoyance.core.loader.DashboardFilterLoader;
-import cn.shuangbofu.clairvoyance.core.loader.WorkSheetLoader;
-import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
-import cn.shuangbofu.clairvoyance.core.utils.JSON;
-import cn.shuangbofu.clairvoyance.web.service.SqlQueryRunner;
+import cn.shuangbofu.clairvoyance.web.service.ChartService;
 import cn.shuangbofu.clairvoyance.web.vo.ChartVO;
-import cn.shuangbofu.clairvoyance.web.vo.DashboardFilterVO;
-import cn.shuangbofu.clairvoyance.web.vo.LayoutConfig;
 import cn.shuangbofu.clairvoyance.web.vo.Result;
+import cn.shuangbofu.clairvoyance.web.vo.form.ChartForm;
+import cn.shuangbofu.clairvoyance.web.vo.form.ChartLinkVO;
 import cn.shuangbofu.clairvoyance.web.vo.form.ChartParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Created by shuangbofu on 2020/7/30 下午10:43
@@ -37,10 +22,18 @@ import java.util.stream.Collectors;
 @Api(tags = "图表接口")
 public class ChartController {
 
+    @Autowired
+    private ChartService chartService;
+
+    @DeleteMapping("/{chartId}")
+    public Result<Boolean> deleteChart(@PathVariable("chartId") Long chartId) {
+        return Result.success(chartService.deleteChart(chartId));
+    }
+
     @GetMapping
     @ApiOperation("图表详情")
     public Result<ChartVO> getChart(@RequestParam("chartId") Long chartId) {
-        return Result.success(ChartVO.toVO(ChartLoader.byId(chartId)));
+        return Result.success(chartService.getChart(chartId));
     }
 
     /**
@@ -50,68 +43,28 @@ public class ChartController {
     @PostMapping
     @ApiOperation("创建保存图表")
     public Result<Long> createChart(@RequestBody ChartVO chartFrom) {
-        Chart chart = chartFrom.toModel();
-        if (chartFrom.created()) {
-            ChartLoader.update(chart);
-        } else {
-            Long id = ChartLoader.create(chart);
-            chart.setId(id);
+        return Result.success(chartService.createChart(chartFrom));
+    }
 
-            // FIXME: 2020/8/14
-            // 更新dashboard
-            Long dashboardId = chart.getDashboardId();
-            Dashboard dashboard = DashBoardLoader.byId(dashboardId);
-            LayoutConfig layoutConfig = JSON.parseObject(dashboard.getLayoutConfig(), LayoutConfig.class);
-            layoutConfig.getPositions().add(new LayoutConfig.Layout(layoutConfig.getMaxBottom(), id));
-            Dashboard newDash = new Dashboard().setId(dashboardId).setLayoutConfig(JSON.toJSONString(layoutConfig));
-            DashBoardLoader.update(newDash);
-
-            // TODO 如果sqlConfig中包含钻取的配置，那么需要去掉当前图表的工作表作为主表的多表关联
-        }
-        return Result.success(chart.getId());
+    @PostMapping("/data")
+    public Result<List<Map<String, Object>>> getChartData(@RequestBody ChartForm form) {
+        return Result.success(chartService.getChartData(form));
     }
 
     @PostMapping("/data/{chartId}")
     public Result<List<Map<String, Object>>> getChartData(@PathVariable("chartId") Long chartId, @RequestBody(required = false) ChartParam param) {
-        Chart chart = ChartLoader.byId(chartId);
-        Long workSheetId = chart.getWorkSheetId();
-
-        WorkSheet workSheet = WorkSheetLoader.getSheet(workSheetId);
-        SourceTable table = SqlQueryRunner.getSourceTable(workSheet);
-
-        ChartSqlBuilder sqlBuilder = new ChartSqlBuilder(chart.getSqlConfig(), workSheetId)
-                // 设置下钻属性
-                .setDrillParam(param.getDrillParam());
-
-        setGlobalFilters(sqlBuilder, param.getGlobalFilterParams(), chartId, workSheetId);
-        setLinkedParam(sqlBuilder, param.getLinkedParam());
-
-        // 执行SQL获得结果
-        List<Map<String, Object>> result = table.run(sqlBuilder.build());
-        return Result.success(result);
+        return Result.success(chartService.getChartData(chartId, param));
     }
 
-    private void setLinkedParam(ChartSqlBuilder sqlBuilder, LinkedParam param) {
+    @PostMapping("/link")
+    public Result<Boolean> createChartLink(@RequestBody ChartLinkVO chartLinkVO) {
 
+        return Result.success(false);
     }
 
-    private void setGlobalFilters(ChartSqlBuilder sqlBuilder, List<GlobalFilterParam> globalFilterParams, Long chartId, Long workSheetId) {
-        if (globalFilterParams != null && globalFilterParams.size() > 0) {
-            List<Long> dashboardFilterIds = globalFilterParams.stream()
-                    .map(GlobalFilterParam::getDashboardFilterId).collect(Collectors.toList());
-            List<DashboardFilter> filters = DashboardFilterLoader.inIds(dashboardFilterIds);
-            DashboardFilterVO.toVos(filters).stream()
-                    .filter(i -> i.getSelectedCharts()
-                            .contains(chartId))
-                    .forEach(filterVO -> {
-                        Long fieldId = filterVO.getSheetFieldMap().get(workSheetId);
-                        Optional<GlobalFilterParam> any = globalFilterParams.stream().filter(p -> p.getDashboardFilterId().equals(filterVO.getId())).findAny();
-                        if (any.isPresent()) {
-                            ExactChartFilter exactChartFilter = new ExactChartFilter(any.get().getRange(), filterVO.getIncluded(), fieldId);
-                            // 添加全局过滤器
-                            sqlBuilder.addFilter(exactChartFilter);
-                        }
-                    });
-        }
+    @DeleteMapping("/link/{chartLinkId}")
+    public Result<Boolean> removeChartLink(@PathVariable("chartLinkId") Long chartLinkId) {
+
+        return Result.success(false);
     }
 }

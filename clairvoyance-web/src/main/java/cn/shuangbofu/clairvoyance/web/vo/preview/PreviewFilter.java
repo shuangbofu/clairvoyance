@@ -1,10 +1,10 @@
 package cn.shuangbofu.clairvoyance.web.vo.preview;
 
-import cn.shuangbofu.clairvoyance.core.domain.Pair;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.Filter;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.OrderType;
+import cn.shuangbofu.clairvoyance.core.chart.sql.base.Filter;
+import cn.shuangbofu.clairvoyance.core.chart.sql.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
+import cn.shuangbofu.clairvoyance.core.utils.Pair;
 import cn.shuangbofu.clairvoyance.web.vo.FieldSimpleVO;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

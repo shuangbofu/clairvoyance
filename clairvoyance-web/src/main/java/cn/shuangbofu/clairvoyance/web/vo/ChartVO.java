@@ -1,13 +1,13 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import cn.shuangbofu.clairvoyance.core.db.Chart;
-import cn.shuangbofu.clairvoyance.core.domain.chart.AlarmConfig;
-import cn.shuangbofu.clairvoyance.core.domain.chart.ChartLayer;
-import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSql;
-import cn.shuangbofu.clairvoyance.core.domain.chart.ChartSqlBuilder;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.Value;
-import cn.shuangbofu.clairvoyance.core.enums.ChartType;
+import cn.shuangbofu.clairvoyance.core.chart.AlarmConfig;
+import cn.shuangbofu.clairvoyance.core.chart.ChartLayer;
+import cn.shuangbofu.clairvoyance.core.chart.ChartSql;
+import cn.shuangbofu.clairvoyance.core.chart.sql.Value;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
+import cn.shuangbofu.clairvoyance.web.entity.Chart;
+import cn.shuangbofu.clairvoyance.web.enums.ChartType;
+import cn.shuangbofu.clairvoyance.web.service.ChartSqlBuilderFactory;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -33,7 +33,7 @@ public class ChartVO {
     private String remarks;
 
     public static ChartVO toVO(Chart chart) {
-        ChartSql sqlConfig = new ChartSqlBuilder(chart.getSqlConfig(), chart.getWorkSheetId()).build();
+        ChartSql sqlConfig = ChartSqlBuilderFactory.create(chart.getSqlConfig(), chart.getWorkSheetId()).build();
         List<ChartLayoutConfig> configs = JSON.parseArray(chart.getLayoutConfig(), ChartLayoutConfig.class);
         // 只有表格才有行总计
         for (int i = 0; i < sqlConfig.getLayers().size(); i++) {

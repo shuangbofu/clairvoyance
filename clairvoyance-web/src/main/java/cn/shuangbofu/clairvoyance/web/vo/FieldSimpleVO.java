@@ -1,8 +1,8 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
-import cn.shuangbofu.clairvoyance.core.db.Field;
-import cn.shuangbofu.clairvoyance.core.enums.ColumnType;
-import cn.shuangbofu.clairvoyance.core.enums.FieldType;
+import cn.shuangbofu.clairvoyance.web.entity.SheetField;
+import cn.shuangbofu.clairvoyance.web.enums.ColumnType;
+import cn.shuangbofu.clairvoyance.web.enums.FieldType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -32,22 +32,22 @@ public class FieldSimpleVO {
 
     private String linkUrl;
 
-    public static List<FieldSimpleVO> toVOs(List<Field> fields) {
-        return fields.stream().map(FieldSimpleVO::toVO).collect(Collectors.toList());
+    public static List<FieldSimpleVO> toVOs(List<SheetField> sheetFields) {
+        return sheetFields.stream().map(FieldSimpleVO::toVO).collect(Collectors.toList());
     }
 
-    public static FieldSimpleVO toVO(Field field) {
-        return new FieldSimpleVO().setId(field.getId())
-                .setName(field.getName())
-                .setTitle(field.getTitle())
-                .setType(field.getColumnType())
-                .setRemarks(field.getRemarks())
-                .setSeqNo(field.getSeqNo())
-                .setLinkUrl(field.getLinkUrl())
-                .setFieldType(field.getFieldType());
+    public static FieldSimpleVO toVO(SheetField sheetField) {
+        return new FieldSimpleVO().setId(sheetField.getId())
+                .setName(sheetField.getName())
+                .setTitle(sheetField.getTitle())
+                .setType(sheetField.getColumnType())
+                .setRemarks(sheetField.getRemarks())
+                .setSeqNo(sheetField.getSeqNo())
+                .setLinkUrl(sheetField.getLinkUrl())
+                .setFieldType(sheetField.getFieldType());
     }
 
-    public Field toModel() {
-        return new Field().setId(id).setTitle(title).setColumnType(type).setRemarks(remarks).setLinkUrl(linkUrl);
+    public SheetField toModel() {
+        return new SheetField().setId(id).setTitle(title).setColumnType(type).setRemarks(remarks).setLinkUrl(linkUrl);
     }
 }

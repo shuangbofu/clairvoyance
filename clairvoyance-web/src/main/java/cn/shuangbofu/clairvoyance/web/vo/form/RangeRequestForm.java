@@ -1,7 +1,7 @@
 package cn.shuangbofu.clairvoyance.web.vo.form;
 
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.base.AggregatorFunc;
-import cn.shuangbofu.clairvoyance.core.domain.chart.sql.filter.ExactChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.sql.base.AggregatorFunc;
+import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ExactChartFilter;
 import lombok.Data;
 
 import java.util.List;
