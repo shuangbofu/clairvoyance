@@ -5,8 +5,6 @@ import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import cn.shuangbofu.clairvoyance.web.dao.DashboardFilterDao;
 import cn.shuangbofu.clairvoyance.web.entity.Dashboard;
 import cn.shuangbofu.clairvoyance.web.entity.DashboardFilter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -15,16 +13,15 @@ import java.util.List;
  * Created by shuangbofu on 2020/7/31 15:04
  */
 @Data
-@ApiModel("仪表盘")
 public class DashboardVO extends DashboardSimpleVO {
 
-    @ApiModelProperty("布局配置")
+    /**
+     * 布局配置
+     */
     private LayoutConfig layoutConfig;
-
     /**
      * 全局过滤器配置
      */
-    @ApiModelProperty("全局过滤器配置")
     private List<DashboardFilterVO> globalFilters;
 
     /**

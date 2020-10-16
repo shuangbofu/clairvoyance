@@ -1,24 +1,19 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
  * Created by shuangbofu on 2020/7/30 下午8:48
  */
 @Data
-@ApiModel(description = "返回结构")
 public class Result<T> {
-    @ApiModelProperty("错误信息")
+
     @JsonProperty("errorMsg")
     private String message;
-    @ApiModelProperty("数据")
 
     @JsonProperty("result")
     private T data;
-    @ApiModelProperty("是否成功")
     private boolean success;
 
     public Result() {

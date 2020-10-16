@@ -28,9 +28,6 @@ import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetImport;
 import cn.shuangbofu.clairvoyance.web.vo.preview.PreviewFilter;
 import com.google.common.collect.Lists;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,7 +41,6 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api/workSheet")
-@Api(tags = "工作表接口")
 public class WorkSheetController {
 
     /**
@@ -53,7 +49,6 @@ public class WorkSheetController {
      * @return
      */
     @GetMapping("/catalogue")
-    @ApiOperation("工作表目录")
     public Result<List<Catalogue<WorkSheetSimpleVO>>> workSheetFolders() {
         Pair<List<Node>, List<Long>> allNodesPair = NodeDao.getAllNodesPair(NodeType.workSheet);
         return Result.success(
@@ -72,8 +67,6 @@ public class WorkSheetController {
      * @return
      */
     @PutMapping("/field")
-    @ApiOperation("修改字段")
-    @ApiParam(name = "id", defaultValue = "1", required = true)
     public Result<Boolean> updateField(@RequestBody FieldSimpleVO fieldSimpleVO) {
         SheetFieldDao.update(fieldSimpleVO.toModel());
         return Result.success(true);
@@ -87,7 +80,6 @@ public class WorkSheetController {
      * @return
      */
     @PutMapping
-    @ApiOperation("修改工作表备注和标题，只修改title和description")
     public Result<Boolean> updateWorkSheet(@RequestBody WorkSheetForm form) {
         return Result.success(WorkSheetDao.update(form.toModel()));
     }
@@ -99,7 +91,6 @@ public class WorkSheetController {
      * @return
      */
     @GetMapping
-    @ApiOperation(("根据ID获取工作表"))
     public Result<WorkSheetVO> one(@RequestParam("workSheetId") Long workSheetId) {
         WorkSheet workSheet = WorkSheetDao.getSheet(workSheetId);
         return Result.success(WorkSheetVO.toVO(workSheet));
@@ -112,7 +103,6 @@ public class WorkSheetController {
      * @return
      */
     @PostMapping("/folder")
-    @ApiOperation("创建文件夹")
     public Result<Folder> createFolder(@RequestBody Folder folder) {
         Long id = NodeDao.newNode(folder.toNode().setNodeType(NodeType.workSheet));
         return Result.success(folder.setId(id));

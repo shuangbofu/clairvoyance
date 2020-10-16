@@ -1,8 +1,6 @@
 package cn.shuangbofu.clairvoyance.web.vo.form;
 
 import cn.shuangbofu.clairvoyance.web.entity.Node;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -11,16 +9,12 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel("文件夹")
 public class Folder {
 
     private Long id;
-    @ApiModelProperty("名称")
     private String name;
     private Long refId;
-    @ApiModelProperty("父文件夹")
     private Long parentId;
-    @ApiModelProperty("层级")
     private int level = 0;
 
 

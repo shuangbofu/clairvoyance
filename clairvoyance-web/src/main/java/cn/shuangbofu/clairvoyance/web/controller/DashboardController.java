@@ -6,8 +6,6 @@ import cn.shuangbofu.clairvoyance.web.service.WorkSheetService;
 import cn.shuangbofu.clairvoyance.web.vo.*;
 import cn.shuangbofu.clairvoyance.web.vo.form.DashboardForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.Folder;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +17,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/dashboard")
-@Api(tags = "仪表盘接口")
 public class DashboardController {
 
     @Autowired
@@ -34,7 +31,6 @@ public class DashboardController {
      * @return
      */
     @GetMapping("/catalogue")
-    @ApiOperation("仪表盘目录")
     public Result<List<Catalogue<DashboardSimpleVO>>> dashboards() {
         return Result.success(dashboardService.getCatalogues());
     }
@@ -46,13 +42,17 @@ public class DashboardController {
      * @return
      */
     @PostMapping()
-    @ApiOperation("创建仪表盘")
     public Result<Map<String, Long>> createDashboard(@RequestBody DashboardForm form) {
         return Result.success(dashboardService.createDashboard(form));
     }
 
+    /**
+     * 根据ID获取仪表盘（布局配置，图表列表）
+     *
+     * @param dashboardId
+     * @return
+     */
     @GetMapping
-    @ApiOperation(("根据ID获取仪表盘（布局配置，图表列表）"))
     public Result<DashboardVO> dashboard(@RequestParam("dashboardId") Long dashboardId) {
         return Result.success(dashboardService.getDashboard(dashboardId));
     }
@@ -64,7 +64,6 @@ public class DashboardController {
      * @return
      */
     @PostMapping("/folder")
-    @ApiOperation("创建文件夹")
     public Result<Folder> createFolder(@RequestBody Folder folder) {
         return Result.success(dashboardService.createFolder(folder));
     }

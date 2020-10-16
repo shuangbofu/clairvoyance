@@ -1,8 +1,6 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.web.entity.Dashboard;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -11,19 +9,15 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel
 public class DashboardSimpleVO implements IdVo {
 
-    @ApiModelProperty("id")
     private Long dashboardId;
 
-    @ApiModelProperty("名称")
     private String name;
 //
 //    @ApiModelProperty("标签")
 //    private List<String> tags;
 
-    @ApiModelProperty("备注")
     private String remarks;
 
     public static DashboardSimpleVO toSimpleVO(Dashboard dashboard) {

@@ -6,8 +6,6 @@ import cn.shuangbofu.clairvoyance.web.vo.Result;
 import cn.shuangbofu.clairvoyance.web.vo.form.ChartForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.ChartLinkVO;
 import cn.shuangbofu.clairvoyance.web.vo.form.ChartParam;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +17,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/chart")
-@Api(tags = "图表接口")
 public class ChartController {
 
     @Autowired
@@ -30,18 +27,21 @@ public class ChartController {
         return Result.success(chartService.deleteChart(chartId));
     }
 
+    /**
+     * 图表详情
+     */
     @GetMapping
-    @ApiOperation("图表详情")
     public Result<ChartVO> getChart(@RequestParam("chartId") Long chartId) {
         return Result.success(chartService.getChart(chartId));
     }
 
     /**
+     * 创建保存图表
+     *
      * @param chartFrom
      * @return
      */
     @PostMapping
-    @ApiOperation("创建保存图表")
     public Result<Long> createChart(@RequestBody ChartVO chartFrom) {
         return Result.success(chartService.createChart(chartFrom));
     }
@@ -62,9 +62,9 @@ public class ChartController {
         return Result.success(false);
     }
 
-    @DeleteMapping("/link/{chartLinkId}")
-    public Result<Boolean> removeChartLink(@PathVariable("chartLinkId") Long chartLinkId) {
-
+    @DeleteMapping("/link/{chartId}")
+    public Result<Boolean> removeChartLink(@PathVariable("chartId") Long chartId) {
+        // 根据chartId删除关联
         return Result.success(false);
     }
 }
