@@ -2,9 +2,10 @@ package cn.shuangbofu.clairvoyance.web.config;
 
 import cn.shuangbofu.clairvoyance.core.chart.ChartLayer;
 import cn.shuangbofu.clairvoyance.core.chart.ChartSql;
-import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ChartFilter;
-import cn.shuangbofu.clairvoyance.core.chart.sql.filter.InnerChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.filter.ChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.filter.InnerChartFilter;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
+import cn.shuangbofu.clairvoyance.web.dao.Daos;
 import cn.shuangbofu.clairvoyance.web.entity.Chart;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -14,8 +15,22 @@ import java.util.*;
 
 /**
  * Created by shuangbofu on 2020/9/7 17:20
+ * <p>
+ * 数据订正
  */
 public class FixData {
+    public static void main(String[] args) {
+        String json = "{\"filters\":[{\"filterType\":\"exact\",\"id\":2961,\"range\":[\"McoO8jXh\",\"i9TxRD2l\",\"HaoiuWzy\",\"1wzznw9a\",\"vhrcfp2v\",\"b3ov3nor\"],\"included\":true}],\"layers\":[{\"innerFilters\":null,\"x\":[{\"id\":2960}],\"y\":[{\"id\":2961,\"aggregator\":\"AVG\"},{\"id\":2967,\"aggregator\":\"COUNT\"}],\"sort\":null}],\"drillFields\":[]}";
+
+//        String s = convertInnerFiltersStructure2(json);
+//        System.out.println(s);
+
+        ChartSql chartSql = JSON.parseObject(json, ChartSql.class);
+
+//        chartSql.getLayers().forEach(chartLayer -> chartLayer.setYOptional(Lists.newArrayList()));
+        System.out.println(chartSql);
+    }
+
     private static String convertInnerFiltersStructure2(String oldJson) {
         JsonNode jsonNode = JSON.jsonString2JsonNode(oldJson);
         JsonNode innerFiltersNode = jsonNode.get("innerFilters");
@@ -41,13 +56,25 @@ public class FixData {
     }
 
     public static void fix() {
-        List<Chart> charts = Chart.from().all();
-        for (Chart chart : charts) {
+        for (Chart chart : Daos.chart().findAll()) {
             fixChart(chart);
         }
     }
 
+
     private static void fixChart(Chart chart) {
+//        JsonNode node = JSON.jsonString2JsonNode(chart.getSqlConfig());
+//        JsonNode layers = node.get("layers");
+//        Iterator<JsonNode> elements = layers.elements();
+//        while (elements.hasNext()) {
+//            JsonNode next = elements.next();
+//            next
+//        }
+        ChartSql chartSql = JSON.parseObject(chart.getSqlConfig(), ChartSql.class);
+        chartSql.getLayers().forEach(chartLayer -> chartLayer.setYOptional(Lists.newArrayList()).setXOptional(Lists.newArrayList()));
+        Daos.chart().updateSqlConfig(chart.getId(), JSON.toJSONString(chartSql));
+//        new Chart().setSqlConfig(JSON.toJSONString(chartSql)).setId(chart.getId()).update();
+
 //        chart.setSqlConfig(chart.getSqlConfig().replace("\"inner\"", "\"" + ChartFilter.EXACT + "\""));
 //        chart.setSqlConfig(convertInnerFiltersStructure2(chart.getSqlConfig()));
 //        List<ChartLayoutConfig> configs = JSON.parseArray(chart.getLayoutConfig(), ChartLayoutConfig.class);
@@ -75,10 +102,6 @@ public class FixData {
 //        chart.setSqlConfig(JSON.toJSONString(node));
 //        System.out.println(chart.getSqlConfig());
 //        chart.update();
-
-        ChartSql chartSql = JSON.parseObject(chart.getSqlConfig(), ChartSql.class);
-        chartSql.getLayers().forEach(chartLayer -> chartLayer.setYOptional(Lists.newArrayList()));
-        new Chart().setSqlConfig(JSON.toJSONString(chartSql)).setId(chart.getId()).update();
     }
 
     private static String convertInnerFiltersStructure(String oldJson) {

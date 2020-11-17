@@ -1,24 +1,23 @@
 package cn.shuangbofu.clairvoyance.core.chart;
 
-import cn.shuangbofu.clairvoyance.core.chart.sql.Dimension;
-import cn.shuangbofu.clairvoyance.core.chart.sql.Value;
-import cn.shuangbofu.clairvoyance.core.chart.sql.base.FieldAlias;
-import cn.shuangbofu.clairvoyance.core.chart.sql.base.OrderType;
-import cn.shuangbofu.clairvoyance.core.chart.sql.filter.InnerChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.base.OrderType;
+import cn.shuangbofu.clairvoyance.core.chart.field.Dimension;
+import cn.shuangbofu.clairvoyance.core.chart.field.FieldAlias;
+import cn.shuangbofu.clairvoyance.core.chart.field.Value;
+import cn.shuangbofu.clairvoyance.core.chart.filter.InnerChartFilter;
 import cn.shuangbofu.clairvoyance.core.field.AbstractChartField;
+import cn.shuangbofu.clairvoyance.core.field.ComputeField;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.utils.Pair;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -60,21 +59,33 @@ public class ChartLayer implements Sql {
     @JsonProperty("yOptional")
     private List<Value> yOptional;
 
+    /**
+     * 对比
+     */
+    @JsonProperty("xOptional")
+    private List<Dimension> xOptional;
+
     public static ChartLayer defaultLayer() {
         return new ChartLayer()
                 .setInnerFilters(new ArrayList<>())
                 .setX(new ArrayList<>())
                 .setY(new ArrayList<>())
                 .setYOptional(new ArrayList<>())
+                .setXOptional(new ArrayList<>())
                 .setSort(new Sort());
     }
 
     @JsonIgnore
     public List<FieldAlias> getXY() {
         List<FieldAlias> fieldAliases = new ArrayList<>();
-        fieldAliases.addAll(x);
+        fieldAliases.addAll(getAllX());
         fieldAliases.addAll(getYWithoutRow());
         return fieldAliases;
+    }
+
+    @JsonIgnore
+    public List<Dimension> getAllX() {
+        return Lists.newArrayList(x, xOptional).stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     /**
@@ -99,6 +110,7 @@ public class ChartLayer implements Sql {
         return y;
     }
 
+
     @JsonIgnore
     public Value getRow() {
         // 设置次轴不允许是表格
@@ -117,7 +129,8 @@ public class ChartLayer implements Sql {
 
     @Override
     public String groupBys() {
-        return x.stream()
+        List<Dimension> groupByFieldList = getAllX().stream().filter(field -> !field.getRealField().getClass().equals(ComputeField.class)).collect(Collectors.toList());
+        return groupByFieldList.stream()
                 .map(AbstractChartField::getRealName)
                 .filter(StringUtils::isNotEmpty)
                 .collect(Collectors.joining(", "));
@@ -129,5 +142,21 @@ public class ChartLayer implements Sql {
             return null;
         }
         return new Pair<>(sort.getFinalAliasName(), sort.getOrderType());
+    }
+
+    public Boolean isEmptyLayer() {
+        if (x != null && x.size() > 0) {
+            return false;
+        }
+        if (xOptional != null && xOptional.size() > 0) {
+            return false;
+        }
+        if (y != null && y.size() > 0) {
+            return false;
+        }
+        if (yOptional != null && yOptional.size() > 0) {
+            return false;
+        }
+        return true;
     }
 }

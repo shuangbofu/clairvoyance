@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
-import cn.shuangbofu.clairvoyance.core.chart.sql.base.OrderType;
+import cn.shuangbofu.clairvoyance.core.chart.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.field.AbstractChartField;
 import cn.shuangbofu.clairvoyance.core.field.Field;
 import lombok.Data;

@@ -3,7 +3,6 @@ package cn.shuangbofu.clairvoyance.web.entity;
 import cn.shuangbofu.clairvoyance.web.enums.SheetType;
 import io.github.biezhi.anima.annotation.Column;
 import io.github.biezhi.anima.annotation.Table;
-import io.github.biezhi.anima.core.AnimaQuery;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -19,6 +18,7 @@ public class WorkSheet extends Model<WorkSheet> {
     private Long gmtModified;
     @Column(name = "`status`")
     private Boolean deleted;
+    // private String env;
 
     private SheetType sheetType;
     private String title;
@@ -30,19 +30,4 @@ public class WorkSheet extends Model<WorkSheet> {
      * 最近数据同步时间
      */
     private Long lastSyncTime;
-
-    /**
-     * 字段元数据信息 ----> List<Field>
-     */
-//    private String fieldInfos;
-
-    /**
-     * 数据源配置 ----> SourceConfig
-     */
-    private String sourceConfig;
-
-    public static AnimaQuery<WorkSheet> from() {
-        return s(WorkSheet.class)
-                .where(WorkSheet::getDeleted, false);
-    }
 }

@@ -1,28 +1,25 @@
 package cn.shuangbofu.clairvoyance.web.service;
 
 import cn.shuangbofu.clairvoyance.core.chart.GlobalFilterParam;
-import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ChartFilter;
-import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ExactChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.filter.ChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.filter.ExactChartFilter;
 import cn.shuangbofu.clairvoyance.core.utils.Pair;
-import cn.shuangbofu.clairvoyance.web.dao.ChartDao;
-import cn.shuangbofu.clairvoyance.web.dao.DashBoardDao;
-import cn.shuangbofu.clairvoyance.web.dao.DashboardFilterDao;
-import cn.shuangbofu.clairvoyance.web.dao.NodeDao;
-import cn.shuangbofu.clairvoyance.web.entity.Dashboard;
-import cn.shuangbofu.clairvoyance.web.entity.DashboardFilter;
-import cn.shuangbofu.clairvoyance.web.entity.Node;
+import cn.shuangbofu.clairvoyance.web.config.CurrentLoginUser;
+import cn.shuangbofu.clairvoyance.web.dao.*;
+import cn.shuangbofu.clairvoyance.web.entity.*;
 import cn.shuangbofu.clairvoyance.web.enums.NodeType;
+import cn.shuangbofu.clairvoyance.web.pojo.Model.Dashboard.ChartLinkModel;
+import cn.shuangbofu.clairvoyance.web.pojo.Model.Dashboard.LinkFieldModel;
+import cn.shuangbofu.clairvoyance.web.pojo.Model.Dashboard.LinkModel;
+import cn.shuangbofu.clairvoyance.web.pojo.VO.Chart.ChartVO;
+import cn.shuangbofu.clairvoyance.web.pojo.VO.Dashboard.DashboardFilterSaveVO;
 import cn.shuangbofu.clairvoyance.web.vo.*;
 import cn.shuangbofu.clairvoyance.web.vo.form.DashboardForm;
-import cn.shuangbofu.clairvoyance.web.vo.form.Folder;
 import com.google.common.collect.Lists;
-import io.github.biezhi.anima.Anima;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -32,25 +29,36 @@ import java.util.stream.Collectors;
 @Component
 public class DashboardService {
 
+    private final DashBoardDao dashBoardDao = Daos.dashboard();
+    private final ChartDao chartDao = Daos.chart();
+    private final DashboardFilterDao dashboardFilterDao = Daos.dashboardFilter();
+    private final DashboardFilterSelectedDao dashboardFilterSelectedDao = Daos.dashboardFilterSelectedDao();
+    private final DashboardLinkDao dashboardLinkDao = Daos.dashboardLinkDao();
+
+    @Autowired
+    private cn.shuangbofu.clairvoyance.web.service.FieldService fieldService;
+    @Autowired
+    private Converter converter;
+
+    @Autowired
+    private NodeService nodeService;
+
     public List<Catalogue<DashboardSimpleVO>> getCatalogues() {
-        Pair<List<Node>, List<Long>> allNodesPair = NodeDao.getAllNodesPair(NodeType.dashboard);
-        List<DashboardSimpleVO> vos = DashBoardDao.inIds(allNodesPair.getSecond()).stream().map(DashboardSimpleVO::toSimpleVO).collect(Collectors.toList());
+        Pair<List<Node>, List<Long>> allNodesPair = nodeService.getAllNodesPair(NodeType.dashboard);
+        List<DashboardSimpleVO> vos = dashBoardDao.findListInIds(allNodesPair.getSecond()).stream().map(DashboardSimpleVO::toSimpleVO).collect(Collectors.toList());
         return Catalogue.getList(allNodesPair.getFirst(), vos);
     }
 
     public Map<String, Long> createDashboard(DashboardForm form) {
         // 创建仪表盘
         Dashboard dashboard = form.toModel();
-//        dashboard.setCreateUser(CurrentLoginUser.getUser());
-//        dashboard.setModifyUser(CurrentLoginUser.getUser());
+        dashboard.setCreateUser(CurrentLoginUser.getUser());
+        dashboard.setModifyUser(CurrentLoginUser.getUser());
 
-        Long id = DashBoardDao.create(dashboard);
+        Long id = dashBoardDao.insert(dashboard);
 
         // 创建对应节点
-        Long nodeId = NodeDao.newNode(new Node().setName(form.getName())
-                .setNodeType(NodeType.dashboard)
-                .setRefId(id)
-                .setParentId(form.getParentId()));
+        long nodeId = nodeService.createNode(form.getName(), NodeType.dashboard, id, form.getParentId());
 
         Map<String, Long> object = new HashMap<>();
         object.put("nodeId", nodeId);
@@ -59,52 +67,86 @@ public class DashboardService {
     }
 
     public DashboardVO getDashboard(Long dashboardId) {
-        List<ChartVO> charts = ChartDao.getChartsByDshId(dashboardId).stream().map(ChartVO::toVO).collect(Collectors.toList());
+        List<ChartVO> charts = chartDao.findChartsByDshId(dashboardId).stream()
+                .map(chart -> converter.chart2VO(chart)).collect(Collectors.toList());
 
-        Dashboard dashboard = DashBoardDao.byId(dashboardId);
-
-        return DashboardVO.toVO(dashboard, charts);
-    }
-
-    public Folder createFolder(Folder folder) {
-        Long id = NodeDao.newNode(folder.toNode()
-                .setNodeType(NodeType.dashboard))
-//                .setCreateUser(CurrentLoginUser.getUser())
-//                .setModifyUser(CurrentLoginUser.getUser()))
-                ;
-        return folder.setId(id);
-    }
-
-    public boolean moveNode(Folder folder) {
-        NodeDao.update(folder.toNode());
-        return true;
+        Dashboard dashboard = dashBoardDao.findOneById(dashboardId);
+        return converter.dashboard2VO(dashboard, charts);
     }
 
     public boolean removeDashboard(Long dashboardId) {
         AtomicBoolean result = new AtomicBoolean(false);
-        Anima.atomic(() -> {
-            boolean delete = DashBoardDao.delete(dashboardId);
-            boolean b = NodeDao.removeByRefId(dashboardId, NodeType.dashboard);
-            result.set(delete && b);
-        }).catchException(e -> {
-            throw new RuntimeException(e);
-        });
+        Daos.atomic(() -> {
+            int delete = dashBoardDao.deleteById(dashboardId);
+            boolean b = nodeService.removeByRefId(dashboardId, NodeType.dashboard);
+            result.set(delete > 0 && b);
+        }, "remove dashboard error");
         return result.get();
     }
 
     public boolean saveDashboard(DashboardVO vo) {
-        DashBoardDao.update(vo.toModel());
-        return true;
+        Dashboard dashboard = dashBoardDao.findOneById(vo.getDashboardId());
+        if (dashboard != null) {
+            if (dashboard.getName().equals(vo.getName())) {
+                Daos.atomic(() -> {
+                    dashBoardDao.rename(vo.getDashboardId(), vo.getName());
+                    nodeService.renameByRefId(vo.getDashboardId(), NodeType.dashboard, vo.getName());
+                    if (vo.getDashboardId() != null && vo.getParentId() != null) {
+                        nodeService.moveNodeByRefId(vo.getDashboardId(), vo.getParentId());
+                    }
+                }, "save dashboard error");
+            }
+            dashBoardDao.updateModel(vo.toModel());
+            return true;
+        }
+        return false;
+    }
+
+    public List<DashboardFilterVO> saveBatchDashboardFilter(DashboardFilterSaveVO dashboardFilterSaveVO) {
+        List<DashboardFilterVO> filters = new ArrayList<>();
+        if (dashboardFilterSaveVO != null) {
+            if (dashboardFilterSaveVO.getDashboardFilterList() != null && dashboardFilterSaveVO.getDashboardFilterList().size() > 0) {
+                deleteDashboardFilter(dashboardFilterSaveVO.getDashboardId());
+                for (DashboardFilterVO dashboardFilterVO : dashboardFilterSaveVO.getDashboardFilterList()) {
+                    create(dashboardFilterVO.setParentId(0L));
+                }
+
+                List<DashboardFilter> dashboardFilters = dashboardFilterDao.getListByDashboardId(dashboardFilterSaveVO.getDashboardId());
+                List<DashboardFilterVO> resultVOList = new ArrayList<>();
+                for (DashboardFilter dashboardFilter : dashboardFilters) {
+                    List<DashboardFilterSelected> dashboardFilterSelectedList = dashboardFilterSelectedDao.getListByDashboardFilterId(dashboardFilter.getId());
+                    resultVOList.add(DashboardFilterVO.toVO(dashboardFilter, dashboardFilterSelectedList));
+                }
+
+                filters = DashboardFilterVO.toTreeList(resultVOList);
+
+            } else if (dashboardFilterSaveVO.getDashboardFilterList() != null) {
+                deleteDashboardFilter(dashboardFilterSaveVO.getDashboardId());
+            }
+        }
+        return filters;
     }
 
     public boolean saveDashboardFilter(DashboardFilterVO dashboardFilterVO) {
+        deleteDashboardFilter(dashboardFilterVO.getDashboardId());
         create(dashboardFilterVO.setParentId(0L));
         return true;
     }
 
     private void create(DashboardFilterVO filterVO) {
         DashboardFilter dashboardFilter = filterVO.toModel();
-        Long id = DashboardFilterDao.create(dashboardFilter);
+        Long id = dashboardFilterDao.insert(dashboardFilter);
+        List<DashboardFilterSelected> selectedList = new ArrayList<>();
+        for (DashboardFilterVO.ChartConf chartConf : filterVO.getSelectedCharts()) {
+            DashboardFilterSelected selected = new DashboardFilterSelected();
+            selected.setDashboardId(dashboardFilter.getDashboardId());
+            selected.setDashboardFilterId(id);
+            selected.setWorkSheetId(chartConf.getWorkSheetId());
+            selected.setChartId(chartConf.getChartId());
+            selected.setFieldId(chartConf.getFieldId());
+            selectedList.add(selected);
+        }
+        dashboardFilterSelectedDao.insertBatch(selectedList);
         List<DashboardFilterVO> children = filterVO.getChildren();
         if (children != null && children.size() > 0) {
             children.forEach(fVo -> create(fVo.setParentId(id)));
@@ -112,56 +154,90 @@ public class DashboardService {
     }
 
     public List<Object> getFilterRange(Long dashboardFilterId, List<GlobalFilterParam> params) {
-        List<DashboardFilterVO> filterVOS = null;
+        List<DashboardFilterVO> filterVOS = new ArrayList<>();
         RangeResult rangeResult = new RangeResult();
         if (params != null && params.size() > 0) {
             List<Long> ids = params.stream().map(GlobalFilterParam::getDashboardFilterId).collect(Collectors.toList());
-            List<DashboardFilter> filters = DashboardFilterDao.inIds(ids);
-            filterVOS = DashboardFilterVO.toVos(filters);
+            List<DashboardFilter> filters = dashboardFilterDao.findListInIds(ids);
+            for (DashboardFilter dashboardFilter : filters) {
+                List<DashboardFilterSelected> dashboardFilterSelectedList = dashboardFilterSelectedDao.getListByDashboardFilterId(dashboardFilter.getId());
+                filterVOS.add(DashboardFilterVO.toVO(dashboardFilter, dashboardFilterSelectedList));
+            }
         }
-
-        List<Object> range = Lists.newArrayList();
-        DashboardFilter dashboardFilter = DashboardFilterDao.byId(dashboardFilterId);
-        DashboardFilterVO vo = DashboardFilterVO.toVO(dashboardFilter);
-        List<String> template = vo.getTemplate();
-        if (template != null && template.size() > 0) {
-            range.addAll(template);
-            return range;
+        DashboardFilter dashboardFilter = dashboardFilterDao.findOneById(dashboardFilterId);
+        if (dashboardFilter == null) {
+            throw new RuntimeException("dashboardFilter is null");
         }
-        for (Long workSheetId : vo.getSheetFieldMap().keySet()) {
+        List<DashboardFilterSelected> dashboardFilterSelectedList = dashboardFilterSelectedDao.getListByDashboardFilterId(dashboardFilter.getId());
+        DashboardFilterVO vo = DashboardFilterVO.toVO(dashboardFilter, dashboardFilterSelectedList);
+        for (DashboardFilterVO.ChartConf conf : vo.getDistinctWorksheetAndFields()) {
             List<ChartFilter> chartFilters = Lists.newArrayList();
-            if (filterVOS != null && filterVOS.size() > 0) {
+            Long fieldId = conf.getFieldId();
+            if (filterVOS.size() > 0) {
                 filterVOS.forEach(filterVO -> {
-                    Long fieldId = filterVO.getSheetFieldMap().get(workSheetId);
                     if (fieldId != null) {
                         Optional<GlobalFilterParam> any = params.stream().filter(i -> i.getDashboardFilterId().equals(filterVO.getId())).findAny();
-                        any.ifPresent(globalFilterParam -> chartFilters.add(new ExactChartFilter(globalFilterParam.getRange(), filterVO.getIncluded(), fieldId)));
+                        any.ifPresent(param -> chartFilters.add(new ExactChartFilter(param.getRange(), param.getIncluded(), fieldId)));
                     }
                 });
             }
-            RangeResult result = FieldService.getFieldRange(workSheetId, vo.getSheetFieldMap().get(workSheetId), chartFilters);
+            RangeResult result = fieldService.getFieldRange(conf
+                    .getWorkSheetId(), fieldId, chartFilters);
             rangeResult.concat(result);
         }
         return rangeResult.getRange();
     }
 
-    public boolean removeFolder(Long id) {
-        Anima.atomic(() -> {
-            Node folderNode = NodeDao.findById(id);
-            folderNode.delete();
-            List<Node> allNodes = NodeDao.getAllChildrenNodes(id);
-            allNodes.forEach(node -> {
-                if (node.getRefId() != null) {
-                    Dashboard dashboard = DashBoardDao.byId(node.getRefId());
-                    if (dashboard != null) {
-                        dashboard.delete();
-                    }
-                }
-                node.delete();
-            });
-        }).catchException(e -> {
-            throw new RuntimeException(e);
-        });
+    public boolean removeFolder(Long nodeId) {
+        return nodeService.removeFolder(nodeId, dashBoardDao::deleteById);
+    }
+
+    /**
+     * 设置图表关联信息
+     *
+     * @param chartLinkModel
+     * @return
+     */
+    public Boolean setChartLink(ChartLinkModel chartLinkModel) {
+        List<DashboardLink> dashboardLinkList = new ArrayList<>();
+        Chart chart = chartDao.findOneById(chartLinkModel.getChartId());
+        if (chart == null) {
+            throw new RuntimeException("chart is not exist");
+        }
+        for (LinkModel linkModel : chartLinkModel.getLinks()) {
+            for (LinkFieldModel linkFieldModel : linkModel.getFieldMappings()) {
+                DashboardLink dashboardLink = new DashboardLink();
+                dashboardLink.setDashboardId(chart.getDashboardId());
+                dashboardLink.setChartId(chartLinkModel.getChartId());
+                dashboardLink.setLinkedChartId(linkModel.getLinkedChartId());
+                dashboardLink.setFieldId(linkFieldModel.getFieldId());
+                dashboardLink.setLinkedFieldId(linkFieldModel.getLinkedFieldId());
+                dashboardLinkList.add(dashboardLink);
+            }
+        }
+        dashboardLinkDao.insertBatch(dashboardLinkList);
         return true;
+    }
+
+    /**
+     * 根据图表删除图表关联
+     *
+     * @param chartId
+     * @return
+     */
+    public Boolean removeChartLink(Long chartId) {
+        return dashboardLinkDao.removeChartLink(chartId) > 0;
+    }
+
+
+    /**
+     * 删除仪表盘全局筛选相关
+     *
+     * @param dashboardId
+     * @return
+     */
+    public Boolean deleteDashboardFilter(Long dashboardId) {
+        dashboardFilterDao.deleteByDashboardId(dashboardId);
+        return dashboardFilterSelectedDao.deleteByDashboardId(dashboardId) > 0;
     }
 }

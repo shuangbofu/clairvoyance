@@ -1,40 +1,19 @@
 package cn.shuangbofu.clairvoyance.web.controller;
 
-import cn.shuangbofu.clairvoyance.core.chart.SqlBuiler;
-import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ChartFilter;
-import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ExactChartFilter;
-import cn.shuangbofu.clairvoyance.core.meta.source.SourceDb;
-import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
-import cn.shuangbofu.clairvoyance.core.meta.table.Column;
-import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
-import cn.shuangbofu.clairvoyance.core.utils.Pair;
-import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
-import cn.shuangbofu.clairvoyance.web.dao.DatasourceDao;
-import cn.shuangbofu.clairvoyance.web.dao.NodeDao;
-import cn.shuangbofu.clairvoyance.web.dao.SheetFieldDao;
-import cn.shuangbofu.clairvoyance.web.dao.WorkSheetDao;
-import cn.shuangbofu.clairvoyance.web.entity.Datasource;
-import cn.shuangbofu.clairvoyance.web.entity.Node;
-import cn.shuangbofu.clairvoyance.web.entity.SheetField;
-import cn.shuangbofu.clairvoyance.web.entity.WorkSheet;
-import cn.shuangbofu.clairvoyance.web.enums.NodeType;
-import cn.shuangbofu.clairvoyance.web.enums.SheetType;
-import cn.shuangbofu.clairvoyance.web.service.FieldService;
-import cn.shuangbofu.clairvoyance.web.service.SqlQueryRunner;
+import cn.shuangbofu.clairvoyance.web.pojo.Model.WorkSheetField.ComputeFieldSaveModel;
+import cn.shuangbofu.clairvoyance.web.pojo.Model.WorkSheetField.WorkSheetListQueryModel;
+import cn.shuangbofu.clairvoyance.web.service.NodeService;
+import cn.shuangbofu.clairvoyance.web.service.WorkSheetService;
 import cn.shuangbofu.clairvoyance.web.vo.*;
 import cn.shuangbofu.clairvoyance.web.vo.form.Folder;
 import cn.shuangbofu.clairvoyance.web.vo.form.RangeRequestForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetForm;
 import cn.shuangbofu.clairvoyance.web.vo.form.WorkSheetImport;
 import cn.shuangbofu.clairvoyance.web.vo.preview.PreviewFilter;
-import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * Created by shuangbofu on 2020/7/30 下午9:25
@@ -43,6 +22,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/workSheet")
 public class WorkSheetController {
 
+    @Autowired
+    private WorkSheetService workSheetService;
+
+    @Autowired
+    private NodeService nodeService;
+
     /**
      * 工作表目录
      *
@@ -50,14 +35,7 @@ public class WorkSheetController {
      */
     @GetMapping("/catalogue")
     public Result<List<Catalogue<WorkSheetSimpleVO>>> workSheetFolders() {
-        Pair<List<Node>, List<Long>> allNodesPair = NodeDao.getAllNodesPair(NodeType.workSheet);
-        return Result.success(
-                Catalogue.getList(allNodesPair.getFirst(),
-                        WorkSheetSimpleVO.toSimpleVOList(
-                                WorkSheetDao.simpleInIds(allNodesPair.getSecond())
-                        )
-                )
-        );
+        return Result.success(workSheetService.catalogue());
     }
 
     /**
@@ -68,8 +46,30 @@ public class WorkSheetController {
      */
     @PutMapping("/field")
     public Result<Boolean> updateField(@RequestBody FieldSimpleVO fieldSimpleVO) {
-        SheetFieldDao.update(fieldSimpleVO.toModel());
+        return Result.success(workSheetService.updateField(fieldSimpleVO));
+    }
+
+    /**
+     * 删除字段
+     *
+     * @param fieldId
+     * @return
+     */
+    @DeleteMapping("/field")
+    public Result<Boolean> deleteField(@RequestParam("fieldId") Long fieldId) {
+        workSheetService.deleteField(fieldId);
         return Result.success(true);
+    }
+
+    /**
+     * 保存计算字段
+     *
+     * @param computeFieldSaveModel
+     * @return
+     */
+    @PostMapping("/field/compute")
+    public Result<Long> saveComputeField(@RequestBody ComputeFieldSaveModel computeFieldSaveModel) {
+        return Result.success(workSheetService.saveComputeField(computeFieldSaveModel));
     }
 
 
@@ -81,7 +81,7 @@ public class WorkSheetController {
      */
     @PutMapping
     public Result<Boolean> updateWorkSheet(@RequestBody WorkSheetForm form) {
-        return Result.success(WorkSheetDao.update(form.toModel()));
+        return Result.success(workSheetService.updateWorkSheet(form));
     }
 
 
@@ -92,9 +92,15 @@ public class WorkSheetController {
      */
     @GetMapping
     public Result<WorkSheetVO> one(@RequestParam("workSheetId") Long workSheetId) {
-        WorkSheet workSheet = WorkSheetDao.getSheet(workSheetId);
-        return Result.success(WorkSheetVO.toVO(workSheet));
+        return Result.success(workSheetService.getWorkSheet(workSheetId));
     }
+
+
+    @PostMapping("/list")
+    public Result<List<WorkSheetVO>> list(@RequestBody WorkSheetListQueryModel workSheetListQueryModel) {
+        return Result.success(workSheetService.getWorkSheetList(workSheetListQueryModel));
+    }
+
 
     /**
      * 创建文件夹
@@ -104,20 +110,8 @@ public class WorkSheetController {
      */
     @PostMapping("/folder")
     public Result<Folder> createFolder(@RequestBody Folder folder) {
-        Long id = NodeDao.newNode(folder.toNode().setNodeType(NodeType.workSheet));
-        return Result.success(folder.setId(id));
-    }
-
-
-    /**
-     * TODO 需要权限
-     *
-     * @param limit
-     * @return
-     */
-    @GetMapping("/list")
-    public Result<List<WorkSheetSimpleVO>> listLimit(@RequestParam(value = "limit", required = false, defaultValue = "10000") int limit) {
-        return Result.success(WorkSheetSimpleVO.toSimpleVOList(WorkSheetDao.simpleAllLimit(limit)));
+        nodeService.createFolder(folder);
+        return Result.success(folder);
     }
 
     /**
@@ -128,7 +122,7 @@ public class WorkSheetController {
      */
     @GetMapping("/search")
     public Result<List<WorkSheetSimpleVO>> listSearch(@RequestParam(value = "name") String name, @RequestParam(required = false, defaultValue = "10") int limit) {
-        return Result.success(WorkSheetSimpleVO.toSimpleVOList(WorkSheetDao.simpleSearchByNameLimit(name, limit)));
+        return Result.success(workSheetService.search(name, limit));
     }
 
     /**
@@ -139,66 +133,7 @@ public class WorkSheetController {
      */
     @PostMapping("/import")
     public Result<Boolean> importFromDatasource(@RequestBody WorkSheetImport workSheetImport) {
-        Long datasourceId = workSheetImport.getDatasourceId();
-
-        Datasource datasource = DatasourceDao.getSource(datasourceId);
-
-        SourceDb sourceDb = SqlQueryRunner.getSourceDb(datasource);
-
-        Long folderNodeId = workSheetImport.getFolderId();
-
-        List<String> tables;
-        List<String> allTables = sourceDb.tables();
-        if (workSheetImport.isAllTables()) {
-            tables = allTables;
-        } else {
-            tables = workSheetImport.getTables()
-                    .stream().filter(allTables::contains)
-                    .collect(Collectors.toList());
-        }
-
-        if (workSheetImport.isNewFolder()) {
-            Node folder = new Node()
-                    .setName(StringUtils.emptyGet(datasource.getName(), sourceDb::name))
-                    .setNodeType(NodeType.workSheet)
-                    .setParentId(folderNodeId);
-            folderNodeId = NodeDao.newNode(folder);
-        }
-
-        for (String table : tables) {
-            boolean exist = WorkSheetDao.existSheet(datasourceId, table);
-            if (exist) {
-                continue;
-            }
-            SourceTable sourceTable = sourceDb.sourceTable(table);
-            String tableComment = sourceTable.comment();
-            WorkSheet workSheet = new WorkSheet()
-                    .setTitle(table)
-                    .setSheetType(SheetType.source)
-                    .setDescription(tableComment)
-                    .setTableName(table)
-                    .setDatasourceId(datasourceId)
-                    .setLastSyncTime(System.currentTimeMillis());
-            Long workSheetId = WorkSheetDao.insert(workSheet);
-
-            List<Column> columns = sourceTable.columns();
-            AtomicInteger count = new AtomicInteger();
-            List<SheetField> sheetFields = columns.stream().map(col ->
-                    SheetField.newColumn(col.getName(), col.getComment(), col.getType())
-                            .setSeqNo(count.incrementAndGet())
-                            .setWorkSheetId(workSheetId)
-            )
-                    .collect(Collectors.toList());
-            SheetFieldDao.insertBatch(sheetFields);
-
-            NodeDao.newNode(
-                    new Node()
-                            .setName(workSheet.getTableName())
-                            .setRefId(workSheetId)
-                            .setParentId(folderNodeId)
-                            .setNodeType(NodeType.workSheet));
-        }
-        return Result.success(true);
+        return Result.success(workSheetService.importFromDatasource(workSheetImport));
     }
 
     /**
@@ -209,17 +144,7 @@ public class WorkSheetController {
      */
     @PostMapping("/preview/{workSheetId}")
     public Result<DataResult> previewData(@PathVariable(value = "workSheetId") Long workSheetId, @RequestBody PreviewFilter condition) {
-        condition.checkParams(FieldService.getAllFields(workSheetId));
-        WorkSheet workSheet = WorkSheetDao.getSheet(workSheetId);
-        SourceTable table = SqlQueryRunner.getSourceTable(workSheet);
-
-        List<Map<String, Object>> result = table.run(condition);
-
-        Sql selectCount = SqlBuiler.select("COUNT(1) AS COUNT");
-
-        List<Map<String, Object>> countResult = table.run(selectCount);
-        long total = (Long) countResult.get(0).get("COUNT");
-        return Result.success(new DataResult(result, total));
+        return Result.success(workSheetService.previewData(workSheetId, condition));
     }
 
     /**
@@ -231,21 +156,11 @@ public class WorkSheetController {
      */
     @PostMapping("/field/range")
     public Result<List<Object>> getRangeData(@RequestBody RangeRequestForm form) {
-        List<ExactChartFilter> filters = Optional.ofNullable(form.getFilters()).orElse(Lists.newArrayList());
-        filters.forEach(f -> f.setIncluded(true));
-        RangeResult fieldRange = FieldService.getFieldRange(form.getWorkSheetId(), form.getFieldId(), Lists.newArrayList(filters), form.getAggregator());
-        return Result.success(fieldRange.getRange());
+        return Result.success(workSheetService.getRangeData(form));
     }
 
     @PostMapping("/field/ranges")
     public Result<List<Object>> getRangeData2(@RequestBody List<RangeRequestForm> forms) {
-        forms = forms.stream().distinct().collect(Collectors.toList());
-        RangeResult result = new RangeResult();
-        for (RangeRequestForm form : forms) {
-            List<ChartFilter> filters = Lists.newArrayList(Optional.ofNullable(form.getFilters()).orElse(Lists.newArrayList()));
-            RangeResult fieldRange = FieldService.getFieldRange(form.getWorkSheetId(), form.getFieldId(), filters, form.getAggregator());
-            result.concat(fieldRange);
-        }
-        return Result.success(result.getRange());
+        return Result.success(workSheetService.getRangeDatas(forms));
     }
 }

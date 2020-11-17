@@ -8,13 +8,14 @@ import lombok.Data;
  */
 @Data
 public class Result<T> {
-
     @JsonProperty("errorMsg")
     private String message;
 
     @JsonProperty("result")
     private T data;
     private boolean success;
+
+    private int code;
 
     public Result() {
     }
@@ -30,11 +31,15 @@ public class Result<T> {
     }
 
     public static <T> Result<T> success(T data) {
-        return new Result<T>(true).message("success").data(data);
+        return new Result<T>(true).message("success").data(data).code(0);
     }
 
     public static <T> Result<T> error(String message) {
         return new Result<T>(false).message(message);
+    }
+
+    public static <T> Result<T> error(String message, int code) {
+        return new Result<T>(false).message(message).code(code);
     }
 
     public Result<T> data(T data) {
@@ -44,6 +49,11 @@ public class Result<T> {
 
     public Result<T> message(String message) {
         this.message = message;
+        return this;
+    }
+
+    public Result<T> code(int code) {
+        this.code = code;
         return this;
     }
 

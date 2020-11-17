@@ -13,19 +13,26 @@ public class ComputeField extends AbstractField {
 
     String formula;
 
+    List<Long> fieldList;
+
+    List<Field> fields;
+
+
     @Override
     public String getName() {
-//        formula.replace()
-        return "";
+        return name;
     }
 
     @Override
     public String getRealName() {
-
-        return null;
+        String name = formula;
+        for (int index = 0; index < fields.size(); index++) {
+            name = name.replaceAll("\\{\\{" + index + "}}", " " + fields.get(index).getName() + " ");
+        }
+        return name;
     }
 
     public void setFields(List<Field> fields) {
-
+        this.fields = fields;
     }
 }

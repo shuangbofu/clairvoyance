@@ -2,15 +2,18 @@ package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import cn.shuangbofu.clairvoyance.web.entity.DashboardFilter;
+import cn.shuangbofu.clairvoyance.web.entity.DashboardFilterSelected;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -22,40 +25,21 @@ public class DashboardFilterVO {
 
     private Long id;
     private Long dashboardId;
-    private List<Long> selectedCharts;
-    private Map<Long, Long> sheetFieldMap;
-    private List<String> template;
+    private List<ChartConf> selectedCharts;
     private List<DashboardFilterVO> children;
     private Long parentId;
-    private Boolean included;
     private String name;
     private Boolean visible;
 
-    public static DashboardFilterVO toVO(DashboardFilter filter) {
-        String sheetFieldMapStr = filter.getSheetFieldMap();
-        Map<Long, Long> map = new HashMap<>();
-        if (StringUtils.isNotEmpty(sheetFieldMapStr)) {
-            String[] split = sheetFieldMapStr.split(",");
-            for (String s : split) {
-                if (StringUtils.isEmpty(s)) {
-                    continue;
-                }
-                String[] kv = s.split(":");
-                if (kv.length > 1) {
-                    map.put(Long.parseLong(kv[0]), Long.parseLong(kv[1]));
-                }
-            }
-        }
+    public static DashboardFilterVO toVO(DashboardFilter filter, List<DashboardFilterSelected> dashboardFilterSelectedList) {
+        List<ChartConf> chartConfList = toVOs(dashboardFilterSelectedList);
         return new DashboardFilterVO()
                 .setName(filter.getName())
                 .setVisible(filter.getVisible())
-                .setIncluded(filter.getIncluded())
                 .setId(filter.getId())
                 .setParentId(filter.getParentId())
                 .setDashboardId(filter.getDashboardId())
-                .setSelectedCharts(str2List(filter.getSelectedCharts(), Long::parseLong))
-                .setSheetFieldMap(map)
-                .setTemplate(str2List(filter.getTemplate(), i -> i));
+                .setSelectedCharts(chartConfList);
     }
 
     private static <T> List<T> str2List(String str, Function<String, T> function) {
@@ -65,12 +49,8 @@ public class DashboardFilterVO {
         return Arrays.stream(str.split(",")).map(function).collect(Collectors.toList());
     }
 
-    public static List<DashboardFilterVO> toTreeList(List<DashboardFilter> dashboardFilters) {
-        return getTreeList(0L, toVos(dashboardFilters));
-    }
-
-    public static List<DashboardFilterVO> toVos(List<DashboardFilter> dashboardFilters) {
-        return dashboardFilters.stream().map(DashboardFilterVO::toVO).collect(Collectors.toList());
+    public static List<DashboardFilterVO> toTreeList(List<DashboardFilterVO> dashboardFilterVOList) {
+        return getTreeList(0L, dashboardFilterVOList);
     }
 
     private static List<DashboardFilterVO> getTreeList(Long parentId, List<DashboardFilterVO> allFilters) {
@@ -81,14 +61,40 @@ public class DashboardFilterVO {
         }).collect(Collectors.toList());
     }
 
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
+
+    public static List<ChartConf> toVOs(List<DashboardFilterSelected> dashboardFilterSelectedList) {
+        List<ChartConf> chartConfList = new ArrayList<>();
+        if (dashboardFilterSelectedList != null) {
+            for (DashboardFilterSelected dashboardFilterSelected : dashboardFilterSelectedList) {
+                ChartConf chartConf = new ChartConf();
+                chartConf.setChartId(dashboardFilterSelected.getChartId());
+                chartConf.setFieldId(dashboardFilterSelected.getFieldId());
+                chartConf.setWorkSheetId(dashboardFilterSelected.getWorkSheetId());
+                chartConfList.add(chartConf);
+            }
+        }
+        return chartConfList;
+    }
+
     public DashboardFilter toModel() {
         return new DashboardFilter()
                 .setVisible(visible)
                 .setName(name)
-                .setIncluded(included)
-                .setDashboardId(dashboardId)
-                .setTemplate(String.join(",", template))
-                .setSelectedCharts(selectedCharts.stream().map(Object::toString).collect(Collectors.joining(",")))
-                .setSheetFieldMap(sheetFieldMap.keySet().stream().map(i -> i + ":" + sheetFieldMap.get(i)).collect(Collectors.joining(",")));
+                .setDashboardId(dashboardId);
+    }
+
+    public List<ChartConf> getDistinctWorksheetAndFields() {
+        return getSelectedCharts().stream().filter(distinctByKey(ChartConf::getWorkSheetId)).collect(Collectors.toList());
+    }
+
+    @Data
+    public static class ChartConf {
+        private Long chartId;
+        private Long workSheetId;
+        private Long fieldId;
     }
 }

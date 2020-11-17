@@ -5,7 +5,6 @@ import cn.shuangbofu.clairvoyance.web.enums.ColumnType;
 import cn.shuangbofu.clairvoyance.web.enums.FieldType;
 import io.github.biezhi.anima.annotation.Column;
 import io.github.biezhi.anima.annotation.Table;
-import io.github.biezhi.anima.core.AnimaQuery;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,33 +17,23 @@ import lombok.experimental.Accessors;
 public class SheetField extends Model<SheetField> {
 
     private Long id;
-
     private Long gmtCreate;
     private Long gmtModified;
     @Column(name = "`status`")
     private Boolean deleted;
+    // private String env;
 
     private String name;
-
     private String title;
-
     private ColumnType columnType;
-
     private FieldType fieldType;
-
     private String remarks;
-
     private int seqNo;
-
     private String linkUrl;
-
     private String config;
-
     private Long workSheetId;
 
-    public static AnimaQuery<SheetField> from() {
-        return s(SheetField.class).where(SheetField::getDeleted, 0);
-    }
+    private Long chartId;
 
     /**
      * 同步表结构生成字段

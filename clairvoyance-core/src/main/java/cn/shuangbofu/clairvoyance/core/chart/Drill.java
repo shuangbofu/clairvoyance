@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.chart;
 
-import cn.shuangbofu.clairvoyance.core.chart.sql.base.Filter;
+import cn.shuangbofu.clairvoyance.core.chart.base.Filter;
 import cn.shuangbofu.clairvoyance.core.field.DrillField;
 import cn.shuangbofu.clairvoyance.core.meta.utils.SqlUtil;
 

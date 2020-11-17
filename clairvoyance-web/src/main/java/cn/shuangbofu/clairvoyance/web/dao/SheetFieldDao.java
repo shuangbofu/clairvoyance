@@ -1,57 +1,59 @@
 package cn.shuangbofu.clairvoyance.web.dao;
 
+import cn.shuangbofu.clairvoyance.core.field.FieldType;
 import cn.shuangbofu.clairvoyance.web.entity.SheetField;
-import cn.shuangbofu.clairvoyance.web.enums.FieldType;
-import io.github.biezhi.anima.Anima;
 
 import java.util.List;
 
 /**
  * Created by shuangbofu on 2020/8/5 12:15
  */
-public class SheetFieldDao {
+public class SheetFieldDao extends BaseDao<SheetField> {
 
-    public static void insert(SheetField sheetField) {
-        sheetField.insert();
+    public SheetFieldDao() {
+        super(SheetField.class);
     }
 
-    public static void insertBatch(List<SheetField> sheetFields) {
-        Anima.saveBatch(sheetFields);
+    public List<SheetField> getAllByWorkSheetId(Long workSheetId) {
+        return findListBy(q -> q.where(SheetField::getWorkSheetId, workSheetId));
     }
 
-    /**
-     * 原始字段列表，只需要部分字段
-     *
-     * @param workSheetId
-     * @return
-     */
-    public static List<SheetField> getOriginFields(Long workSheetId) {
-        return SheetField.from()
-                .select("id, name, title, column_type, remarks, seq_no")
-                .where(SheetField::getWorkSheetId, workSheetId)
-                .where(SheetField::getFieldType, FieldType.origin).all();
+    public List<SheetField> getAllByWorkSheetId4Origin(Long workSheetId) {
+        return findListBy(q -> q.where(SheetField::getWorkSheetId, workSheetId).and(SheetField::getFieldType, FieldType.origin));
     }
 
-    public static void update(SheetField sheetField) {
-        sheetField.update();
+    public List<SheetField> getComputeFieldList(Long chartId) {
+        return findListBy(q -> q.where(SheetField::getChartId, chartId));
     }
 
-    public static SheetField getField(Long id) {
-        return SheetField.from().where(SheetField::getId, id).one();
+    public long countComputeField(Long workSheetId) {
+        return findCountBy(q -> q.where(SheetField::getWorkSheetId, workSheetId)
+                .where(SheetField::getFieldType, FieldType.computed));
     }
 
     /**
-     * 自定义字段列表
+     * 为计算字段关联图表
      *
-     * @param workSheetId
+     * @param chartId
+     * @param computeFieldIdList
      * @return
      */
-    public static List<SheetField> getCustomFields(Long workSheetId) {
-        return SheetField.from().where(SheetField::getWorkSheetId, workSheetId)
-                .gt(SheetField::getFieldType, 1).all();
+    public Boolean linkChart4ComputeField(Long chartId, List<Long> computeFieldIdList) {
+        Daos.atomic(() -> computeFieldIdList.forEach(id -> updateById(id, q -> q.set(SheetField::getChartId, chartId))), "update error");
+        return true;
     }
 
-    public static List<SheetField> getAllFields(Long workSheetId) {
-        return SheetField.from().where(SheetField::getWorkSheetId, workSheetId).all();
+    /**
+     * 查询工作表title相同的字段数量
+     *
+     * @param workSheetId
+     * @param title
+     * @return
+     */
+    public long countFieldByTitle(Long workSheetId, String title) {
+        return findCountBy(q ->
+                q.where(SheetField::getWorkSheetId, workSheetId)
+                        .where(SheetField::getTitle, title)
+                        .where(SheetField::getFieldType, FieldType.computed));
     }
 }

@@ -89,6 +89,11 @@ public abstract class AbstractChartField implements ChartField {
     }
 
     @Override
+    public FieldType getFieldType() {
+        return getValue(Field::getFieldType);
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
@@ -113,6 +118,10 @@ public abstract class AbstractChartField implements ChartField {
     @JsonIgnore
     @Override
     public String getFinalAliasName() {
-        return String.format("%s[%s]", getRealAliasName(), getUniqId());
+        String realAliasName = getRealAliasName();
+        if (realAliasName == null) {
+            return null;
+        }
+        return String.format("%s(%s)", realAliasName, getUniqId());
     }
 }

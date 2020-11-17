@@ -2,7 +2,6 @@ package cn.shuangbofu.clairvoyance.web.entity;
 
 import io.github.biezhi.anima.annotation.Column;
 import io.github.biezhi.anima.annotation.Table;
-import io.github.biezhi.anima.core.AnimaQuery;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -19,11 +18,11 @@ public class Dashboard extends Model<Dashboard> {
     private Long gmtModified;
     @Column(name = "`status`")
     private Boolean deleted;
+    // private String env;
 
     private String name;
     private String tags;
     private String remarks;
-
     /**
      * 仪表盘布局配置,JSON
      */
@@ -31,14 +30,4 @@ public class Dashboard extends Model<Dashboard> {
 
     private String createUser;
     private String modifyUser;
-
-    public Dashboard() {
-        // TODO 创建时设置默认的表盘布局配置和过滤器配置
-
-    }
-
-    public static AnimaQuery<Dashboard> from() {
-        return s(Dashboard.class)
-                .where(Dashboard::getDeleted, false);
-    }
 }

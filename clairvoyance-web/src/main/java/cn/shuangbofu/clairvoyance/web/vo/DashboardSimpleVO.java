@@ -1,6 +1,8 @@
 package cn.shuangbofu.clairvoyance.web.vo;
 
 import cn.shuangbofu.clairvoyance.web.entity.Dashboard;
+import cn.shuangbofu.clairvoyance.web.service.User;
+import cn.shuangbofu.clairvoyance.web.service.UserCache;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -14,22 +16,19 @@ public class DashboardSimpleVO implements IdVo {
     private Long dashboardId;
 
     private String name;
-//
-//    @ApiModelProperty("标签")
-//    private List<String> tags;
 
     private String remarks;
 
+    private User createUser;
+    private User modifyUser;
+
     public static DashboardSimpleVO toSimpleVO(Dashboard dashboard) {
-        DashboardSimpleVO res = new DashboardSimpleVO()
+        return new DashboardSimpleVO()
                 .setDashboardId(dashboard.getId())
                 .setName(dashboard.getName())
-                .setRemarks(dashboard.getRemarks());
-//        String[] split = dashboard.getTags().split(",");
-//        if (split.length > 0) {
-//            res.setTags(Arrays.asList(split));
-//        }
-        return res;
+                .setRemarks(dashboard.getRemarks())
+                .setCreateUser(UserCache.getUser(dashboard.getCreateUser()))
+                .setModifyUser(UserCache.getUser(dashboard.getModifyUser()));
     }
 
     @Override

@@ -13,6 +13,8 @@ public interface Field {
 
     ColumnType getType();
 
+    FieldType getFieldType();
+
     String getRealName();
 
     String getRealAliasName();

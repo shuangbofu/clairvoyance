@@ -10,7 +10,9 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
+//@Deprecated
 public class GlobalFilterParam {
-    private List<String> range;
+    private List<Object> range;
     private Long dashboardFilterId;
+    private Boolean included;
 }

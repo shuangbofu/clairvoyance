@@ -1,14 +1,14 @@
 package cn.shuangbofu.clairvoyance.core.chart;
 
-import cn.shuangbofu.clairvoyance.core.chart.result.AdddRowHandler;
-import cn.shuangbofu.clairvoyance.core.chart.result.ReplaceKeyHandler;
-import cn.shuangbofu.clairvoyance.core.chart.result.ResultHandler;
-import cn.shuangbofu.clairvoyance.core.chart.sql.base.Filter;
-import cn.shuangbofu.clairvoyance.core.chart.sql.base.OrderType;
-import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ChartFilter;
-import cn.shuangbofu.clairvoyance.core.chart.sql.filter.InnerChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.base.Filter;
+import cn.shuangbofu.clairvoyance.core.chart.base.OrderType;
+import cn.shuangbofu.clairvoyance.core.chart.filter.ChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.filter.InnerChartFilter;
 import cn.shuangbofu.clairvoyance.core.field.DrillField;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
+import cn.shuangbofu.clairvoyance.core.result.AdddRowHandler;
+import cn.shuangbofu.clairvoyance.core.result.ReplaceKeyHandler;
+import cn.shuangbofu.clairvoyance.core.result.ResultHandler;
 import cn.shuangbofu.clairvoyance.core.utils.JSON;
 import cn.shuangbofu.clairvoyance.core.utils.Pair;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
@@ -46,7 +46,6 @@ public class ChartSql implements Sql {
      * 下钻字段
      */
     List<DrillField> drillFields;
-
     /**
      * 比如全局过滤器、图表联动的过滤条件
      */
@@ -126,5 +125,16 @@ public class ChartSql implements Sql {
                 new ReplaceKeyHandler(this),
                 new AdddRowHandler(this)
         );
+    }
+
+    public Boolean isEmptyChartSQL() {
+        if (layers != null && layers.size() > 0) {
+            for (ChartLayer layer : layers) {
+                if (!layer.isEmptyLayer()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

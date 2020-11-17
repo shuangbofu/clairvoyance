@@ -1,7 +1,7 @@
 package cn.shuangbofu.clairvoyance.web.vo.form;
 
-import cn.shuangbofu.clairvoyance.core.chart.sql.base.AggregatorFunc;
-import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ExactChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.field.AggregatorFunc;
+import cn.shuangbofu.clairvoyance.core.chart.filter.ChartFilter;
 import lombok.Data;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public class RangeRequestForm {
 
     private Long workSheetId;
     private Long fieldId;
-    private List<ExactChartFilter> filters;
+    private List<ChartFilter> filters;
     private AggregatorFunc aggregator;
 
     @Override
@@ -26,7 +26,7 @@ public class RangeRequestForm {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        RangeRequestForm that = (RangeRequestForm) o;
+        cn.shuangbofu.clairvoyance.web.vo.form.RangeRequestForm that = (cn.shuangbofu.clairvoyance.web.vo.form.RangeRequestForm) o;
         return Objects.equals(workSheetId, that.workSheetId) &&
                 Objects.equals(fieldId, that.fieldId);
     }

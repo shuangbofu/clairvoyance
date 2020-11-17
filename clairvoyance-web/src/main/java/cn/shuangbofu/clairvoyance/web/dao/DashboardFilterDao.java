@@ -7,21 +7,16 @@ import java.util.List;
 /**
  * Created by shuangbofu on 2020/8/14 17:55
  */
-public class DashboardFilterDao {
-    public static Long create(DashboardFilter filter) {
-        DashboardFilter insert = filter.insert();
-        return insert.getId();
+public class DashboardFilterDao extends BaseDao<DashboardFilter> {
+    public DashboardFilterDao() {
+        super(DashboardFilter.class);
     }
 
-    public static DashboardFilter byId(Long id) {
-        return DashboardFilter.from().where(DashboardFilter::getId, id).one();
+    public List<DashboardFilter> getListByDashboardId(Long dashboardId) {
+        return findListBy(q -> q.where(DashboardFilter::getDashboardId, dashboardId));
     }
 
-    public static List<DashboardFilter> getListByDashboardId(Long dashboardId) {
-        return DashboardFilter.from().where(DashboardFilter::getDashboardId, dashboardId).all();
-    }
-
-    public static List<DashboardFilter> inIds(List<Long> dashboardFilterIds) {
-        return DashboardFilter.from().in(DashboardFilter::getId, dashboardFilterIds).all();
+    public void deleteByDashboardId(Long dashboardId) {
+        updateBy(q -> q.set(DashboardFilter::getDeleted, true).where(DashboardFilter::getDashboardId, dashboardId));
     }
 }

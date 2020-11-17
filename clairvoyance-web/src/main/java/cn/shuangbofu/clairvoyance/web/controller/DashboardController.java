@@ -1,7 +1,10 @@
 package cn.shuangbofu.clairvoyance.web.controller;
 
 import cn.shuangbofu.clairvoyance.core.chart.GlobalFilterParam;
+import cn.shuangbofu.clairvoyance.web.pojo.Model.Dashboard.ChartLinkModel;
+import cn.shuangbofu.clairvoyance.web.pojo.VO.Dashboard.DashboardFilterSaveVO;
 import cn.shuangbofu.clairvoyance.web.service.DashboardService;
+import cn.shuangbofu.clairvoyance.web.service.NodeService;
 import cn.shuangbofu.clairvoyance.web.service.WorkSheetService;
 import cn.shuangbofu.clairvoyance.web.vo.*;
 import cn.shuangbofu.clairvoyance.web.vo.form.DashboardForm;
@@ -25,6 +28,9 @@ public class DashboardController {
     @Autowired
     private WorkSheetService workSheetService;
 
+    @Autowired
+    private NodeService nodeService;
+
     /**
      * 仪表盘目录（包含文件夹）
      *
@@ -46,12 +52,6 @@ public class DashboardController {
         return Result.success(dashboardService.createDashboard(form));
     }
 
-    /**
-     * 根据ID获取仪表盘（布局配置，图表列表）
-     *
-     * @param dashboardId
-     * @return
-     */
     @GetMapping
     public Result<DashboardVO> dashboard(@RequestParam("dashboardId") Long dashboardId) {
         return Result.success(dashboardService.getDashboard(dashboardId));
@@ -65,12 +65,17 @@ public class DashboardController {
      */
     @PostMapping("/folder")
     public Result<Folder> createFolder(@RequestBody Folder folder) {
-        return Result.success(dashboardService.createFolder(folder));
+        return Result.success(nodeService.createFolder(folder));
     }
 
-    @PutMapping("/move")
-    public Result<Boolean> moveNode(@RequestBody Folder folder) {
-        return Result.success(dashboardService.moveNode(folder));
+    @PutMapping("/folder")
+    public Result<Boolean> modifyNode(@RequestBody Folder folder) {
+        return Result.success(nodeService.update4Folder(folder));
+    }
+
+    @PostMapping("/move")
+    public Result<Boolean> removeNode(@RequestBody Folder folder) {
+        return Result.success(nodeService.moveNode(folder.getId(), folder.getParentId()));
     }
 
     @DeleteMapping("/{dashboardId}")
@@ -94,18 +99,41 @@ public class DashboardController {
         return Result.success(dashboardService.saveDashboard(vo));
     }
 
-    @PutMapping("/filter")
-    public Result<Boolean> saveDashboardFilter(@RequestBody DashboardFilterVO dashboardFilterVO) {
-        return Result.success(dashboardService.saveDashboardFilter(dashboardFilterVO));
+    @PostMapping("/filter")
+    public Result<List<DashboardFilterVO>> saveDashboardFilter(@RequestBody DashboardFilterSaveVO dashboardFilterSaveVO) {
+        return Result.success(dashboardService.saveBatchDashboardFilter(dashboardFilterSaveVO));
     }
 
     @PostMapping("/filter/range/{dashboardFilterId}")
-    public Result<List<Object>> filterRange(@PathVariable("dashboardFilterId") Long dashboardFilterId, @RequestBody(required = false) List<GlobalFilterParam> params) {
+    public Result<List<Object>> filterRange(@PathVariable("dashboardFilterId") Long dashboardFilterId,
+                                            @RequestBody(required = false) List<GlobalFilterParam> params) {
         return Result.success(dashboardService.getFilterRange(dashboardFilterId, params));
     }
 
     @GetMapping("/workSheet")
     public Result<List<WorkSheetVO>> workSheetByDashboard(@RequestParam("dashboardId") Long dashboardId) {
         return Result.success(workSheetService.getWorkSheetsByDashboardId(dashboardId));
+    }
+
+    /**
+     * 保存图表关联信息
+     *
+     * @param chartLinkModel
+     * @return
+     */
+    @PostMapping("/set/link")
+    public Result<Boolean> setChartLink(@RequestBody ChartLinkModel chartLinkModel) {
+        return Result.success(dashboardService.setChartLink(chartLinkModel));
+    }
+
+    /**
+     * 根据图表ID删除图表关联
+     *
+     * @param chartId
+     * @return
+     */
+    @DeleteMapping("/link/{chartId}")
+    public Result<Boolean> removeChartLink(@PathVariable("chartId") Long chartId) {
+        return Result.success(dashboardService.removeChartLink(chartId));
     }
 }

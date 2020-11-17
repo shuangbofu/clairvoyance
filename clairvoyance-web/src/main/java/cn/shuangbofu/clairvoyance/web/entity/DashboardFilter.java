@@ -2,7 +2,6 @@ package cn.shuangbofu.clairvoyance.web.entity;
 
 import io.github.biezhi.anima.annotation.Column;
 import io.github.biezhi.anima.annotation.Table;
-import io.github.biezhi.anima.core.AnimaQuery;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,23 +17,14 @@ public class DashboardFilter extends Model<DashboardFilter> {
     private Long gmtModified;
     @Column(name = "`status`")
     private Boolean deleted;
+    // private String env;
 
     private Long dashboardId;
-
-    private String selectedCharts;
-
     /**
      * 选择字段
      */
-    private String sheetFieldMap;
     private String template;
-
     private Long parentId;
-    private Boolean included;
     private String name;
     private Boolean visible;
-
-    public static AnimaQuery<DashboardFilter> from() {
-        return s(DashboardFilter.class).where(DashboardFilter::getDeleted, false);
-    }
 }

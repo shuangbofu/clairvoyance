@@ -13,5 +13,6 @@ import lombok.experimental.Accessors;
 public class ChartLayoutConfig {
     private ChartType chartType;
     private JsonNode chartStyle;
-    private ChartType optionalChartType;
+    private ChartType chartMainType;
+    private ChartType chartOptionalType;
 }

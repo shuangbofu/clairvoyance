@@ -1,7 +1,7 @@
 package cn.shuangbofu.clairvoyance.web.vo.preview;
 
-import cn.shuangbofu.clairvoyance.core.chart.sql.base.Filter;
-import cn.shuangbofu.clairvoyance.core.chart.sql.base.OrderType;
+import cn.shuangbofu.clairvoyance.core.chart.base.Filter;
+import cn.shuangbofu.clairvoyance.core.chart.base.OrderType;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sort;
 import cn.shuangbofu.clairvoyance.core.meta.table.Sql;
 import cn.shuangbofu.clairvoyance.core.utils.Pair;

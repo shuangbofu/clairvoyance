@@ -1,8 +1,8 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
-import cn.shuangbofu.clairvoyance.core.chart.result.ResultHandler;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceDb;
 import cn.shuangbofu.clairvoyance.core.meta.source.SourceTable;
+import cn.shuangbofu.clairvoyance.core.result.ResultHandler;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -32,8 +32,7 @@ public abstract class AbstractSourceTable implements SourceTable, SourceDb {
         if (sqlContent == null) {
             return Lists.newArrayList();
         }
-        List<Map<String, Object>> origin = query(sqlContent);
-        return handle(origin, 0, sql.handlers());
+        return handle(query(sqlContent), 0, sql.handlers());
     }
 
 

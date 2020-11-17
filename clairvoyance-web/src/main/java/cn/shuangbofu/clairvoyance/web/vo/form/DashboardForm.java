@@ -15,7 +15,6 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 public class DashboardForm {
-
     private Long dashboardId;
 
     private String name;

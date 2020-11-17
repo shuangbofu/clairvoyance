@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +17,11 @@ import java.util.stream.Collectors;
 @Data
 public class RangeResult {
 
-    private List<Object> range;
+    private List<Object> range = new ArrayList<>();
     private int total;
 
     public RangeResult() {
-        range = Lists.newArrayList();
+
     }
 
     public RangeResult(List<Map<String, Object>> originResult) {

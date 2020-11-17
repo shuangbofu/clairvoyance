@@ -4,8 +4,6 @@ import cn.shuangbofu.clairvoyance.core.utils.Pair;
 import cn.shuangbofu.clairvoyance.web.entity.Node;
 import cn.shuangbofu.clairvoyance.web.enums.NodeType;
 import com.google.common.collect.Lists;
-import io.github.biezhi.anima.Anima;
-import io.github.biezhi.anima.utils.Functions;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,53 +11,39 @@ import java.util.stream.Collectors;
 /**
  * Created by shuangbofu on 2020/7/30 下午9:46
  */
-public class NodeDao {
+public class NodeDao extends BaseDao<Node> {
 
-    public static List<Node> getAllNodes(NodeType nodeType) {
-        return Node.from().where(Node::getNodeType, nodeType).all();
+    private final WhereCondition<Node, NodeType> TYPE_WHERE = type -> q -> q.where(Node::getNodeType, type);
+    private final TwoWhereCondition<Node, Long, NodeType> REFID_TYPE_WHERE = (refId, type) -> q -> TYPE_WHERE.where(type).apply(q.where(Node::getRefId, refId));
+
+    public NodeDao() {
+        super(Node.class);
     }
 
-    public static Pair<List<Node>, List<Long>> getAllNodesPair(NodeType nodeType) {
+    public List<Node> getAllNodes(NodeType type) {
+        return findListBy(q -> TYPE_WHERE.where(type).apply(q));
+    }
+
+    public Pair<List<Node>, List<Long>> getAllNodesPair(NodeType nodeType) {
         List<Node> allNodes = getAllNodes(nodeType);
         List<Long> ids = allNodes.stream().filter(i -> i.getRefId() != 0L)
                 .map(Node::getRefId).collect(Collectors.toList());
         return new Pair<>(allNodes, ids);
     }
 
-    public static Long newNode(Node node) {
-        Functions.ifNotNullThen(node, node::insert);
-        return node.getId();
+    public int removeByRefId(Long refId, NodeType type) {
+        return deleteBy(q -> REFID_TYPE_WHERE.where(refId, type).apply(q));
     }
 
-    public static void update(Node node) {
-        Functions.ifNotNullThen(node, node::update);
+    public int renameByRefId(Long refId, NodeType type, String name) {
+        return updateBy(q -> REFID_TYPE_WHERE.where(refId, type).apply(q.set(Node::getName, name)));
     }
 
-    public static Node findById(Long id) {
-        return Node.from().where(Node::getId).one();
+    public List<Node> findNodesByParentId(Long id) {
+        return findListBy(q -> q.where(Node::getParentId, id));
     }
 
-    public static void removeNode(Long nodeId) {
-        new Node().setId(nodeId).delete();
-    }
-
-    public static Node getNodeByRefId(Long id, NodeType type) {
-        return Node.from().where(Node::getRefId, id).where(Node::getNodeType, type).one();
-    }
-
-    public static boolean removeByRefId(Long refId, NodeType type) {
-        return Anima.update().from(Node.class)
-                .set(Node::getDeleted, true)
-                .set(Node::getGmtModified, System.currentTimeMillis())
-                .where(Node::getRefId, refId).where(Node::getNodeType, type)
-                .execute() > 0;
-    }
-
-    public static List<Node> findNodesByParentId(Long id) {
-        return Node.from().where(Node::getParentId, id).all();
-    }
-
-    public static List<Node> getAllChildrenNodes(Long id) {
+    public List<Node> getAllChildrenNodes(Long id) {
         List<Node> nodes = findNodesByParentId(id);
         List<Node> all = Lists.newArrayList();
         nodes.forEach(node -> {
@@ -70,5 +54,35 @@ public class NodeDao {
         });
         all.addAll(nodes);
         return all;
+    }
+
+    public boolean existRoot(NodeType type) {
+        return findCountBy(q -> TYPE_WHERE.where(type).apply(q)) > 0;
+    }
+
+    public int moveNode(Long nodeId, Long parentId) {
+        return updateById(nodeId, q -> q.set(Node::getParentId, parentId));
+    }
+
+    public int moveNodeByRefId(Long refId, Long parentId) {
+        return updateBy(q -> q.set(Node::getParentId, parentId).where(Node::getRefId, refId));
+    }
+
+    public int rename(Long nodeId, String name) {
+        return updateById(nodeId, q -> q.set(Node::getName, name));
+    }
+
+    public int updateNode(Long nodeId, String name, Long parentId) {
+        return updateById(nodeId, q -> q.set(Node::getName, name).set(Node::getParentId, parentId));
+    }
+
+    public Node findOneByName(String nodeName, NodeType nodeType) {
+        return findOneBy(q -> q.where(Node::getName, nodeName).and(Node::getNodeType, nodeType));
+    }
+
+    public Node findOne(String nodeName, NodeType nodeType, Long parentId) {
+        return findOneBy(q -> q.where(Node::getName, nodeName)
+                .and(Node::getNodeType, nodeType)
+                .and(Node::getParentId, parentId));
     }
 }

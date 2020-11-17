@@ -1,7 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.chart;
 
-import cn.shuangbofu.clairvoyance.core.chart.sql.Dimension;
-import cn.shuangbofu.clairvoyance.core.chart.sql.filter.ChartFilter;
+import cn.shuangbofu.clairvoyance.core.chart.field.Dimension;
+import cn.shuangbofu.clairvoyance.core.chart.filter.ChartFilter;
 import cn.shuangbofu.clairvoyance.core.field.ChartField;
 import cn.shuangbofu.clairvoyance.core.field.DrillField;
 import cn.shuangbofu.clairvoyance.core.field.Field;
@@ -40,6 +40,10 @@ public class ChartSqlBuilder {
         otherFilters.add(filter);
     }
 
+    public void addFilters(List<ChartFilter> filters) {
+        otherFilters.addAll(filters);
+    }
+
     public ChartSql build() {
         if (fields == null || fields.size() == 0) {
             throw new RuntimeException("fields not set");
@@ -52,6 +56,13 @@ public class ChartSqlBuilder {
             setDrill();
         }
         return chartSql;
+    }
+
+    /**
+     * 图表关联
+     */
+    private void setLink() {
+
     }
 
     /**

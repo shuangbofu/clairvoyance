@@ -1,5 +1,7 @@
 package cn.shuangbofu.clairvoyance.web.config;
 
+import cn.shuangbofu.clairvoyance.web.dao.BaseDao;
+import cn.shuangbofu.clairvoyance.web.entity.Model;
 import io.github.biezhi.anima.Anima;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,12 @@ public class DatasourceConfig {
 
     @Value("${mysql.password}")
     private String password;
+
+    @Value("${runtime.env}")
+    public void setEnv(String value) {
+        Model.ENV = value;
+        BaseDao.ENV = value;
+    }
 
     @Bean
     public Anima anima() {

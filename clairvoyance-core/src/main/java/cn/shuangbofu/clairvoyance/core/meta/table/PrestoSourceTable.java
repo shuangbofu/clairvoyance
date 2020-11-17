@@ -1,16 +1,20 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
-import cn.shuangbofu.clairvoyance.core.utils.Pair;
 import cn.shuangbofu.clairvoyance.core.meta.source.JdbcSourceDb;
+import cn.shuangbofu.clairvoyance.core.utils.Pair;
 import cn.shuangbofu.clairvoyance.core.utils.StringUtils;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 /**
  * Created by shuangbofu on 2020/8/4 11:51
  */
-public class PrestoSourceTable extends cn.shuangbofu.clairvoyance.core.meta.table.JdbcSourceTable {
+public class PrestoSourceTable extends JdbcSourceTable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrestoSourceTable.class);
 
     public PrestoSourceTable(String tableName, JdbcSourceDb sourceDb) {
         super(tableName, sourceDb);

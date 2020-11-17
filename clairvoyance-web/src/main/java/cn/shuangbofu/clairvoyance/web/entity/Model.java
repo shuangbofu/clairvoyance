@@ -2,6 +2,7 @@ package cn.shuangbofu.clairvoyance.web.entity;
 
 import io.github.biezhi.anima.Anima;
 import io.github.biezhi.anima.annotation.Column;
+import io.github.biezhi.anima.annotation.Ignore;
 import io.github.biezhi.anima.core.AnimaQuery;
 import io.github.biezhi.anima.core.ResultKey;
 import lombok.Getter;
@@ -13,6 +14,8 @@ import lombok.experimental.Accessors;
  */
 @Accessors(chain = true)
 public class Model<T extends Model<?>> extends io.github.biezhi.anima.Model {
+    @Ignore
+    public static String ENV;
 
     @Getter
     @Setter
@@ -32,6 +35,11 @@ public class Model<T extends Model<?>> extends io.github.biezhi.anima.Model {
     @Setter
     @Column(name = "status")
     protected Boolean deleted;
+
+//    @Getter
+//    @Setter
+//    @Column(name = "env")
+    // private String env;
 
     public static <B extends Model<?>> AnimaQuery<B> s(Class<B> bClass) {
         return Anima.select().from(bClass);
@@ -54,7 +62,9 @@ public class Model<T extends Model<?>> extends io.github.biezhi.anima.Model {
         if (getDeleted() == null) {
             setDeleted(false);
         }
-
+//        if (getEnv() == null) {
+//            setEnv(ENV);
+//        }
         ResultKey key = super.save();
         setId(key.asBigInteger().longValue());
         return key;

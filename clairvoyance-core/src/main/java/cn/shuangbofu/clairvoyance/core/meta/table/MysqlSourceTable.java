@@ -1,7 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
-import cn.shuangbofu.clairvoyance.core.utils.Pair;
 import cn.shuangbofu.clairvoyance.core.meta.source.JdbcSourceDb;
+import cn.shuangbofu.clairvoyance.core.utils.Pair;
 import com.google.common.collect.Lists;
 
 import java.util.List;

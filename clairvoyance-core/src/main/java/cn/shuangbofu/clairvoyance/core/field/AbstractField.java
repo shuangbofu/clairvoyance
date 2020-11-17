@@ -14,6 +14,7 @@ public abstract class AbstractField implements Field {
     protected Long id;
     protected String title;
     protected ColumnType type;
+    protected FieldType fieldType;
     protected String name;
     protected String description;
 
@@ -27,5 +28,11 @@ public abstract class AbstractField implements Field {
     @JsonIgnore
     public String getRealName() {
         return getName();
+    }
+
+
+    @Override
+    public FieldType getFieldType() {
+        return fieldType;
     }
 }

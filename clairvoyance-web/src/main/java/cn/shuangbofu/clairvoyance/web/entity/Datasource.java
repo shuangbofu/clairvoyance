@@ -3,7 +3,6 @@ package cn.shuangbofu.clairvoyance.web.entity;
 import cn.shuangbofu.clairvoyance.web.enums.DatasourceType;
 import io.github.biezhi.anima.annotation.Column;
 import io.github.biezhi.anima.annotation.Table;
-import io.github.biezhi.anima.core.AnimaQuery;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -20,18 +19,15 @@ public class Datasource extends Model<Datasource> {
     @Column(name = "`status`")
     private Boolean deleted;
     private DatasourceType type;
-
-    private String description;
+    // private String env;
 
     private String name;
+    private String description;
     private String config;
     private String dbName;
 
     private String createUser;
     private String modifyUser;
 
-    public static AnimaQuery<Datasource> from() {
-        return s(Datasource.class)
-                .where(Datasource::getDeleted, false);
-    }
+
 }

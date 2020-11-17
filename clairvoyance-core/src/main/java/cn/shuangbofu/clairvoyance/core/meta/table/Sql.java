@@ -1,7 +1,7 @@
 package cn.shuangbofu.clairvoyance.core.meta.table;
 
-import cn.shuangbofu.clairvoyance.core.chart.result.ResultHandler;
-import cn.shuangbofu.clairvoyance.core.chart.sql.base.OrderType;
+import cn.shuangbofu.clairvoyance.core.chart.base.OrderType;
+import cn.shuangbofu.clairvoyance.core.result.ResultHandler;
 import cn.shuangbofu.clairvoyance.core.utils.Pair;
 
 import java.util.List;

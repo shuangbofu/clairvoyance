@@ -1,6 +1,6 @@
 package cn.shuangbofu.clairvoyance.core.meta.utils;
 
-import cn.shuangbofu.clairvoyance.core.chart.sql.base.WhereOperation;
+import cn.shuangbofu.clairvoyance.core.chart.base.WhereOperation;
 import com.google.common.collect.Lists;
 
 import java.util.Arrays;

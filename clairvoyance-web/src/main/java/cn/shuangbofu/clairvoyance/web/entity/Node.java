@@ -3,7 +3,6 @@ package cn.shuangbofu.clairvoyance.web.entity;
 import cn.shuangbofu.clairvoyance.web.enums.NodeType;
 import io.github.biezhi.anima.annotation.Column;
 import io.github.biezhi.anima.annotation.Table;
-import io.github.biezhi.anima.core.AnimaQuery;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -20,6 +19,7 @@ public class Node extends Model<Node> {
     private Long gmtModified;
     @Column(name = "`status`")
     private Boolean deleted;
+    // private String env;
 
     private String name;
     private NodeType nodeType;
@@ -28,9 +28,4 @@ public class Node extends Model<Node> {
 
     private String createUser;
     private String modifyUser;
-
-    public static AnimaQuery<Node> from() {
-        return s(Node.class)
-                .where(Node::getDeleted, false);
-    }
 }
