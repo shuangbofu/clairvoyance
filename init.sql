@@ -29,7 +29,6 @@ CREATE TABLE `dashboard`
     `tags`          varchar(128)        NOT NULL DEFAULT '' COMMENT '标签',
     `remarks`       varchar(128)        NOT NULL DEFAULT '' COMMENT '备注描述',
     `layout_config` varchar(2048)       NOT NULL DEFAULT '' COMMENT '仪表盘布局配置',
-    `filter_config` varchar(2048)       NOT NULL DEFAULT '' COMMENT '全局过滤器配置',
     `create_user`   varchar(64)         NOT NULL DEFAULT '' COMMENT '创建用户',
     `modify_user`   varchar(64)         NOT NULL DEFAULT '' COMMENT '修改用户',
     PRIMARY KEY (`id`)
@@ -107,4 +106,58 @@ CREATE TABLE `work_sheet_field`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `dashboard_filter`
+(
+    `id`           bigint(13) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `gmt_create`   bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `gmt_modified` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '修改时间',
+    `status`       tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '逻辑删除',
+    `dashboard_id` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '仪表盘ID',
+    `parent_id`    bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '父过滤器ID',
+    `included`     tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '是否包含IN',
+    `name`         varchar(64)         NOT NULL DEFAULT '' COMMENT '过滤器名称',
+    `visible`      tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '是否可见',
+    `env`          varchar(8)          NOT NULL DEFAULT '' COMMENT '区域',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 101
+  DEFAULT CHARSET = utf8mb4 COMMENT ='仪表盘全局过滤配置表';
+
+CREATE TABLE `dashboard_link`
+(
+    `id`              bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '图表联动ID',
+    `dashboard_id`    bigint(20)          NOT NULL DEFAULT '0' COMMENT '仪表盘ID',
+    `chart_id`        bigint(20)          NOT NULL DEFAULT '0' COMMENT '主表ID',
+    `linked_chart_id` bigint(20)          NOT NULL DEFAULT '0' COMMENT '子表ID',
+    `field_id`        bigint(20)          NOT NULL DEFAULT '0' COMMENT '主表字段',
+    `linked_field_id` bigint(20)          NOT NULL DEFAULT '0' COMMENT '子表字段',
+    `status`          tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '0 未删除, 1 已删除',
+    `gmt_create`      bigint(13)          NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `gmt_modified`    bigint(13)          NOT NULL DEFAULT '0' COMMENT '修改时间',
+    `create_user`     varchar(32)         NOT NULL DEFAULT '' COMMENT '创建人',
+    `modify_user`     varchar(32)         NOT NULL DEFAULT '' COMMENT '修改人',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 76
+  DEFAULT CHARSET = utf8mb4 COMMENT ='仪表盘图表联动表';
+
+CREATE TABLE `dashboard_filter_selected`
+(
+    `id`                  bigint(20)          NOT NULL AUTO_INCREMENT COMMENT '全局过滤选择项ID',
+    `dashboard_Id`        bigint(20)          NOT NULL DEFAULT '0' COMMENT '仪表盘ID',
+    `dashboard_filter_Id` bigint(20)          NOT NULL DEFAULT '0' COMMENT '仪表盘全局过滤配置ID',
+    `work_sheet_id`       bigint(20)          NOT NULL DEFAULT '0' COMMENT '工作表ID',
+    `chart_id`            bigint(20)          NOT NULL DEFAULT '0' COMMENT '图表ID',
+    `field_id`            bigint(20)          NOT NULL DEFAULT '0' COMMENT '字段ID',
+    `status`              tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '0 未删除, 1 已删除',
+    `gmt_create`          bigint(13)          NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `gmt_create_by`       varchar(32)         NOT NULL DEFAULT '' COMMENT '创建人',
+    `gmt_modified`        bigint(13)          NOT NULL DEFAULT '0' COMMENT '修改时间',
+    `gmt_modified_by`     varchar(32)         NOT NULL DEFAULT '' COMMENT '修改人',
+    `env`                 varchar(8)          NOT NULL DEFAULT '' COMMENT '环境',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 163
+  DEFAULT CHARSET = utf8mb4 COMMENT ='仪表盘全局过滤选择项表';
 
