@@ -33,7 +33,7 @@ public class Test3 {
 //        db.update("UPDATE `user2` SET id = 2");
 
 
-        MysqlSourceDb db = new MysqlSourceDb(new JdbcParam("jdbc:mysql://172.16.248.10:3306/hive_meta_test?useSSL=false", "root", "root"));
+        MysqlSourceDb db = new MysqlSourceDb(new JdbcParam("jdbc:mysql://127.0.0.1:3306/hive_meta_test?useSSL=false", "root", "root"));
 
         List<Column> columns = db.sourceTable("columns_v2").columns();
 
@@ -42,7 +42,7 @@ public class Test3 {
 
     @Test
     public void testHive() {
-        HiveSourceDb hiveSourceDb = new HiveSourceDb(new JdbcParam("jdbc:hive://172.16.248.220:7001/hive", "hadoop", ""));
+        HiveSourceDb hiveSourceDb = new HiveSourceDb(new JdbcParam("jdbc:hive://127.0.0.1:7001/hive", "hadoop", ""));
 
         boolean valid = hiveSourceDb.isValid();
         System.out.println(valid);
@@ -51,7 +51,7 @@ public class Test3 {
 
     @Test
     public void tst() {
-        PrestoSourceDb prestoSourceDb = new PrestoSourceDb(new JdbcParam("jdbc:presto://172.16.248.220:9999/hive/test", "hadoop", ""));
+        PrestoSourceDb prestoSourceDb = new PrestoSourceDb(new JdbcParam("jdbc:presto://127.0.0.1:9999/hive/test", "hadoop", ""));
         List<Map<String, Object>> query = prestoSourceDb.query("select * from \"test\".\"user\" limit 2");
         System.out.println(query);
     }
@@ -59,7 +59,7 @@ public class Test3 {
 
     @Test
     public void testPresto() {
-        PrestoSourceDb prestoSourceDb = new PrestoSourceDb(new JdbcParam("jdbc:presto://172.16.248.220:9999/hive/test", "hadoop", ""));
+        PrestoSourceDb prestoSourceDb = new PrestoSourceDb(new JdbcParam("jdbc:presto://127.0.0.1:9999/hive/test", "hadoop", ""));
 //        prestoSourceDb.execute("CREATE TABLE user (\n" +
 //                "  id bigint COMMENT '主键',\n" +
 //                "  name varchar COMMENT '姓名'\n" +
