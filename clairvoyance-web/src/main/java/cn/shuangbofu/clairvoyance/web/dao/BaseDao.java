@@ -74,8 +74,7 @@ public abstract class BaseDao<T extends Model<T>> {
 
     private AnimaQuery<T> select() {
         return BASE_WHERE.apply(
-                Anima.select().from(bClass)
-                        .order(GMT_CREATE_NAME, OrderBy.DESC));
+                Anima.select().from(bClass));
     }
 
     private AnimaQuery<T> delete() {
@@ -83,7 +82,7 @@ public abstract class BaseDao<T extends Model<T>> {
     }
 
     protected <R> R findBy(QueryHandler<T> handler, ExecuteFunction<T, R> function) {
-        return function.apply(handler.apply(select()));
+        return function.apply(handler.apply(select()).order(GMT_CREATE_NAME, OrderBy.DESC));
     }
 
     protected Page<T> findPageBy(int num, int size, QueryHandler<T> handler) {
